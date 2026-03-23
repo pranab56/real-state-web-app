@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Bath, Bed, MapPin, Move } from 'lucide-react';
 import Image from 'next/image';

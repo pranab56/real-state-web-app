@@ -4,7 +4,12 @@ const nextConfig: NextConfig = {
   /* config options here */
   allowedDevOrigins: ['10.10.7.37'],
   images: {
-    domains: ['images.unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
   },
 };
 
