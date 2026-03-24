@@ -49,6 +49,16 @@ export function Navbar() {
   // Logic for background - Always solid on internal pages, scroll-based on Home
   const showBackground = !isHome || scrolled;
 
+  const isDashboardRoute =
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/partner-dashboard') ||
+    pathname.startsWith('/hotels-partner-dashboard');
+
+  if (isDashboardRoute) {
+    return null;
+  }
+
   return (
     <nav
       className={cn(

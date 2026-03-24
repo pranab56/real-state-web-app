@@ -23,14 +23,14 @@ import { useState } from 'react';
 
 export default function Hero() {
   const [activeMainTab, setActiveMainTab] = useState('Real Estate');
-    const [activeSubTab, setActiveSubTab] = useState('Houses');
-    const [showAdvanced, setShowAdvanced] = useState(false);
-  
-    const mainTabs = ['Real Estate', 'Hotels', 'Guesthouses', 'Transportation', 'POA/Legal'];
-    const amenities = ['Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor'];
-    return (
-        <section>
-          {/* Hero Section */}
+  const [activeSubTab, setActiveSubTab] = useState('Houses');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const mainTabs = ['Real Estate', 'Hotels', 'Guesthouses', 'Transportation', 'POA/Legal'];
+  const amenities = ['Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor'];
+  return (
+    <section>
+      {/* Hero Section */}
       <section className="relative min-h-[100vh] w-full pt-32 pb-20 flex items-center overflow-hidden bg-[#1E2024]">
         {/* Video Background Layer */}
         <div className="absolute inset-0 z-0">
@@ -270,6 +270,6 @@ export default function Hero() {
           </div>
         </div>
       </section>
-        </section>
-    );
+    </section>
+  );
 }

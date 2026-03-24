@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 function Logo() {
   return (
@@ -39,6 +40,12 @@ function Logo() {
 }
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith('/partner-dashboard') || pathname.startsWith('/hotels-partner-dashboard')) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#1E2024] text-white py-16 px-6">
       <div className="max-w-7xl mx-auto">
