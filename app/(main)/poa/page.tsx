@@ -47,13 +47,13 @@ export default function POAPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-8"
           >
-            <h1 className="text-4xl md:text-5xl font-black text-neutral-1 uppercase leading-tight tracking-tight">
+            <h1 className="text-4xl md:text-4xl font-black text-neutral-1 uppercase leading-tight tracking-tight">
               Legal & Power of <br /> Attorney (POA) Services
             </h1>
             <p className="text-lg text-neutral-2 max-w-xl font-medium leading-relaxed">
               Secure Property Transactions in Ethiopia. We represent buyers abroad to ensure safe, legal, and transparent investments through professional Power of Attorney management.
             </p>
-            <Button className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all">
+            <Button className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer">
               Request Legal Assistance
             </Button>
           </motion.div>
@@ -135,10 +135,10 @@ export default function POAPage() {
 
       {/* Consultation Section */}
       <section className="container mx-auto px-6 py-24">
-        <div className="max-w-6xl mx-auto bg-white rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden border border-gray-100 flex flex-col lg:row-reverse items-stretch lg:flex-row-reverse">
+        <div className=" mx-auto bg-white rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden border border-gray-100 flex flex-col lg:row-reverse items-stretch lg:flex-row-reverse">
           <div className="lg:w-1/2 relative min-h-[400px]">
             <Image
-              src="https://images.unsplash.com/photo-1521791136064-7986c2959663?q=80&w=1200&h=1200&fit=crop"
+              src="/images/company/image1.png"
               alt="Consultation"
               fill
               className="object-cover brightness-[0.9]"

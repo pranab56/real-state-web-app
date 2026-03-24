@@ -21,6 +21,7 @@ import {
   Star
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const hotels = [
   {
@@ -175,49 +176,53 @@ export default function HotelsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group bg-white rounded-sm overflow-hidden border border-gray-100 hover:shadow-sm transition-all duration-500"
               >
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <Image
-                    src={hotel.image}
-                    alt={hotel.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  {/* Badge */}
-                  <span className="absolute top-4 left-4 bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
-                    {hotel.tag}
-                  </span>
-                  {/* Quick Actions */}
-                  <div className="absolute bottom-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <button className="w-10 h-10 rounded-sm bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all shadow-lg">
-                      <Bookmark size={18} />
-                    </button>
-                    <button className="w-10 h-10 rounded-sm bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all shadow-lg">
-                      <Search size={18} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-5 space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-2xl font-bold text-neutral-1 group-hover:text-primary transition-colors">{hotel.name}</h3>
-                    <div className="flex items-start gap-2 text-neutral-2">
-                      <MapPin size={18} className="mt-1 flex-shrink-0 text-primary" />
-                      <p className="font-medium">{hotel.address}</p>
+                <Link
+                  href={`/hotels/${hotel.id}`}
+                  className="group block bg-white rounded-sm overflow-hidden border border-gray-100 hover:shadow-sm transition-all duration-500"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <Image
+                      src={hotel.image}
+                      alt={hotel.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    {/* Badge */}
+                    <span className="absolute top-4 left-4 bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+                      {hotel.tag}
+                    </span>
+                    {/* Quick Actions */}
+                    <div className="absolute bottom-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      <button className="w-10 h-10 rounded-sm bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all shadow-lg">
+                        <Bookmark size={18} />
+                      </button>
+                      <button className="w-10 h-10 rounded-sm bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all shadow-lg">
+                        <Search size={18} />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-extrabold text-neutral-1">{hotel.price}</span>
-                      <span className="text-neutral-2 text-sm font-medium">/ night</span>
+                  <div className="p-5 space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-bold text-neutral-1 group-hover:text-primary transition-colors">{hotel.name}</h3>
+                      <div className="flex items-start gap-2 text-neutral-2">
+                        <MapPin size={18} className="mt-1 flex-shrink-0 text-primary" />
+                        <p className="font-medium">{hotel.address}</p>
+                      </div>
                     </div>
-                    <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-12 px-6 rounded-sm transition-all active:scale-95">
-                      Book Now
-                    </Button>
+
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-50">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-extrabold text-neutral-1">{hotel.price}</span>
+                        <span className="text-neutral-2 text-sm font-medium">/ night</span>
+                      </div>
+                      <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-12 px-6 rounded-sm transition-all active:scale-95">
+                        Book Now
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                </Link>
               </motion.div>
             ))}
           </div>

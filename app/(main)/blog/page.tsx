@@ -46,9 +46,9 @@ export default function BlogPage() {
     <div className="min-h-screen bg-white">
       {/* Breadcrumbs */}
       <div className="container mx-auto px-6 py-6 flex items-center gap-2 text-sm mt-12">
-       <Link href="/">
-        <span className="text-primary font-medium hover:underline cursor-pointer">Home</span>
-       </Link>
+        <Link href="/">
+          <span className="text-primary font-medium hover:underline cursor-pointer">Home</span>
+        </Link>
         <ChevronRight size={14} className="text-neutral-2" />
         <span className="text-neutral-2">Blog Grid</span>
       </div>
@@ -84,9 +84,11 @@ export default function BlogPage() {
                     <span>{post.date}</span>
                   </div>
 
-                  <h2 className="text-2xl font-bold text-neutral-1 hover:text-primary transition-colors cursor-pointer">
-                    {post.title}
-                  </h2>
+                  <Link href={`/blog/${post.id}`}>
+                    <h2 className="text-2xl font-bold text-neutral-1 hover:text-primary transition-colors cursor-pointer">
+                      {post.title}
+                    </h2>
+                  </Link>
 
                   <p className="text-neutral-2 leading-relaxed max-w-4xl">
                     {post.excerpt}

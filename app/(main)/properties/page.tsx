@@ -24,11 +24,12 @@ import {
   Search
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const properties = [
   {
     id: 1,
-    title: 'Modern Villa',
+    title: 'Modern Villa Lakeview',
     price: 'ETB165.00',
     address: '14691 Stratford Dr, Woodbridge, VA 22193',
     beds: 4,
@@ -39,7 +40,7 @@ const properties = [
   },
   {
     id: 2,
-    title: 'Luxury Apartment',
+    title: 'Luxury Apartment Skyline',
     price: 'ETB165.00',
     address: '14691 Stratford Dr, Woodbridge, VA 22193',
     beds: 4,
@@ -50,7 +51,7 @@ const properties = [
   },
   {
     id: 3,
-    title: 'Cozy House',
+    title: 'Cozy Family House',
     price: 'ETB165.00',
     address: '14691 Stratford Dr, Woodbridge, VA 22193',
     beds: 4,
@@ -61,7 +62,7 @@ const properties = [
   },
   {
     id: 4,
-    title: 'Beach Front',
+    title: 'Beach Front Paradise',
     price: 'ETB165.00',
     address: '14691 Stratford Dr, Woodbridge, VA 22193',
     beds: 4,
@@ -72,7 +73,7 @@ const properties = [
   },
   {
     id: 5,
-    title: 'Urban Loft',
+    title: 'Urban Chic Loft',
     price: 'ETB165.00',
     address: '14691 Stratford Dr, Woodbridge, VA 22193',
     beds: 4,
@@ -83,7 +84,7 @@ const properties = [
   },
   {
     id: 6,
-    title: 'Penthouse',
+    title: 'The Grand Penthouse',
     price: 'ETB165.00',
     address: '14691 Stratford Dr, Woodbridge, VA 22193',
     beds: 4,
@@ -104,7 +105,7 @@ const featuredHomes = [
 
 const SidebarSelect = ({ label, placeholder }: { label?: string, placeholder: string }) => (
   <Select>
-    <SelectTrigger className="w-full h-12 py-6 bg-[#F7F7F7] border-none rounded-sm text-neutral-2">
+    <SelectTrigger className="w-full h-12 py-6 bg-[#F7F7F7] border-none rounded-sm text-neutral-2 shadow-none">
       <SelectValue placeholder={placeholder} />
     </SelectTrigger>
     <SelectContent className="rounded">
@@ -117,7 +118,7 @@ const SidebarSelect = ({ label, placeholder }: { label?: string, placeholder: st
 
 export default function PropertiesPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pt-20">
       {/* Breadcrumbs */}
       <div className="container mx-auto px-6 py-6 flex items-center gap-2 text-sm">
         <span className="text-primary font-medium">Home</span>
@@ -129,7 +130,7 @@ export default function PropertiesPage() {
 
         {/* Sidebar Filters */}
         <aside className="lg:w-[320px] flex-shrink-0 space-y-10">
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 space-y-8">
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 space-y-8 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-neutral-1">Property Search</h2>
               <button className="text-sm text-neutral-2 hover:text-primary transition-colors">Clear All</button>
@@ -180,9 +181,9 @@ export default function PropertiesPage() {
               <h3 className="font-medium text-neutral-1">Amenities:</h3>
               <div className="grid grid-cols-2 gap-y-4 gap-x-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                  <div key={i} className="flex items-center space-x-2 bg-[#F7F7F7] p-3 rounded-sm cursor-pointer hover:bg-gray-100 transition-colors">
+                  <div key={i} className="flex items-center space-x-2 bg-[#F7F7F7] p-3 rounded-sm cursor-pointer hover:bg-gray-100 transition-colors group/item">
                     <Checkbox id={`amenity-${i}`} className="border-neutral-2 data-[state=checked]:bg-primary" />
-                    <label htmlFor={`amenity-${i}`} className="text-sm font-medium text-neutral-1 cursor-pointer">Bed Linens</label>
+                    <label htmlFor={`amenity-${i}`} className="text-sm font-medium text-neutral-2 group-hover/item:text-primary cursor-pointer transition-colors">Bed Linens</label>
                   </div>
                 ))}
               </div>
@@ -190,35 +191,36 @@ export default function PropertiesPage() {
           </div>
 
           {/* Featured Properties (Mini) */}
-          <div className="space-y-6 shadow-sm flex flex-col justify-center items-center py-2  rounded-sm">
+          <div className="space-y-6 border border-gray-100 bg-white p-6 rounded-2xl shadow-sm">
+            <h3 className="font-bold text-neutral-1 mb-4">Featured Homes</h3>
             {featuredHomes.map((home, idx) => (
-              <div key={idx} className="flex gap-4 group cursor-pointer">
-                <div className="relative w-24 h-20 rounded-xl overflow-hidden flex-shrink-0">
+              <div key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
                   <Image src={home.image} alt={home.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-medium text-neutral-1 group-hover:text-primary transition-colors">{home.title}</h4>
-                  <p className="text-xs text-neutral-2 font-medium">{home.beds} Beds {home.baths} Baths {home.size}</p>
-                  <p className="text-sm font-bold text-primary">{home.price}</p>
+                  <h4 className="text-sm font-bold text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{home.title}</h4>
+                  <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">{home.beds} Beds | {home.baths} Baths</p>
+                  <p className="text-sm font-black text-primary">{home.price}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* CTA Card */}
-          <div className="relative rounded-lg overflow-hidden min-h-[400px] flex flex-col justify-end">
+          <div className="relative rounded-2xl overflow-hidden min-h-[400px] flex flex-col justify-end shadow-xl">
             <Image
               src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?q=80&w=800&h=1200&fit=crop"
               alt="Agent"
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="relative p-8 space-y-6 text-white">
-              <h3 className="text-2xl font-bold leading-tight">We can help you find a local real estate agent</h3>
-              <p className="text-sm text-white/80 font-medium">Connect with a trusted agent who knows the market inside out - whether you're buying or selling.</p>
-              <Button className="w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-12 rounded-xl">
-                Connect with an agent
+              <h3 className="text-2xl font-black leading-tight tracking-tight">Expert Agent Assistance</h3>
+              <p className="text-sm text-white/80 font-medium">Connect with a trusted agent who knows the luxury market inside out.</p>
+              <Button className="w-full bg-[#F1913D] hover:bg-white hover:text-primary text-white font-bold h-12 rounded-xl transition-all">
+                Connect With An Agent
               </Button>
             </div>
           </div>
@@ -228,23 +230,23 @@ export default function PropertiesPage() {
         <main className="flex-1 space-y-8 mt-12 lg:mt-0">
           {/* List Header */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-            <span className="text-neutral-2 font-medium">Showing <span className="text-neutral-1 font-bold">1-6</span> of <span className="text-neutral-1 font-bold">24</span> properties</span>
+            <span className="text-neutral-2 font-medium italic text-sm">Showing <span className="text-neutral-1 font-bold not-italic">1-6</span> of <span className="text-neutral-1 font-bold not-italic">24</span> properties</span>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-neutral-2 font-medium">Sort by:</span>
+              <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest">Sort by:</span>
               <Select defaultValue="newest">
                 <SelectTrigger className="w-40 h-10 border-none bg-transparent font-bold text-neutral-1 shadow-none">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
-                <SelectContent className='rounded-none'>
-                  <SelectItem className='rounded-none py-1' value="newest">Newest first</SelectItem>
-                  <SelectItem className='rounded-none py-1' value="oldest">Oldest first</SelectItem>
+                <SelectContent className='rounded-xl'>
+                  <SelectItem className='py-2' value="newest">Newest first</SelectItem>
+                  <SelectItem className='py-2' value="oldest">Oldest first</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {/* Property Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {properties.map((property, index) => (
               <motion.div
                 key={property.id}
@@ -252,55 +254,62 @@ export default function PropertiesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group bg-white rounded-sm overflow-hidden border border-gray-100 hover:shadow-sm transition-all duration-500 cursor-pointer"
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={property.image}
-                    alt={property.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  {/* Badges */}
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full">Zila Verified</span>
-                    <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full">For Sale</span>
-                  </div>
-                  {/* Quick Actions Overlay */}
-                  <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all">
-                      <Repeat size={18} />
-                    </button>
-                    <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all">
-                      <Heart size={18} />
-                    </button>
-                    <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all">
-                      <Maximize2 size={18} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="p-4 space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-3xl font-medium text-neutral-1">{property.price}</h3>
-                    <div className="flex items-start gap-2 text-neutral-2">
-                      <MapPin size={18} className="mt-1 flex-shrink-0" />
-                      <p className="font-medium">{property.address}</p>
+                <div className="group bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 relative">
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <Image
+                      src={property.image}
+                      alt={property.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    {/* Badges */}
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">Zila Verified</span>
+                      <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">For Sale</span>
+                    </div>
+                    {/* Quick Actions Overlay */}
+                    <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      <button className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                        <Repeat size={18} />
+                      </button>
+                      <button className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                        <Heart size={18} />
+                      </button>
+                      <button className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                        <Maximize2 size={18} />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-50 text-neutral-2">
-                    <div className="flex items-center gap-2">
-                      <BedDouble size={20} className="text-primary" />
-                      <span className="text-sm font-bold">Beds <span className="text-neutral-1">{property.beds}</span></span>
+                  <div className="p-5 space-y-6">
+                    <div className="space-y-3">
+                      <h3 className="text-2xl font-black text-neutral-1">{property.price}</h3>
+                      <Link
+                        href={`/properties/${property.id}`}
+                        className="text-lg font-bold text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight"
+                      >
+                        {property.title}
+                      </Link>
+                      <div className="flex items-start gap-1.5 text-neutral-2">
+                        <MapPin size={16} className="mt-1 flex-shrink-0 text-primary" />
+                        <p className="font-medium text-sm italic">{property.address}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Bath size={20} className="text-primary" />
-                      <span className="text-sm font-bold">Baths <span className="text-neutral-1">{property.baths}</span></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Maximize2 size={20} className="text-primary" />
-                      <span className="text-sm font-bold">m2 <span className="text-neutral-1">{property.size.split(' ')[0]}</span></span>
+
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-50 text-neutral-2 gap-2">
+                      <div className="flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider">
+                        <BedDouble size={16} className="text-primary" />
+                        <span>Beds <span className="text-neutral-1 font-black">{property.beds}</span></span>
+                      </div>
+                      <div className="flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider">
+                        <Bath size={16} className="text-primary" />
+                        <span>Baths <span className="text-neutral-1 font-black">{property.baths}</span></span>
+                      </div>
+                      <div className="flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider">
+                        <Maximize2 size={16} className="text-primary" />
+                        <span>SqFt <span className="text-neutral-1 font-black">{property.size.split(' ')[0]}</span></span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -310,20 +319,20 @@ export default function PropertiesPage() {
 
           {/* Pagination */}
           <div className="flex items-center justify-center gap-4 pt-12">
-            <button className="flex items-center gap-2 p-2 px-4 rounded-sm border border-gray-100 text-neutral-2 hover:text-primary hover:border-primary transition-all font-medium cursor-pointer">
-              <ChevronLeft size={20} />
+            <button className="flex items-center gap-2 p-2 px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-sm cursor-pointer shadow-sm">
+              <ChevronLeft size={18} />
               Previous
             </button>
             <div className="flex items-center gap-2">
-              <button className="w-10 h-10 rounded-sm bg-primary text-white font-bold shadow-lg shadow-primary/20 cursor-pointer">1</button>
-              <button className="w-10 h-10 rounded-sm text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">2</button>
-              <button className="w-10 h-10 rounded-sm text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">3</button>
+              <button className="w-10 h-10 rounded-lg bg-primary text-white font-black shadow-lg shadow-primary/20 cursor-pointer">1</button>
+              <button className="w-10 h-10 rounded-lg text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">2</button>
+              <button className="w-10 h-10 rounded-lg text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">3</button>
               <span className="px-2 text-neutral-2">...</span>
-              <button className="w-10 h-10 rounded-sm text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">12</button>
+              <button className="w-10 h-10 rounded-lg text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">12</button>
             </div>
-            <button className="flex items-center gap-2 p-2 px-4 rounded-sm border border-gray-100 text-neutral-2 hover:text-primary hover:border-primary transition-all font-medium cursor-pointer">
+            <button className="flex items-center gap-2 p-2 px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-sm cursor-pointer shadow-sm">
               Next
-              <ChevronRight size={20} />
+              <ChevronRight size={18} />
             </button>
           </div>
         </main>
