@@ -1,7 +1,16 @@
 'use client';
 
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { CalendarCheck } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -57,6 +66,24 @@ const getStatusStyle = (status: string) => {
 };
 
 export default function HotelPartnerDashboardPage() {
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(bookings.map((b) => b.id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleToggleRow = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const isAllSelected = selectedIds.length === bookings.length && bookings.length > 0;
+
   return (
     <div className="space-y-6">
 
@@ -67,7 +94,7 @@ export default function HotelPartnerDashboardPage() {
           return (
             <div
               key={idx}
-              className="bg-white rounded-[20px] p-7 flex flex-col justify-center border border-[#F2F2F2] shadow-sm"
+              className="bg-white rounded-[20px] p-5 flex flex-col justify-center border border-[#F2F2F2] shadow-sm"
             >
               <div
                 className="w-12 h-12 rounded-[10px] border flex items-center justify-center mb-6"
@@ -91,7 +118,11 @@ export default function HotelPartnerDashboardPage() {
             <thead>
               <tr className="bg-[#F9F9F9]">
                 <th className="px-5 py-4 w-10 text-center rounded-l-xl font-medium text-[#6C757D]">
-                  <input type="checkbox" className="w-4 h-4 accent-[#F1913D]" />
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                    className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:border-[#F1913D]"
+                  />
                 </th>
                 <th className="px-5 py-4 font-medium text-[#6C757D]">Guest Name</th>
                 <th className="px-5 py-4 font-medium text-[#6C757D]">Room Type</th>
@@ -105,7 +136,11 @@ export default function HotelPartnerDashboardPage() {
               {bookings.map((b) => (
                 <tr key={b.id} className="border-b border-[#F2F2F2] last:border-0 hover:bg-gray-50/50 transition-colors">
                   <td className="px-5 py-4 text-center">
-                    <input type="checkbox" className="w-4 h-4 accent-[#F1913D]" />
+                    <Checkbox
+                      checked={selectedIds.includes(b.id)}
+                      onCheckedChange={() => handleToggleRow(b.id)}
+                      className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:border-[#F1913D]"
+                    />
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
@@ -139,11 +174,16 @@ export default function HotelPartnerDashboardPage() {
               Asset value appreciation over the last 12 months
             </p>
           </div>
-          <select className="border border-[#E5E7EB] rounded-lg px-4 py-2 text-[14px] font-semibold text-[#2C2E33] bg-white outline-none focus:ring-1 focus:ring-[#F1913D] cursor-pointer">
-            <option>Monthly</option>
-            <option>Weekly</option>
-            <option>Yearly</option>
-          </select>
+          <Select defaultValue="monthly">
+            <SelectTrigger className="w-[124px] border border-[#E5E7EB] rounded-lg px-4 h-12 py-5 text-[14px] font-semibold text-[#2C2E33] bg-white outline-none focus:ring-1 focus:ring-[#F1913D] cursor-pointer shadow-none">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent className="rounded-sm border-[#F2F2F2] shadow-xl">
+              <SelectItem value="monthly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-lg cursor-pointer py-2.5">Monthly</SelectItem>
+              <SelectItem value="weekly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-lg cursor-pointer py-2.5">Weekly</SelectItem>
+              <SelectItem value="yearly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-lg cursor-pointer py-2.5">Yearly</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="mb-6">
@@ -152,7 +192,7 @@ export default function HotelPartnerDashboardPage() {
         </div>
 
         <ResponsiveContainer width="100%" height={260}>
-          <AreaChart data={revenueData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={revenueData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="hotelRevenueGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#F1913D" stopOpacity={0.3} />
@@ -165,6 +205,8 @@ export default function HotelPartnerDashboardPage() {
               tick={{ fill: '#A1A1A1', fontSize: 12, fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
+              interval={0}
+              padding={{ left: 16, right: 16 }}
             />
             <YAxis hide />
             <Tooltip

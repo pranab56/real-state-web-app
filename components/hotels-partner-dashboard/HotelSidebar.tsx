@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   CalendarCheck,
   FileText,
@@ -17,7 +17,17 @@ import { usePathname } from 'next/navigation';
 
 const sidebarItems = [
   { name: 'Overview', href: '/hotels-partner-dashboard', icon: LayoutDashboard },
-  { name: 'Manage Hotels', href: '/hotels-partner-dashboard/manage-hotels', icon: Hotel },
+  {
+    name: 'Manage Hotels',
+    href: '/hotels-partner-dashboard/manage-hotels',
+    icon: Hotel,
+    children: [
+      { name: 'Hotels List', href: '/hotels-partner-dashboard/manage-hotels/list' },
+      { name: 'Add Hotel', href: '/hotels-partner-dashboard/manage-hotels/add' },
+      { name: 'Room Type', href: '/hotels-partner-dashboard/manage-hotels/room-type' },
+      { name: 'Add Room', href: '/hotels-partner-dashboard/manage-hotels/add-room' },
+    ],
+  },
   { name: 'Bookings', href: '/hotels-partner-dashboard/bookings', icon: CalendarCheck },
   { name: 'Message', href: '/hotels-partner-dashboard/messages', icon: MessageSquare },
   { name: 'Payment History', href: '/hotels-partner-dashboard/payments', icon: FileText },
@@ -66,36 +76,72 @@ export function HotelSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 mt-6">
-        <ul className="flex flex-col gap-2 relative">
+        <ul className="flex flex-col gap-1 relative">
           {sidebarItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isParentActive = pathname === item.href || (item.children && pathname.startsWith(item.href));
             const Icon = item.icon;
 
             return (
-              <li key={item.name} className="relative group">
-                {isActive && (
-                  <motion.div
-                    layoutId="hotel-sidebar-active"
-                    className="absolute inset-x-0 inset-y-0 bg-[#F1913D] shadow-lg shadow-[#F1913D]/20 z-0"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  />
-                )}
-                <Link
-                  href={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors relative z-10',
-                    isActive ? 'text-white' : 'text-white/60 hover:text-white'
+              <li key={item.name} className="relative group px-3">
+                <div className="relative">
+                  {isParentActive && (
+                    <motion.div
+                      layoutId="hotel-sidebar-active"
+                      className="absolute inset-x-0 inset-y-0 bg-[#F1913D] rounded-lg shadow-lg shadow-[#F1913D]/20 z-0"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
                   )}
-                >
-                  <Icon
-                    size={18}
-                    className={cn('transition-all', isActive ? 'text-white' : '')}
-                    strokeWidth={isActive ? 2.5 : 2}
-                  />
-                  {item.name}
-                </Link>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors relative z-10',
+                      isParentActive ? 'text-white' : 'text-white/60 hover:text-white'
+                    )}
+                  >
+                    <Icon
+                      size={20}
+                      className={cn('transition-all', isParentActive ? 'text-white' : '')}
+                      strokeWidth={isParentActive ? 2.5 : 2}
+                    />
+                    {item.name}
+                  </Link>
+                </div>
+
+                {/* Children with Animation */}
+                <AnimatePresence>
+                  {item.children && isParentActive && (
+                    <motion.ul
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      className="ml-4 flex flex-col gap-1 relative z-10 overflow-hidden"
+                    >
+                      {item.children.map((child) => {
+                        const isChildActive = pathname === child.href;
+                        return (
+                          <li key={child.name}>
+                            <Link
+                              href={child.href}
+                              className={cn(
+                                'flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors',
+                                isChildActive ? 'text-white' : 'text-white/60 hover:text-white'
+                              )}
+                            >
+                              <div className={cn(
+                                'w-2 h-2 rounded-full',
+                                isChildActive ? 'bg-white' : 'bg-[#F1913D]'
+                              )} />
+                              {child.name}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
               </li>
             );
           })}
