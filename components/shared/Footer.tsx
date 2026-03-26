@@ -42,7 +42,12 @@ function Logo() {
 export default function Footer() {
   const pathname = usePathname();
 
-  if (pathname.startsWith('/partner-dashboard') || pathname.startsWith('/hotels-partner-dashboard')) {
+  if (
+    pathname.startsWith('/partner-dashboard') ||
+    pathname.startsWith('/hotels-partner-dashboard') ||
+    pathname.startsWith('/transport-Partner-dashboard') ||
+    pathname.startsWith('/transport-partner-dashboard')
+  ) {
     return null;
   }
 

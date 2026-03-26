@@ -53,7 +53,9 @@ export function Navbar() {
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/partner-dashboard') ||
-    pathname.startsWith('/hotels-partner-dashboard');
+    pathname.startsWith('/hotels-partner-dashboard') ||
+    pathname.startsWith('/transport-Partner-dashboard') ||
+    pathname.startsWith('/transport-partner-dashboard');
 
   if (isDashboardRoute) {
     return null;
