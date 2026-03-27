@@ -1,14 +1,17 @@
 'use client';
 
+import { useSidebar } from '@/hooks/use-sidebar';
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
 
 export function TransportTopbar() {
+  const { toggleSidebar } = useSidebar();
+
   return (
     <header className="bg-white px-8 py-5 flex items-center justify-between border-b border-[#F2F2F2]">
       {/* Left side */}
       <div className="flex items-center gap-4">
-        <button className="bg-[#FFF4ED] p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
+        <button onClick={toggleSidebar} className="bg-[#FFF4ED] p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
           <Menu size={24} strokeWidth={2.5} />
         </button>
         <div>

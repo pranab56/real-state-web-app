@@ -28,11 +28,12 @@ const stats = [
 ];
 
 const bookings = [
-  { id: 1, name: 'Eleanor Jones', roomType: 'Deluxe Suite', date: 'Oct 12, 2025', status: 'Confirmed', amount: 'ETB250,00', image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=150&fit=crop' },
-  { id: 2, name: 'Eleanor Jones', roomType: 'Deluxe Suite', date: 'Oct 12, 2025', status: 'Pending', amount: 'ETB250,00', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=150&fit=crop' },
-  { id: 3, name: 'Eleanor Jones', roomType: 'Deluxe Suite', date: 'Oct 12, 2025', status: 'Confirmed', amount: 'ETB250,00', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=150&fit=crop' },
-  { id: 4, name: 'Eleanor Jones', roomType: 'Deluxe Suite', date: 'Oct 12, 2025', status: 'Checked In', amount: 'ETB250,00', image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=150&fit=crop' },
-  { id: 5, name: 'Eleanor Jones', roomType: 'Deluxe Suite', date: 'Oct 12, 2025', status: 'Confirmed', amount: 'ETB250,00', image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=150&fit=crop' },
+  { id: 1, name: 'Eleanor Jones', roomType: 'Deluxe Suite', date: 'Oct 12, 2025', status: 'Confirmed', amount: 'ETB250,00', type: 'Confirmed', image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=150&fit=crop' },
+  { id: 2, name: 'Marcus Lee', roomType: 'Standard Room', date: 'Oct 12, 2025', status: 'Pending', amount: 'ETB180,00', type: 'Pending', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=150&fit=crop' },
+  { id: 3, name: 'Sophia Hall', roomType: 'Superior Room', date: 'Oct 12, 2025', status: 'Confirmed', amount: 'ETB300,00', type: 'Confirmed', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=150&fit=crop' },
+  { id: 4, name: 'James Carter', roomType: 'Family Suite', date: 'Oct 11, 2025', status: 'Checked In', amount: 'ETB420,00', type: 'Checked In', image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=150&fit=crop' },
+  { id: 5, name: 'Olivia Brown', roomType: 'Penthouse', date: 'Oct 10, 2025', status: 'Cancelled', amount: 'ETB650,00', type: 'Cancelled', image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=150&fit=crop' },
+  { id: 6, name: 'David Kim', roomType: 'Deluxe Suite', date: 'Oct 09, 2025', status: 'Pending', amount: 'ETB250,00', type: 'Pending', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=150&fit=crop' },
 ];
 
 const revenueData = [
@@ -66,13 +67,19 @@ const getStatusStyle = (status: string) => {
 };
 
 export default function HotelPartnerDashboardPage() {
+  const [activeTab, setActiveTab] = useState('All');
+  const [growthFilter, setGrowthFilter] = useState('monthly');
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedIds(bookings.map((b) => b.id));
-    } else {
+  const filteredBookings = activeTab === 'All'
+    ? bookings
+    : bookings.filter(b => b.type === activeTab);
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredBookings.length && filteredBookings.length > 0) {
       setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredBookings.map(b => b.id));
     }
   };
 
@@ -82,7 +89,7 @@ export default function HotelPartnerDashboardPage() {
     );
   };
 
-  const isAllSelected = selectedIds.length === bookings.length && bookings.length > 0;
+  const isAllSelected = selectedIds.length === filteredBookings.length && filteredBookings.length > 0;
 
   return (
     <div className="space-y-6">
@@ -94,10 +101,10 @@ export default function HotelPartnerDashboardPage() {
           return (
             <div
               key={idx}
-              className="bg-white rounded-[20px] p-5 flex flex-col justify-center border border-[#F2F2F2] shadow-sm"
+              className="bg-white rounded-lg p-5 flex flex-col justify-center border border-[#F2F2F2] shadow-sm"
             >
               <div
-                className="w-12 h-12 rounded-[10px] border flex items-center justify-center mb-6"
+                className="w-12 h-12 rounded-sm bg-green-50 border flex items-center justify-center mb-6"
                 style={{ borderColor: `${stat.iconBg}30` }}
               >
                 <Icon className="text-[#2B9724]" size={24} strokeWidth={1.5} />
@@ -110,8 +117,27 @@ export default function HotelPartnerDashboardPage() {
       </div>
 
       {/* Recent Bookings Table */}
-      <div className="bg-white rounded-[20px] p-7 border border-[#F2F2F2] shadow-sm">
+      <div className="bg-white rounded-lg p-7 border border-[#F2F2F2] shadow-sm">
         <h2 className="text-[20px] font-bold text-[#2C2E33] mb-6">Recent Bookings</h2>
+
+        {/* Tabs */}
+        <div className="flex items-center gap-8 border-b border-[#F2F2F2] mb-6">
+          {['All', 'Confirmed', 'Pending', 'Checked In', 'Cancelled'].map((tab) => {
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => { setActiveTab(tab); setSelectedIds([]); }}
+                className={`font-semibold text-[15px] pb-4 relative transition-colors cursor-pointer ${isActive ? 'text-[#2C2E33]' : 'text-[#6C757D] hover:text-[#2C2E33]'}`}
+              >
+                {tab}
+                {isActive && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F1913D] rounded-t-full pointer-events-none" />
+                )}
+              </button>
+            );
+          })}
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap border-collapse">
@@ -120,7 +146,7 @@ export default function HotelPartnerDashboardPage() {
                 <th className="px-5 py-4 w-10 text-center rounded-l-xl font-medium text-[#6C757D]">
                   <Checkbox
                     checked={isAllSelected}
-                    onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                    onCheckedChange={handleSelectAll}
                     className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:border-[#F1913D]"
                   />
                 </th>
@@ -133,7 +159,12 @@ export default function HotelPartnerDashboardPage() {
             </thead>
             <tbody>
               <tr className="h-4" />
-              {bookings.map((b) => (
+              {filteredBookings.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-[#6C757D]">No bookings found.</td>
+                </tr>
+              )}
+              {filteredBookings.map((b) => (
                 <tr key={b.id} className="border-b border-[#F2F2F2] last:border-0 hover:bg-gray-50/50 transition-colors">
                   <td className="px-5 py-4 text-center">
                     <Checkbox
@@ -166,7 +197,7 @@ export default function HotelPartnerDashboardPage() {
       </div>
 
       {/* Revenue Trend Chart */}
-      <div className="bg-white rounded-[20px] p-7 border border-[#F2F2F2] shadow-sm">
+      <div className="bg-white rounded-lg p-7 border border-[#F2F2F2] shadow-sm">
         <div className="flex items-start justify-between mb-1">
           <div>
             <h2 className="text-[20px] font-bold text-[#2C2E33]">Revenue Trend</h2>
@@ -174,14 +205,14 @@ export default function HotelPartnerDashboardPage() {
               Asset value appreciation over the last 12 months
             </p>
           </div>
-          <Select defaultValue="monthly">
-            <SelectTrigger className="w-[124px] border border-[#E5E7EB] rounded-lg px-4 h-12 py-5 text-[14px] font-semibold text-[#2C2E33] bg-white outline-none focus:ring-1 focus:ring-[#F1913D] cursor-pointer shadow-none">
+          <Select value={growthFilter} onValueChange={(v) => { if (v) setGrowthFilter(v) }}>
+            <SelectTrigger className="w-[124px] border border-[#E5E7EB] rounded-sm px-4 h-12 py-5 text-[14px] font-semibold text-[#2C2E33] bg-white outline-none focus:ring-1 focus:ring-[#F1913D] cursor-pointer shadow-none">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="rounded-sm border-[#F2F2F2] shadow-xl">
-              <SelectItem value="monthly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-lg cursor-pointer py-2.5">Monthly</SelectItem>
-              <SelectItem value="weekly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-lg cursor-pointer py-2.5">Weekly</SelectItem>
-              <SelectItem value="yearly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-lg cursor-pointer py-2.5">Yearly</SelectItem>
+              <SelectItem value="monthly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-none cursor-pointer py-2.5">Monthly</SelectItem>
+              <SelectItem value="weekly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-none cursor-pointer py-2.5">Weekly</SelectItem>
+              <SelectItem value="yearly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] tracking-wide rounded-none cursor-pointer py-2.5">Yearly</SelectItem>
             </SelectContent>
           </Select>
         </div>

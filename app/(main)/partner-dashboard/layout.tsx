@@ -1,5 +1,7 @@
+import { DashboardLayoutClient } from '@/components/DashboardLayoutClient';
 import { Sidebar } from '@/components/partner-dashboard/Sidebar';
 import { Topbar } from '@/components/partner-dashboard/Topbar';
+import { SidebarProvider } from '@/hooks/use-sidebar';
 
 export default function PartnerDashboardLayout({
   children,
@@ -7,14 +9,10 @@ export default function PartnerDashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#F2F2F2]">
-      <Sidebar />
-      <div className="pl-[280px] flex flex-col min-h-screen">
-        <Topbar />
-        <main className="flex-1 p-8 overflow-x-hidden">
-          {children}
-        </main>
-      </div>
-    </div>
+    <SidebarProvider>
+      <DashboardLayoutClient sidebar={<Sidebar />} topbar={<Topbar />}>
+        {children}
+      </DashboardLayoutClient>
+    </SidebarProvider>
   );
 }

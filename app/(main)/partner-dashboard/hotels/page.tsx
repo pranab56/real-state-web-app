@@ -2,8 +2,9 @@
 
 import { ArrowLeftRight, Bath, BedDouble, Bookmark, ChevronLeft, ChevronRight, MapPin, Maximize, Search } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
-const properties = Array(9).fill({
+const properties = Array(8).fill({
   id: 1,
   image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800&auto=format&fit=crop',
   price: 'ETB165.00',
@@ -14,31 +15,46 @@ const properties = Array(9).fill({
 });
 
 export default function PartnerDashboardHotels() {
+  const [activeTab, setActiveTab] = useState('All');
+
+  // Filter properties based on tab to demonstrate functional switching
+  const getTabProperties = () => {
+    if (activeTab === 'Saved Properties') return properties.slice(0, 3);
+    if (activeTab === 'Recent Properties') return properties.slice(0, 6);
+    return properties; // 'All'
+  };
+
+  const displayedProperties = getTabProperties();
+
   return (
     <div className="space-y-8">
 
       {/* Top Tabs */}
-      <div className="bg-white rounded-[16px] px-8 py-[22px] flex gap-10 shadow-sm border border-gray-100">
-        {['All', 'Saved Properties', 'Recent Properties'].map((tab, idx) => (
-          <button
-            key={tab}
-            className={`font-bold text-[16px] relative transition-colors pb-1 ${idx === 0 ? 'text-[#2C2E33]' : 'text-[#6C757D] hover:text-[#2C2E33]'
-              }`}
-          >
-            {tab}
-            {idx === 0 && (
-              <div className="absolute -bottom-[24px] left-0 right-0 h-[3px] bg-[#F1913D]" />
-            )}
-          </button>
-        ))}
+      <div className="bg-white rounded-sm px-8 py-[22px] flex gap-10 shadow-sm border border-gray-100">
+        {['All', 'Saved Properties', 'Recent Properties'].map((tab) => {
+          const isActive = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`font-bold text-[16px] cursor-pointer relative transition-colors pb-1 ${isActive ? 'text-[#2C2E33]' : 'text-[#6C757D] hover:text-[#2C2E33]'
+                }`}
+            >
+              {tab}
+              {isActive && (
+                <div className="absolute -bottom-[24px] left-0 right-0 h-[3px] bg-[#F1913D]" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Property Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {properties.map((property, idx) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        {displayedProperties.map((property, idx) => (
           <div
             key={idx}
-            className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group"
+            className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 group"
           >
             {/* Image Section */}
             <div className="relative aspect-[4/3] w-full p-2">
@@ -104,7 +120,7 @@ export default function PartnerDashboardHotels() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 pt-8 pb-4">
+      <div className="flex justify-center items-center gap-2 pt-4 pb-4">
         <button className="flex items-center gap-2 px-4 py-2 bg-white text-[#6C757D] font-semibold text-[15px] rounded-lg border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">
           <ChevronLeft size={16} strokeWidth={2.5} /> Previous
         </button>

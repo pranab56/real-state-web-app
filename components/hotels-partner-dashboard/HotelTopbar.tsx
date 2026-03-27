@@ -1,23 +1,23 @@
 'use client';
 
+import { useSidebar } from '@/hooks/use-sidebar';
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
 
 export function HotelTopbar() {
+  const { toggleSidebar } = useSidebar();
+
   return (
     <header className="bg-white px-8 py-5 flex items-center justify-between border-b border-[#F2F2F2]">
       {/* Left side */}
       <div className="flex items-center gap-4">
-        <button className="bg-[#FFF4ED] p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
+        <button onClick={toggleSidebar} className="bg-[#FFF4ED] p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
           <Menu size={24} strokeWidth={2.5} />
         </button>
         <div>
           <h1 className="text-[22px] font-bold text-[#2C2E33] leading-tight">
-            Hotel Overview
+            Overview
           </h1>
-          <p className="text-sm text-[#6C757D] font-medium mt-0.5">
-            Property performance and real-time operations for today, Oct 24.
-          </p>
         </div>
       </div>
 
@@ -29,7 +29,7 @@ export function HotelTopbar() {
         </div>
         <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm ring-1 ring-[#F2F2F2]">
           <Image
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rasel"
+            src="https://t3.ftcdn.net/jpg/11/77/92/36/360_F_1177923605_h0NQzz0ACrHfVwq6As64sWQPNnyHcObm.jpg"
             alt="Profile Avatar"
             width={40}
             height={40}

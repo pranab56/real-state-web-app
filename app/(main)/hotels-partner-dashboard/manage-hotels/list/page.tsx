@@ -74,49 +74,51 @@ export default function ManageHotelsListPage() {
     <div className="space-y-6">
 
       {/* Top Filter Bar */}
-      <div className="bg-white rounded-[20px] p-5 flex flex-col md:flex-row items-center gap-4 shadow-sm border border-[#F2F2F2]">
+      <div className="bg-white rounded-lg p-5 flex flex-col md:flex-row items-center gap-4 shadow-sm border border-[#F2F2F2]">
 
         {/* Search */}
-        <div className="flex-1 w-full bg-[#F5F5F5] rounded-[10px] flex items-center px-4 py-3 h-12">
-          <Search size={18} className="text-[#6C757D] mr-3" />
-          <input
-            type="text"
-            placeholder="Search Now"
-            className="bg-transparent border-none outline-none w-full text-[14px] text-[#2C2E33] placeholder:text-[#6C757D]"
-          />
+        <div className='w-7/12'>
+          <div className="flex-1  bg-[#F5F5F5]  rounded-sm flex items-center px-4 py-3 h-12">
+            <Search size={18} className="text-[#6C757D] mr-3" />
+            <input
+              type="text"
+              placeholder="Search Now"
+              className="bg-transparent border-none outline-none w-full text-[14px] text-[#2C2E33] placeholder:text-[#6C757D]"
+            />
+          </div>
         </div>
 
         {/* Dropdowns */}
-        <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="flex items-center gap-4 w-5/12">
           <Select defaultValue="all">
-            <SelectTrigger className="w-[160px] bg-[#F5F5F5] border-none outline-none ring-0 shadow-none h-12 rounded-[10px] text-[14px] font-medium text-[#2C2E33] focus:ring-0 cursor-pointer">
+            <SelectTrigger className="w-full py-6 bg-[#F5F5F5] border-none outline-none ring-0 shadow-none h-12 rounded-sm text-[14px] font-medium text-[#2C2E33] focus:ring-0 cursor-pointer">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-[#F2F2F2] shadow-xl">
-              <SelectItem value="all" className="cursor-pointer font-medium">Status: All</SelectItem>
-              <SelectItem value="active" className="cursor-pointer font-medium">Active</SelectItem>
-              <SelectItem value="inactive" className="cursor-pointer font-medium">Inactive</SelectItem>
+            <SelectContent className="rounded-sm border-[#F2F2F2] shadow-xl">
+              <SelectItem value="all" className="cursor-pointer rounded-none font-medium">Status: All</SelectItem>
+              <SelectItem value="active" className="cursor-pointer rounded-none font-medium">Active</SelectItem>
+              <SelectItem value="inactive" className="cursor-pointer rounded-none font-medium">Inactive</SelectItem>
             </SelectContent>
           </Select>
 
           <Select defaultValue="location">
-            <SelectTrigger className="w-[160px] bg-[#F5F5F5] border-none outline-none ring-0 shadow-none h-12 rounded-[10px] text-[14px] font-medium text-[#2C2E33] focus:ring-0 cursor-pointer">
+            <SelectTrigger className="w-full py-6 bg-[#F5F5F5] border-none outline-none ring-0 shadow-none h-12 rounded-sm text-[14px] font-medium text-[#2C2E33] focus:ring-0 cursor-pointer">
               <SelectValue placeholder="Location" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-[#F2F2F2] shadow-xl">
-              <SelectItem value="location" className="cursor-pointer font-medium">Location</SelectItem>
-              <SelectItem value="houston" className="cursor-pointer font-medium">Houston</SelectItem>
-              <SelectItem value="dallas" className="cursor-pointer font-medium">Dallas</SelectItem>
+            <SelectContent className="rounded-sm border-[#F2F2F2] shadow-xl">
+              <SelectItem value="location" className="cursor-pointer rounded-none font-medium">Location</SelectItem>
+              <SelectItem value="houston" className="cursor-pointer rounded-none font-medium">Houston</SelectItem>
+              <SelectItem value="dallas" className="cursor-pointer rounded-none font-medium">Dallas</SelectItem>
             </SelectContent>
           </Select>
 
           <Select defaultValue="sort">
-            <SelectTrigger className="w-[160px] bg-[#F5F5F5] border-none outline-none ring-0 shadow-none h-12 rounded-[10px] text-[14px] font-medium text-[#2C2E33] focus:ring-0 cursor-pointer">
+            <SelectTrigger className="w-full py-6 bg-[#F5F5F5] border-none outline-none ring-0 shadow-none h-12 rounded-sm text-[14px] font-medium text-[#2C2E33] focus:ring-0 cursor-pointer">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-[#F2F2F2] shadow-xl">
-              <SelectItem value="sort" className="cursor-pointer font-medium">Sort By</SelectItem>
-              <SelectItem value="newest" className="cursor-pointer font-medium">Newest First</SelectItem>
+            <SelectContent className="rounded-sm border-[#F2F2F2] shadow-xl">
+              <SelectItem value="sort" className="cursor-pointer rounded-none font-medium">Sort By</SelectItem>
+              <SelectItem value="newest" className="cursor-pointer rounded-none font-medium">Newest First</SelectItem>
               <SelectItem value="price" className="cursor-pointer font-medium">Price: Low to High</SelectItem>
             </SelectContent>
           </Select>
@@ -124,7 +126,7 @@ export default function ManageHotelsListPage() {
       </div>
 
       {/* Hotel Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {hotels.map((hotel, index) => (
           <motion.div
             key={index}
@@ -133,7 +135,7 @@ export default function ManageHotelsListPage() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <div className="group block bg-white rounded-[20px] overflow-hidden border border-[#F2F2F2] shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="group block bg-white rounded-lg overflow-hidden border border-[#F2F2F2] shadow-sm hover:shadow-md transition-all duration-300">
               <div className="relative aspect-[16/10] overflow-hidden m-4 rounded-[16px]">
                 <Image
                   src={hotel.image}
@@ -170,7 +172,7 @@ export default function ManageHotelsListPage() {
                     <span className="text-[24px] font-extrabold text-[#2C2E33]">{hotel.price}</span>
                     <span className="text-[#6C757D] text-[14px] font-medium">/ night</span>
                   </div>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-10 px-6 rounded-lg transition-transform active:scale-95 text-[14px]">
+                  <Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-bold h-10 px-6 rounded-lg transition-transform active:scale-95 text-[14px]">
                     Book Now
                   </Button>
                 </div>
@@ -187,13 +189,13 @@ export default function ManageHotelsListPage() {
           Previous
         </button>
         <div className="flex items-center gap-2">
-          <button className="w-11 h-11 rounded-xl bg-[#F1913D] text-white font-bold shadow-md shadow-[#F1913D]/20 text-[15px]">1</button>
-          <button className="w-11 h-11 rounded-xl bg-white text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">2</button>
-          <button className="w-11 h-11 rounded-xl bg-white text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">3</button>
-          <span className="w-11 h-11 flex items-center justify-center bg-white text-[#6C757D] rounded-xl shadow-sm text-[15px]">...</span>
-          <button className="w-11 h-11 rounded-xl bg-white text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">12</button>
+          <button className="w-11 h-11 rounded-sm bg-[#F1913D] cursor-pointer text-white font-bold shadow-md shadow-[#F1913D]/20 text-[15px]">1</button>
+          <button className="w-11 h-11 rounded-sm bg-white cursor-pointer text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">2</button>
+          <button className="w-11 h-11 rounded-sm bg-white cursor-pointer text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">3</button>
+          <span className="w-11 h-11 flex items-center justify-center bg-white text-[#6C757D] rounded-sm shadow-sm text-[15px]">...</span>
+          <button className="w-11 h-11 rounded-sm bg-white cursor-pointer text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">12</button>
         </div>
-        <button className="flex items-center gap-2 h-11 px-5 rounded-xl bg-white text-[#2C2E33] hover:bg-gray-50 shadow-sm transition-colors font-medium text-[14px]">
+        <button className="flex items-center gap-2 h-11 px-5 rounded-sm cursor-pointer bg-white text-[#2C2E33] hover:bg-gray-50 shadow-sm transition-colors font-medium text-[14px]">
           Next
           <ChevronRight size={18} />
         </button>

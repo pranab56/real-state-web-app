@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api.dicebear.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.mamp.one',
+      },
+      {
+        protocol: 'https',
+        hostname: 't3.ftcdn.net',
+      },
     ],
   },
 };

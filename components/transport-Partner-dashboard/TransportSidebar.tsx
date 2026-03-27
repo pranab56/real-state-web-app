@@ -1,5 +1,7 @@
 'use client';
 
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -36,13 +38,17 @@ const sidebarItems = [
 
 export function TransportSidebar() {
   const pathname = usePathname();
+  const { isCollapsed } = useSidebar();
 
   return (
-    <aside className="w-[280px] bg-[#2C2E33] flex flex-col h-screen fixed left-0 top-0 overflow-y-auto">
+    <aside className={cn(
+      "bg-[#2C2E33] flex flex-col h-screen fixed left-0 top-0 overflow-y-auto transition-all duration-300 z-50",
+      isCollapsed ? "w-[96px]" : "w-[280px]"
+    )}>
       {/* Logo Area */}
-      <div className="p-6">
+      <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-8 h-8">
+          <div className="relative w-8 h-8 flex-shrink-0">
             <svg viewBox="0 0 100 100" fill="none" className="w-full h-full">
               <path
                 d="M20 50L50 25L80 50"
@@ -67,9 +73,11 @@ export function TransportSidebar() {
               />
             </svg>
           </div>
-          <span className="text-xl font-black text-white tracking-tighter leading-none">
-            ZilaHomes
-          </span>
+          {!isCollapsed && (
+            <span className="text-xl font-black text-white tracking-tighter leading-none whitespace-nowrap overflow-hidden">
+              ZilaHomes
+            </span>
+          )}
         </Link>
       </div>
 
@@ -92,55 +100,67 @@ export function TransportSidebar() {
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      'flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors relative z-10',
-                      isParentActive ? 'text-white' : 'text-white/60 hover:text-white'
+                  <Tooltip>
+                    <TooltipTrigger render={
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          'flex items-center text-sm font-medium transition-colors relative z-10',
+                          isCollapsed ? 'justify-center py-3' : 'gap-3 px-4 py-3',
+                          isParentActive ? 'text-white' : 'text-white/60 hover:text-white'
+                        )}
+                      >
+                        <Icon
+                          size={isCollapsed ? 22 : 20}
+                          className={cn('transition-all flex-shrink-0', isParentActive ? 'text-white' : '')}
+                          strokeWidth={isParentActive ? 2.5 : 2}
+                        />
+                        {!isCollapsed && <span className="whitespace-nowrap overflow-hidden">{item.name}</span>}
+                      </Link>
+                    } />
+                    {isCollapsed && (
+                      <TooltipContent side="right" sideOffset={20} className="bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl z-50">
+                        {item.name}
+                      </TooltipContent>
                     )}
-                  >
-                    <Icon
-                      size={20}
-                      className={cn('transition-all', isParentActive ? 'text-white' : '')}
-                      strokeWidth={isParentActive ? 2.5 : 2}
-                    />
-                    {item.name}
-                  </Link>
+                  </Tooltip>
                 </div>
 
                 {/* Children with Animation */}
-                <AnimatePresence>
-                  {item.children && isParentActive && (
-                    <motion.ul
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
-                      className="ml-4 flex flex-col gap-1 relative z-10 overflow-hidden"
-                    >
-                      {item.children.map((child) => {
-                        const isChildActive = pathname === child.href;
-                        return (
-                          <li key={child.name}>
-                            <Link
-                              href={child.href}
-                              className={cn(
-                                'flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors',
-                                isChildActive ? 'text-white' : 'text-white/60 hover:text-white'
-                              )}
-                            >
-                              <div className={cn(
-                                'w-2 h-2 rounded-full',
-                                isChildActive ? 'bg-white' : 'bg-[#F1913D]'
-                              )} />
-                              {child.name}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </motion.ul>
-                  )}
-                </AnimatePresence>
+                {!isCollapsed && (
+                  <AnimatePresence>
+                    {item.children && isParentActive && (
+                      <motion.ul
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="ml-4 flex flex-col gap-1 relative z-10 overflow-hidden"
+                      >
+                        {item.children.map((child) => {
+                          const isChildActive = pathname === child.href;
+                          return (
+                            <li key={child.name}>
+                              <Link
+                                href={child.href}
+                                className={cn(
+                                  'flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors',
+                                  isChildActive ? 'text-white' : 'text-white/60 hover:text-white'
+                                )}
+                              >
+                                <div className={cn(
+                                  'w-2 h-2 rounded-full flex-shrink-0',
+                                  isChildActive ? 'bg-white' : 'bg-[#F1913D]'
+                                )} />
+                                <span className="whitespace-nowrap overflow-hidden">{child.name}</span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
+                )}
               </li>
             );
           })}
@@ -148,11 +168,23 @@ export function TransportSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="p-6 mt-auto">
-        <button className="flex items-center gap-2 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white px-4 py-2.5 rounded-lg w-full transition-colors text-sm font-semibold justify-center">
-          <LogOut size={18} strokeWidth={2.5} />
-          Logout
-        </button>
+      <div className={cn("p-6 mt-auto", isCollapsed ? "flex justify-center px-4" : "")}>
+        <Tooltip>
+          <TooltipTrigger render={
+            <button className={cn(
+              "flex items-center gap-2 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white py-2.5 rounded-lg transition-colors text-sm font-semibold justify-center cursor-pointer",
+              isCollapsed ? "px-0 w-12 h-12 rounded-xl" : "px-4 w-full"
+            )}>
+              <LogOut size={18} strokeWidth={2.5} className="flex-shrink-0" />
+              {!isCollapsed && <span>Logout</span>}
+            </button>
+          } />
+          {isCollapsed && (
+            <TooltipContent side="right" sideOffset={20} className="bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl z-50">
+              Logout
+            </TooltipContent>
+          )}
+        </Tooltip>
       </div>
     </aside>
   );

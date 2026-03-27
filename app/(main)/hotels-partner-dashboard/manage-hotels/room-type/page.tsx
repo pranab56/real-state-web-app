@@ -11,6 +11,7 @@ import {
   Search,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const stats = [
   { label: 'Total Types', value: '12', icon: CalendarCheck, iconColor: '#2B9724', iconBg: '#2B9724' },
@@ -27,51 +28,63 @@ const rooms = [
     address: '430 Lamar Street, Houston, Texas',
     price: 'ETB42',
     image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800&h=600&fit=crop',
-    tag: 'For Sale'
+    tag: 'For Sale',
+    category: 'Luxury Suites',
   },
   {
     id: 2,
-    name: 'Deluxe King Suite',
+    name: 'Superior Twin Room',
     address: '430 Lamar Street, Houston, Texas',
     price: 'ETB42',
     image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&h=600&fit=crop',
-    tag: 'For Sale'
+    tag: 'For Sale',
+    category: 'Standard Rooms',
   },
   {
     id: 3,
-    name: 'Deluxe King Suite',
+    name: 'Executive Penthouse',
     address: '430 Lamar Street, Houston, Texas',
     price: 'ETB42',
     image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=800&h=600&fit=crop',
-    tag: 'For Sale'
+    tag: 'For Sale',
+    category: 'Luxury Suites',
   },
   {
     id: 4,
-    name: 'Deluxe King Suite',
+    name: 'Conference Suite',
     address: '430 Lamar Street, Houston, Texas',
     price: 'ETB42',
     image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=800&h=600&fit=crop',
-    tag: 'For Sale'
+    tag: 'For Sale',
+    category: 'Meeting & Event',
   },
   {
     id: 5,
-    name: 'Deluxe King Suite',
+    name: 'Classic Double Room',
     address: '430 Lamar Street, Houston, Texas',
     price: 'ETB42',
     image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=800&h=600&fit=crop',
-    tag: 'For Sale'
+    tag: 'For Sale',
+    category: 'Standard Rooms',
   },
   {
     id: 6,
-    name: 'Deluxe King Suite',
+    name: 'Boardroom Event Hall',
     address: '430 Lamar Street, Houston, Texas',
     price: 'ETB42',
     image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=800&h=600&fit=crop',
-    tag: 'For Sale'
+    tag: 'For Sale',
+    category: 'Meeting & Event',
   }
 ];
 
 export default function ManageRoomTypesPage() {
+  const [activeTab, setActiveTab] = useState('All Room Types');
+
+  const filteredRooms = activeTab === 'All Room Types'
+    ? rooms
+    : rooms.filter(r => r.category === activeTab);
+
   return (
     <div className="space-y-6">
 
@@ -82,7 +95,7 @@ export default function ManageRoomTypesPage() {
           return (
             <div
               key={idx}
-              className="bg-white rounded-[20px] p-6 flex flex-col justify-center border border-[#F2F2F2] shadow-sm"
+              className="bg-white rounded-lg p-6 flex flex-col justify-center border border-[#F2F2F2] shadow-sm"
             >
               <div
                 className="w-12 h-12 rounded-[10px] bg-[#2B9724]/10 flex items-center justify-center mb-6"
@@ -97,13 +110,14 @@ export default function ManageRoomTypesPage() {
       </div>
 
       {/* Tabs Row */}
-      <div className="bg-white rounded-[20px] px-6 py-2 border border-[#F2F2F2] shadow-sm flex items-center gap-8 overflow-x-auto no-scrollbar">
-        {tabs.map((tab, idx) => {
-          const isActive = idx === 0;
+      <div className="bg-white rounded-lg px-6 py-2 border border-[#F2F2F2] shadow-sm flex items-center gap-8 overflow-x-auto no-scrollbar">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab;
           return (
             <button
               key={tab}
-              className={`py-4 font-bold text-[14px] whitespace-nowrap transition-colors relative border-b-2 ${isActive ? 'text-[#2C2E33] border-[#F1913D]' : 'text-[#6C757D] border-transparent hover:text-[#2C2E33]'
+              onClick={() => setActiveTab(tab)}
+              className={`py-4 font-bold text-[14px] whitespace-nowrap transition-colors relative border-b-2 cursor-pointer ${isActive ? 'text-[#2C2E33] border-[#F1913D]' : 'text-[#6C757D] border-transparent hover:text-[#2C2E33]'
                 }`}
             >
               {tab}
@@ -113,8 +127,11 @@ export default function ManageRoomTypesPage() {
       </div>
 
       {/* Room Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {rooms.map((room, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {filteredRooms.length === 0 && (
+          <p className="col-span-3 text-center py-12 text-[#6C757D] font-medium">No rooms found for this category.</p>
+        )}
+        {filteredRooms.map((room, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 20 }}
@@ -122,7 +139,7 @@ export default function ManageRoomTypesPage() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <div className="group block bg-white rounded-[20px] overflow-hidden border border-[#F2F2F2] shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="group block bg-white rounded-lg overflow-hidden border border-[#F2F2F2] shadow-sm hover:shadow-md transition-all duration-300">
               <div className="relative aspect-[16/10] overflow-hidden m-4 rounded-[16px]">
                 <Image
                   src={room.image}
@@ -159,7 +176,7 @@ export default function ManageRoomTypesPage() {
                     <span className="text-[24px] font-extrabold text-[#2C2E33]">{room.price}</span>
                     <span className="text-[#6C757D] text-[14px] font-medium">/ night</span>
                   </div>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-10 px-6 rounded-lg transition-transform active:scale-95 text-[14px]">
+                  <Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-bold h-10 px-6 rounded-lg transition-transform active:scale-95 text-[14px]">
                     Book Now
                   </Button>
                 </div>
@@ -171,18 +188,18 @@ export default function ManageRoomTypesPage() {
 
       {/* Pagination */}
       <div className="flex items-center justify-center gap-3 pt-6 pb-2">
-        <button className="flex items-center gap-2 h-11 px-5 rounded-xl bg-white text-[#6C757D] hover:text-[#2C2E33] hover:bg-gray-50 transition-colors font-medium text-[14px] shadow-sm">
+        <button className="flex items-center gap-2 h-11 px-5 rounded-sm bg-white text-[#6C757D] hover:text-[#2C2E33] hover:bg-gray-50 transition-colors cursor-pointer font-medium text-[14px] shadow-sm">
           <ChevronLeft size={18} />
           Previous
         </button>
         <div className="flex items-center gap-2">
-          <button className="w-11 h-11 rounded-xl bg-[#F1913D] text-white font-bold shadow-md shadow-[#F1913D]/20 text-[15px]">1</button>
-          <button className="w-11 h-11 rounded-xl bg-white text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">2</button>
-          <button className="w-11 h-11 rounded-xl bg-white text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">3</button>
-          <span className="w-11 h-11 flex items-center justify-center bg-white text-[#6C757D] rounded-xl shadow-sm text-[15px]">...</span>
-          <button className="w-11 h-11 rounded-xl bg-white text-[#6C757D] font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">12</button>
+          <button className="w-11 h-11 rounded-sm bg-[#F1913D] cursor-pointer text-white font-bold shadow-md shadow-[#F1913D]/20 text-[15px]">1</button>
+          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">2</button>
+          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">3</button>
+          <span className="w-11 h-11 flex items-center justify-center bg-white text-[#6C757D] rounded-sm shadow-sm text-[15px]">...</span>
+          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">12</button>
         </div>
-        <button className="flex items-center gap-2 h-11 px-5 rounded-xl bg-white text-[#2C2E33] hover:bg-gray-50 shadow-sm transition-colors font-medium text-[14px]">
+        <button className="flex items-center gap-2 h-11 px-5 cursor-pointer rounded-sm bg-white text-[#2C2E33] hover:bg-gray-50 shadow-sm transition-colors font-medium text-[14px]">
           Next
           <ChevronRight size={18} />
         </button>
