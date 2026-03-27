@@ -141,7 +141,7 @@ export default function BlogDetailPage() {
             <div className="relative p-6 md:p-8 space-y-4 md:space-y-6 text-white">
               <h3 className="text-xl md:text-2xl font-black leading-tight">We can help you find a local real estate agent</h3>
               <p className="text-xs md:text-sm font-bold text-white/70 leading-relaxed italic">
-                Connect with a trusted agent who knows the market inside out - whether you're buying or selling.
+                Connect with a trusted agent who knows the market inside out - whether you&apos;re buying or selling.
               </p>
               <Button className="w-full bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-black h-12 md:h-14 rounded-lg shadow-xl shadow-primary/40 transition-all group-hover:translate-y-[-4px] text-sm md:text-base">
                 Connect with an agent

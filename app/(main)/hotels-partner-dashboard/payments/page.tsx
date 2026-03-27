@@ -117,7 +117,7 @@ export default function PaymentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {transactions.map((transaction, index) => (
+                {transactions.map((transaction) => (
                   <tr key={transaction.id} className="border-b border-[#F2F2F2] hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-5">
                       <Checkbox

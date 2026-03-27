@@ -30,12 +30,6 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on path change
-  useEffect(() => {
-    setIsOpen(false);
-    setOpenDropdown(null);
-  }, [pathname]);
-
   const menuItems = [
     { name: 'Home', href: '/' },
     { name: 'Properties', href: '/properties' },
@@ -226,7 +220,7 @@ export function Navbar() {
                                   <Link
                                     key={sub.name}
                                     href={sub.href}
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => { setIsOpen(false); setOpenDropdown(null); }}
                                     className={cn(
                                       "py-2 px-4 text-sm font-medium transition-colors rounded-lg",
                                       isSubActive ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
@@ -248,7 +242,7 @@ export function Navbar() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => { setIsOpen(false); setOpenDropdown(null); }}
                     className={cn(
                       "py-3 px-4 text-sm font-semibold rounded-lg transition-colors border border-transparent",
                       isActive ? "bg-white/10 text-white border-white/5" : "text-white/70 hover:bg-white/5 hover:text-white"

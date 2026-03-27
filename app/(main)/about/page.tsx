@@ -14,7 +14,15 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
-const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = false }: any) => (
+interface InfoCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  dark?: boolean;
+  hasButton?: boolean;
+}
+
+const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = false }: InfoCardProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}

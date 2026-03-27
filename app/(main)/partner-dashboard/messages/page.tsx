@@ -301,7 +301,7 @@ export default function MessagesPage() {
   );
 }
 
-function ContactItem({ contact, isActive, onClick }: { contact: any, isActive: boolean, onClick: () => void }) {
+function ContactItem({ contact, isActive, onClick }: { contact: { id: number, name: string, lastMessage: string, time: string, unread?: number, read?: boolean, typing?: boolean, category: string, avatar: string, role: string }, isActive: boolean, onClick: () => void }) {
   return (
     <div
       onClick={onClick}

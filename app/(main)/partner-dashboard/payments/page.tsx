@@ -194,7 +194,7 @@ export default function PartnerDashboardPayments() {
                   <td colSpan={6} className="text-center py-8 text-[#6C757D]">No transactions found.</td>
                 </tr>
               )}
-              {filteredTransactions.map((tx, index) => (
+              {filteredTransactions.map((tx) => (
                 <tr
                   key={tx.id}
                   className="hover:bg-gray-50/50 transition-colors border-b border-[#F2F2F2] last:border-0"

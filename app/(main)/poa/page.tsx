@@ -14,7 +14,14 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
-const FeatureCard = ({ icon: Icon, title, description, light = false }: any) => (
+interface FeatureCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  light?: boolean;
+}
+
+const FeatureCard = ({ icon: Icon, title, description, light = false }: FeatureCardProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}

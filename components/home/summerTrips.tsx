@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function SummerTrips() {
   return (
@@ -16,10 +17,11 @@ export default function SummerTrips() {
         >
           {/* Background Image */}
           <div className="absolute inset-0">
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2670&auto=format&fit=crop"
               alt="Summer Trips"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-1000"
             />
           </div>
 

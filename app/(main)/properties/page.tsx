@@ -103,7 +103,7 @@ const featuredHomes = [
   { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=100&h=100&fit=crop' },
 ];
 
-const SidebarSelect = ({ label, placeholder }: { label?: string, placeholder: string }) => (
+const SidebarSelect = ({ placeholder }: { placeholder: string }) => (
   <Select>
     <SelectTrigger className="w-full h-12 py-6 bg-[#F7F7F7] border-none rounded-sm text-neutral-2 shadow-none">
       <SelectValue placeholder={placeholder} />

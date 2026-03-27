@@ -59,7 +59,7 @@ export default function Hero() {
               Find Verified Homes, Hotels & <br /> Transportation in Ethiopia.
             </h1>
             <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed">
-              We are a real estate agency that will help you find the best residence you dream of, let's discuss for your dream house?
+              We are a real estate agency that will help you find the best residence you dream of, let&apos;s discuss for your dream house?
             </p>
 
             {/* Contact Row */}

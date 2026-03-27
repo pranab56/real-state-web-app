@@ -40,7 +40,7 @@ import {
 import Image from 'next/image';
 import { useState } from 'react';
 
-const AmenityItem = ({ icon: Icon, label }: { icon: any, label: string }) => (
+const AmenityItem = ({ icon: Icon, label }: { icon: React.ElementType, label: string }) => (
   <div className="flex items-center gap-3 sm:gap-4 bg-[#F7F7F7] p-4 sm:p-6 rounded-lg">
     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
       <Icon size={20} className="sm:w-6 sm:h-6" />
@@ -49,7 +49,15 @@ const AmenityItem = ({ icon: Icon, label }: { icon: any, label: string }) => (
   </div>
 );
 
-const ReviewItem = ({ name, date, rating, comment, avatar }: any) => (
+interface ReviewItemProps {
+  name: string;
+  date: string;
+  rating: number;
+  comment: string;
+  avatar: string;
+}
+
+const ReviewItem = ({ name, date, rating, comment, avatar }: ReviewItemProps) => (
   <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pb-6 sm:pb-8 border-b border-gray-100 last:border-none last:pb-0">
     <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden flex-shrink-0">
       <Image src={avatar} alt={name} fill className="object-cover" />

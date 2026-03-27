@@ -243,7 +243,7 @@ export default function BookingsPage() {
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((booking, index) => (
+                {bookings.map((booking) => (
                   <tr key={booking.id} className="border-b border-[#F2F2F2] hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-5">
                       <Checkbox

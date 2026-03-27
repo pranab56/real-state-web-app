@@ -79,7 +79,7 @@ export default function BookingCalendarPage() {
           {['Daily', 'Weekly', 'Monthly'].map((v) => (
             <button
               key={v}
-              onClick={() => setView(v as any)}
+              onClick={() => setView(v as 'Daily' | 'Weekly' | 'Monthly')}
               className={`px-6 py-2 text-[14px] font-bold rounded-lg transition-all cursor-pointer ${view === v
                   ? 'bg-[#F1913D] text-white shadow-sm shadow-[#F1913D]/20'
                   : 'text-[#6C757D] hover:text-[#2C2E33]'
@@ -121,7 +121,7 @@ export default function BookingCalendarPage() {
             </tr>
           </thead>
           <tbody>
-            {rooms.map((room, i) => (
+            {rooms.map((room) => (
               <React.Fragment key={room.no}>
                 <tr className="h-20">
                   <td className="p-6 border-r border-b border-[#F2F2F2]">

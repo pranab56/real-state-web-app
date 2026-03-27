@@ -28,7 +28,7 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-const OverviewItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string }) => (
+const OverviewItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string }) => (
   <div className="flex items-center gap-3 sm:gap-4 bg-[#F7F7F7] p-3 sm:p-6 rounded-lg">
     <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
       <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -47,7 +47,15 @@ const DetailRow = ({ label, value }: { label: string, value: string }) => (
   </div>
 );
 
-const ReviewItem = ({ name, date, rating, comment, avatar }: any) => (
+interface ReviewItemProps {
+  name: string;
+  date: string;
+  rating: number;
+  comment: string;
+  avatar: string;
+}
+
+const ReviewItem = ({ name, date, rating, comment, avatar }: ReviewItemProps) => (
   <div className="flex gap-6 pb-8 border-b border-gray-100 last:border-none last:pb-0">
     <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
       <Image src={avatar} alt={name} fill className="object-cover" />
@@ -273,8 +281,8 @@ export default function PropertyDetailPage() {
 
             {/* Nearby */}
             <div className="space-y-6 md:space-y-8">
-              <h3 className="text-2xl font-bold text-neutral-1">What's nearby?</h3>
-              <p className="text-sm text-neutral-2 font-medium">Explore nearby amenities to precisely locate your property and identify surrounding conveniences, promoting cost-effective and time-efficient visit of your property's convenience.</p>
+              <h3 className="text-2xl font-bold text-neutral-1">What&apos;s nearby?</h3>
+              <p className="text-sm text-neutral-2 font-medium">Explore nearby amenities to precisely locate your property and identify surrounding conveniences, promoting cost-effective and time-efficient visit of your property&apos;s convenience.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2 sm:gap-y-4">
                 {[
                   { label: 'School', dist: '0.7 km' },

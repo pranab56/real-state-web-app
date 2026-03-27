@@ -214,7 +214,7 @@ export default function ForgotPasswordPage() {
                 <div className="text-center space-y-3 lg:space-y-4">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Reset Password</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed px-2 sm:px-0">
-                    Enter your email address and we'll send you a link to reset your password and regain access to your luxury property portfolio.
+                    Enter your email address and we&apos;ll send you a link to reset your password and regain access to your luxury property portfolio.
                   </p>
                 </div>
 
@@ -256,7 +256,7 @@ export default function ForgotPasswordPage() {
                 <div className="text-center space-y-3 lg:space-y-4">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Verify account</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed px-2 sm:px-0">
-                    We've sent unique 6-digit verification codes to your registered phone and email address.
+                    We&apos;ve sent unique 6-digit verification codes to your registered phone and email address.
                   </p>
                 </div>
 
@@ -281,7 +281,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
-                  <span className="text-neutral-2">Didn't receive the SMS?</span>
+                  <span className="text-neutral-2">Didn&apos;t receive the SMS?</span>
                   <button onClick={() => setOtp(['', '', '', '', '', ''])} className="text-neutral-1 hover:text-primary transition-colors hover:underline">Resend SMS</button>
                 </div>
 
@@ -310,7 +310,7 @@ export default function ForgotPasswordPage() {
                 <div className="text-center space-y-3 lg:space-y-4">
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">New Password</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed px-2 sm:px-0">
-                    Please enter a secure password that you haven't used before with EliteEstates.
+                    Please enter a secure password that you haven&apos;t used before with EliteEstates.
                   </p>
                 </div>
 

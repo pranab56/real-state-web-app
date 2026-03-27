@@ -218,7 +218,7 @@ export default function LoginPage() {
                 <Checkbox
                   id="remember"
                   className="border-neutral-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary size-4 sm:size-5"
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={() => {
                     // Manually handle checkbox if needed or rely on register
                   }}
                 />
@@ -249,7 +249,7 @@ export default function LoginPage() {
 
               <div className="text-center pt-2 lg:pt-4">
                 <p className="text-xs sm:text-sm lg:text-base text-neutral-2 font-medium">
-                  Don't have any account? <Link href="/register" className="text-primary hover:underline font-bold">Register Now</Link>
+                  Don&apos;t have any account? <Link href="/register" className="text-primary hover:underline font-bold">Register Now</Link>
                 </p>
               </div>
             </form>

@@ -148,7 +148,7 @@ export default function BlogPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="relative p-6 md:p-8 space-y-4 md:space-y-6 text-white">
               <h3 className="text-xl md:text-2xl font-bold leading-tight">We can help you find a local real estate agent</h3>
-              <p className="text-xs md:text-sm text-white/80 font-medium leading-relaxed">Connect with a trusted agent who knows the market inside out - whether you're buying or selling.</p>
+              <p className="text-xs md:text-sm text-white/80 font-medium leading-relaxed">Connect with a trusted agent who knows the market inside out - whether you&apos;re buying or selling.</p>
               <Button className="w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-10 md:h-12 rounded-lg md:rounded-xl text-sm md:text-base">
                 Connect with an agent
               </Button>
