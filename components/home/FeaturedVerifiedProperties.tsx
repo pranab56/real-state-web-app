@@ -95,15 +95,15 @@ export default function FeaturedVerifiedProperties() {
   );
 
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-6">
+    <section className="py-12 md:py-24 bg-white">
+      <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center mb-12 space-y-4">
+        <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-4 px-2 md:px-0">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold text-neutral-1"
+            className="text-2xl sm:text-3xl md:text-5xl font-bold text-neutral-1 leading-tight"
           >
             Featured Verified Properties
           </motion.h2>
@@ -112,14 +112,14 @@ export default function FeaturedVerifiedProperties() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-neutral-2 max-w-2xl mx-auto"
+            className="text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto"
           >
             We have hundreds of properties for you to choose from.
           </motion.p>
         </div>
 
-        {/* Categories */}
-        <div className="flex justify-center gap-4 mb-16">
+        {/* Categories - Scrollable on mobile */}
+        <div className="flex overflow-x-auto justify-start md:justify-center gap-2 sm:gap-3 md:gap-4 mb-10 md:mb-16 pb-2 md:pb-0 px-4 md:px-0 -mx-4 md:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {categories.map((cat, index) => (
             <motion.button
               key={cat}
@@ -129,7 +129,7 @@ export default function FeaturedVerifiedProperties() {
               transition={{ delay: index * 0.1 }}
               onClick={() => setActiveTab(cat)}
               className={cn(
-                "px-8 py-2.5 rounded cursor-pointer font-bold transition-all border",
+                "px-5 sm:px-6 md:px-8 py-2 md:py-2.5 rounded cursor-pointer font-bold transition-all border whitespace-nowrap text-[13px] sm:text-sm md:text-base shrink-0",
                 activeTab === cat
                   ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
                   : "bg-white text-neutral-2 border-gray-100 hover:border-primary hover:text-primary"
@@ -141,7 +141,7 @@ export default function FeaturedVerifiedProperties() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
           <AnimatePresence mode="popLayout">
             {filteredProperties.map((property, idx) => (
               <motion.div
@@ -154,7 +154,7 @@ export default function FeaturedVerifiedProperties() {
                 className="bg-white border border-gray-100 rounded-lg overflow-hidden group hover:shadow-2xl hover:shadow-black/5 transition-all duration-500"
               >
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] overflow-hidden m-4 rounded-lg">
+                <div className="relative aspect-[4/3] overflow-hidden m-3 md:m-4 rounded-lg">
                   <Image
                     src={property.image}
                     alt="Property"
@@ -163,51 +163,51 @@ export default function FeaturedVerifiedProperties() {
                   />
 
                   {/* Badges */}
-                  <div className="absolute top-4 left-4 flex gap-2">
+                  <div className="absolute top-3 left-3 md:top-4 md:left-4 flex gap-2">
                     {property.verified && (
-                      <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                      <span className="bg-[#2B9724] text-white text-[9px] md:text-[10px] font-bold px-2.5 md:px-3 py-1 rounded-full flex items-center gap-1">
                         Zila Verified
                       </span>
                     )}
-                    <span className="bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                    <span className="bg-primary text-white text-[9px] md:text-[10px] font-bold px-2.5 md:px-3 py-1 rounded-full text-center">
                       {property.category}
                     </span>
                   </div>
 
-                  {/* Hover Icons */}
-                  <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                    <button className="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
-                      <ArrowRightLeft size={18} />
+                  {/* Hover Icons - Fixed for Touch */}
+                  <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
+                    <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
+                      <ArrowRightLeft size={16} className="md:size-[18px]" />
                     </button>
-                    <button className="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
-                      <Heart size={18} />
+                    <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
+                      <Heart size={16} className="md:size-[18px]" />
                     </button>
-                    <button className="w-10 h-10 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
-                      <SearchIcon size={18} />
+                    <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
+                      <SearchIcon size={16} className="md:size-[18px]" />
                     </button>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 pt-2 space-y-4">
-                  <h3 className="text-3xl font-bold text-neutral-1">{property.price}</h3>
-                  <div className="flex items-center gap-2 text-neutral-2">
-                    <MapPin size={18} className="shrink-0" />
-                    <span className="text-sm font-medium line-clamp-1">{property.address}</span>
+                <div className="p-5 md:p-6 pt-1 md:pt-2 space-y-3 md:space-y-4">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-neutral-1">{property.price}</h3>
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
+                    <MapPin size={16} className="shrink-0 md:size-[18px]" />
+                    <span className="text-[13px] sm:text-sm md:text-sm font-medium line-clamp-1">{property.address}</span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-neutral-2">
-                      <Bed size={20} />
-                      <span className="text-sm font-bold text-neutral-1">Beds {property.beds}</span>
+                  <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-100">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
+                      <Bed size={16} className="md:size-5 shrink-0" />
+                      <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-neutral-1 whitespace-nowrap">Beds {property.beds}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-neutral-2">
-                      <Bath size={20} />
-                      <span className="text-sm font-bold text-neutral-1">Baths {property.baths}</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
+                      <Bath size={16} className="md:size-5 shrink-0" />
+                      <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-neutral-1 whitespace-nowrap">Baths {property.baths}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-neutral-2">
-                      <Maximize2 size={20} />
-                      <span className="text-sm font-bold text-neutral-1">m2 {property.size}</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
+                      <Maximize2 size={16} className="md:size-5 shrink-0" />
+                      <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-neutral-1 whitespace-nowrap">m2 {property.size}</span>
                     </div>
                   </div>
                 </div>
@@ -217,12 +217,12 @@ export default function FeaturedVerifiedProperties() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-center gap-8 mt-20">
-          <button className="w-12 h-12 border border-gray-200 rounded-full flex items-center justify-center text-neutral-2 hover:border-primary hover:text-primary transition-all cursor-pointer">
-            <ChevronLeft size={24} />
+        <div className="flex items-center justify-center gap-6 md:gap-8 mt-12 md:mt-20">
+          <button className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded-full flex items-center justify-center text-neutral-2 hover:border-primary hover:text-primary transition-all cursor-pointer">
+            <ChevronLeft size={20} className="md:size-6" />
           </button>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
             <div className="w-3 h-3 rounded-full border-2 border-primary cursor-pointer relative flex items-center justify-center">
               <div className="w-1.5 h-1.5 rounded-full bg-primary" />
             </div>
@@ -230,8 +230,8 @@ export default function FeaturedVerifiedProperties() {
             <div className="w-1.5 h-1.5 rounded-full bg-gray-200 cursor-pointer" />
           </div>
 
-          <button className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all cursor-pointer">
-            <ChevronRight size={24} />
+          <button className="w-10 h-10 md:w-12 md:h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all cursor-pointer">
+            <ChevronRight size={20} className="md:size-6" />
           </button>
         </div>
       </div>

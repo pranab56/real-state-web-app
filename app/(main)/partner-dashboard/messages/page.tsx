@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Ban, CheckCheck, MessageSquare, MoreVertical, Pin, Search, Send, Trash2 } from 'lucide-react';
+import { Ban, CheckCheck, MessageSquare, MoreVertical, Pin, Search, Send, Trash2, ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -90,7 +90,7 @@ const initialMessages = {
 };
 
 export default function MessagesPage() {
-  const [activeContactId, setActiveContactId] = useState(2);
+  const [activeContactId, setActiveContactId] = useState<number | null>(null);
   const [messagesByContact, setMessagesByContact] = useState(initialMessages);
   const [messageInput, setMessageInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -127,6 +127,7 @@ export default function MessagesPage() {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
+    if (activeContactId === null) return;
     setMessagesByContact(prev => ({
       ...prev,
       [activeContactId]: [...(prev[activeContactId as keyof typeof prev] || []), newMessage]
@@ -138,7 +139,7 @@ export default function MessagesPage() {
     <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 flex overflow-hidden h-[calc(100vh-140px)] max-h-[900px]">
 
       {/* LEFT SIDEBAR - CONTACTS */}
-      <aside className="w-full max-w-[340px] flex flex-col border-r border-[#F2F2F2] bg-white">
+      <aside className={`w-full md:max-w-[340px] flex-col border-r border-[#F2F2F2] bg-white flex-shrink-0 ${activeContactId ? 'hidden md:flex' : 'flex'}`}>
         {/* Search */}
         <div className="p-5 border-b border-[#F2F2F2]">
           <div className="relative flex items-center w-full h-12 bg-[#F5F5F5] rounded-xl px-4 text-[#A1A1A1]">
@@ -200,16 +201,19 @@ export default function MessagesPage() {
       </aside>
 
       {/* RIGHT MAIN AREA - CHAT */}
-      <main className="flex-1 flex flex-col bg-[#FAFAFA]">
+      <main className={`flex-1 flex-col bg-[#FAFAFA] w-full ${!activeContactId ? 'hidden md:flex' : 'flex'}`}>
         {/* Chat Header */}
-        <div className="h-[90px] flex items-center justify-between px-8 bg-white border-b border-[#F2F2F2] flex-shrink-0 relative z-10 shadow-sm shadow-[#1E2024]/[0.02]">
-          <div className="flex items-center gap-4">
-            <div className="relative w-14 h-14 rounded-full overflow-hidden bg-gray-200 shadow-sm border-2 border-white">
+        <div className="h-[70px] md:h-[90px] flex items-center justify-between px-4 md:px-8 bg-white border-b border-[#F2F2F2] flex-shrink-0 relative z-10 shadow-sm shadow-[#1E2024]/[0.02]">
+          <div className="flex items-center gap-2 md:gap-4">
+            <button className="md:hidden block mr-1 text-[#6C757D]" onClick={() => setActiveContactId(null)}>
+              <ChevronLeft size={24} />
+            </button>
+            <div className="relative w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden bg-gray-200 shadow-sm border-2 border-white">
               <Image src={activeContact.avatar} alt={activeContact.name} fill className="object-cover" />
             </div>
             <div className="flex flex-col justify-center">
-              <h2 className="text-[20px] font-bold text-[#2C2E33] leading-tight">{activeContact.name}</h2>
-              <p className="text-[#6C757D] text-[12px] font-bold mt-0.5 uppercase tracking-wide">
+              <h2 className="text-[18px] md:text-[20px] font-bold text-[#2C2E33] leading-tight truncate max-w-[150px] sm:max-w-none">{activeContact.name}</h2>
+              <p className="text-[#6C757D] text-[11px] md:text-[12px] font-bold mt-0.5 uppercase tracking-wide truncate max-w-[150px] sm:max-w-none">
                 Online . {activeContact.role}
               </p>
             </div>
@@ -234,7 +238,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Messages History */}
-        <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6 relative z-0 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col gap-6 relative z-0 custom-scrollbar">
           <div className="flex justify-center w-full mb-4">
             <span className="bg-white px-4 py-1.5 rounded-lg text-[13px] font-bold text-[#6C757D] shadow-sm shadow-gray-200/50">
               Today, March 12
@@ -273,13 +277,13 @@ export default function MessagesPage() {
         </div>
 
         {/* Chat Input */}
-        <div className="bg-white p-6 border-t border-[#F2F2F2] flex items-center gap-4">
+        <div className="bg-white p-4 md:p-6 border-t border-[#F2F2F2] flex items-center gap-2 md:gap-4">
           <input
             type="text"
             placeholder="Type your message ..."
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
-            className="flex-1 h-[52px] bg-[#F5F5F5] border-none rounded-xl px-6 text-[#2C2E33] font-medium text-[15px] placeholder:text-[#A1A1A1] outline-none shadow-inner focus-visible:ring-1 focus-visible:ring-[#F1913D]/20 transition-all"
+            className="flex-1 h-[48px] md:h-[52px] w-0 bg-[#F5F5F5] border-none rounded-xl px-4 md:px-6 text-[#2C2E33] font-medium text-[14px] md:text-[15px] placeholder:text-[#A1A1A1] outline-none shadow-inner focus-visible:ring-1 focus-visible:ring-[#F1913D]/20 transition-all"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSendMessage();
             }}
@@ -287,9 +291,9 @@ export default function MessagesPage() {
           <button
             onClick={handleSendMessage}
             disabled={!messageInput.trim()}
-            className="h-[52px] px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center gap-2 shadow-sm transition-all text-[16px] cursor-pointer active:scale-95"
+            className="h-[48px] md:h-[52px] px-4 md:px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center gap-2 shadow-sm transition-all text-[14px] md:text-[16px] cursor-pointer active:scale-95 shrink-0"
           >
-            <Send size={18} strokeWidth={2.5} /> Send
+            <Send size={18} strokeWidth={2.5} /> <span className="hidden sm:inline">Send</span>
           </button>
         </div>
       </main>

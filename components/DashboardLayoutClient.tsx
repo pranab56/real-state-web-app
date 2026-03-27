@@ -33,11 +33,18 @@ export function DashboardLayoutClient({
   return (
     <TooltipProvider delay={200}>
       <div className="min-h-screen bg-[#F2F2F2]">
+        {/* Mobile Overlay */}
+        {!isCollapsed && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setCollapsed(true)}
+          />
+        )}
         {sidebar}
         <div
           className={cn(
             "flex flex-col min-h-screen transition-all duration-300 ease-in-out",
-            isCollapsed ? "pl-[96px] md:pl-[96px]" : "pl-[280px]"
+            isCollapsed ? "pl-0 lg:pl-[96px]" : "pl-0 lg:pl-[280px]"
           )}
         >
           {topbar}

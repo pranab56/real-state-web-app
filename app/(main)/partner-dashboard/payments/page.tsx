@@ -141,7 +141,7 @@ export default function PartnerDashboardPayments() {
       </div>
 
       {/* Main Container - Transaction History */}
-      <div className="bg-white rounded-lg p-6 lg:p-8 border border-gray-100 shadow-sm">
+      <div className="bg-white rounded-lg p-4 md:p-6 lg:p-8 border border-gray-100 shadow-sm">
 
         {/* Header Section */}
         <div className="mb-6">
@@ -149,7 +149,7 @@ export default function PartnerDashboardPayments() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-8 mb-6 border-b border-[#F2F2F2]">
+        <div className="flex items-center gap-4 md:gap-8 mb-6 border-b border-[#F2F2F2] overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {['All', 'Hotels', 'Transportation'].map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -248,13 +248,13 @@ export default function PartnerDashboardPayments() {
 
         {/* Footer Area: Pagination & Showing Info */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-10 pb-2">
-          <p className="text-[#6C757D] text-[15px]">
+          <p className="text-[#6C757D] text-[15px] text-center md:text-left">
             Showing <span className="font-bold text-[#2C2E33]">1-9 of 240</span> entries
           </p>
 
-          <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 cursor-pointer px-4 py-2 border border-gray-100 bg-white text-[#6C757D] font-semibold text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              <ChevronLeft size={16} strokeWidth={2.5} /> Previous
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <button className="flex items-center gap-2 cursor-pointer px-3 sm:px-4 py-2 border border-gray-100 bg-white text-[#6C757D] font-semibold text-[13px] sm:text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
+              <ChevronLeft size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">Previous</span>
             </button>
 
             <button className="w-10 h-10 flex items-center cursor-pointer justify-center bg-[#F1913D] text-white font-bold rounded-sm shadow-sm">
@@ -275,8 +275,8 @@ export default function PartnerDashboardPayments() {
               12
             </button>
 
-            <button className="flex items-center gap-2 cursor-pointer px-4 py-2 border border-gray-100 bg-white text-[#2C2E33] font-semibold text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              Next <ChevronRight size={16} strokeWidth={2.5} />
+            <button className="flex items-center gap-2 cursor-pointer px-3 sm:px-4 py-2 border border-gray-100 bg-white text-[#2C2E33] font-semibold text-[13px] sm:text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
+              <span className="hidden sm:inline">Next</span> <ChevronRight size={16} strokeWidth={2.5} />
             </button>
           </div>
         </div>

@@ -6,13 +6,13 @@ import { motion } from 'framer-motion';
 export default function SummerTrips() {
   return (
     <section className="py-12 bg-white">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative h-[600px] w-full rounded-xl overflow-hidden group shadow-2xl"
+          className="relative h-[480px] md:h-[600px] w-full rounded-2xl overflow-hidden group shadow-2xl"
         >
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -24,24 +24,24 @@ export default function SummerTrips() {
           </div>
 
           {/* Content Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex items-center">
+          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/70 via-black/30 to-transparent flex items-end md:items-center p-6 md:p-0">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="max-w-xl ml-12 md:ml-20 p-8 md:p-12 rounded-[2rem] bg-black/20 backdrop-blur-md border border-white/10 space-y-6 shadow-2xl"
+              className="max-w-xl md:ml-20 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
             >
-              <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-xs font-bold rounded-full uppercase tracking-wider">
+              <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
                 Featured
               </div>
-              <h2 className="text-4xl md:text-4xl font-bold text-white leading-[1.1]">
+              <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
                 Save 30% on summer trips
               </h2>
-              <p className="text-base text-white/90 font-medium">
+              <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
                 Book your transportation and hotel together to unlock exclusive rewards.
               </p>
-              <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white  font-bold h-12 px-10 rounded-sm transition-all shadow-xl shadow-primary/20 text-base">
+              <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
                 Explore Deals
               </Button>
             </motion.div>

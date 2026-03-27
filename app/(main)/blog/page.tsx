@@ -45,7 +45,7 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Breadcrumbs */}
-      <div className="container mx-auto px-6 py-6 flex items-center gap-2 text-sm mt-12">
+      <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 flex items-center gap-2 text-xs md:text-sm mt-8 md:mt-12">
         <Link href="/">
           <span className="text-primary font-medium hover:underline cursor-pointer">Home</span>
         </Link>
@@ -53,13 +53,13 @@ export default function BlogPage() {
         <span className="text-neutral-2">Blog Grid</span>
       </div>
 
-      <div className="container mx-auto px-6 pb-24 lg:flex gap-12">
+      <div className="container mx-auto px-4 md:px-6 pb-16 md:pb-24 lg:flex gap-8 lg:gap-12">
 
         {/* Blog Content */}
-        <div className="flex-1 space-y-16">
-          <h1 className="text-3xl font-bold text-neutral-1">Blog</h1>
+        <div className="flex-1 space-y-10 md:space-y-16">
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-1">Blog</h1>
 
-          <div className="space-y-20">
+          <div className="space-y-12 md:space-y-20">
             {blogPosts.map((post, index) => (
               <motion.article
                 key={post.id}
@@ -78,28 +78,28 @@ export default function BlogPage() {
                   />
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-neutral-2 text-sm font-medium">
+                <div className="space-y-3 md:space-y-4">
+                  <div className="flex items-center gap-2 text-neutral-2 text-xs md:text-sm font-medium">
                     <Clock size={16} className="text-primary" />
                     <span>{post.date}</span>
                   </div>
 
                   <Link href={`/blog/${post.id}`}>
-                    <h2 className="text-2xl font-bold text-neutral-1 hover:text-primary transition-colors cursor-pointer">
+                    <h2 className="text-xl md:text-2xl font-bold text-neutral-1 hover:text-primary transition-colors cursor-pointer">
                       {post.title}
                     </h2>
                   </Link>
 
-                  <p className="text-neutral-2 leading-relaxed max-w-4xl">
+                  <p className="text-sm md:text-base text-neutral-2 leading-relaxed max-w-4xl">
                     {post.excerpt}
                   </p>
 
                   <Link
                     href={`/blog/${post.id}`}
-                    className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all group"
+                    className="inline-flex items-center gap-2 text-sm md:text-base text-primary font-bold hover:gap-3 transition-all group"
                   >
                     Read More
-                    <ArrowRight size={18} className="translate-y-[1px]" />
+                    <ArrowRight size={16} className="md:w-[18px] md:h-[18px] translate-y-[1px]" />
                   </Link>
                 </div>
               </motion.article>
@@ -108,37 +108,37 @@ export default function BlogPage() {
         </div>
 
         {/* Sidebar */}
-        <aside className="lg:w-[350px] space-y-10 mt-12 lg:mt-0">
+        <aside className="lg:w-[350px] space-y-8 md:space-y-10 mt-10 md:mt-12 lg:mt-0">
           {/* Search */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 space-y-6 shadow-sm shadow-black/5">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-4 md:space-y-6 shadow-sm shadow-black/5">
             <h3 className="font-bold text-neutral-1">Search Blog</h3>
             <div className="relative">
               <Input
                 placeholder="Search Now"
-                className="h-12 bg-[#F7F7F7] border-none rounded-lg pl-10 pr-4 text-neutral-1 font-medium"
+                className="h-10 md:h-12 bg-[#F7F7F7] border-none rounded-lg pl-10 pr-4 text-neutral-1 font-medium text-sm md:text-base"
               />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-2" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-2 w-[16px] h-[16px] md:w-[18px] md:h-[18px]" />
             </div>
           </div>
 
           {/* Categories */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 space-y-8 shadow-sm shadow-black/5">
-            <h3 className="font-bold text-neutral-1 border-b border-gray-50">Categories</h3>
-            <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-6 md:space-y-8 shadow-sm shadow-black/5">
+            <h3 className="font-bold text-neutral-1 border-b border-gray-50 pb-3 md:pb-0">Categories</h3>
+            <div className="space-y-3 md:space-y-4">
               {categories.map((cat) => (
                 <div key={cat.name} className="flex items-center justify-between group cursor-pointer">
-                  <span className="text-sm font-medium text-neutral-2 group-hover:text-primary transition-colors">{cat.name}</span>
-                  <span className="text-sm font-bold text-neutral-1 opacity-60">({cat.count})</span>
+                  <span className="text-[13px] md:text-sm font-medium text-neutral-2 group-hover:text-primary transition-colors">{cat.name}</span>
+                  <span className="text-[13px] md:text-sm font-bold text-neutral-1 opacity-60">({cat.count})</span>
                 </div>
               ))}
             </div>
-            <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-lg mt-4">
+            <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-10 md:h-12 rounded-lg mt-4 text-sm md:text-base">
               Send Inquiry
             </Button>
           </div>
 
           {/* CTA Card */}
-          <div className="relative rounded-3xl overflow-hidden min-h-[450px] flex flex-col justify-end group">
+          <div className="relative rounded-2xl md:rounded-3xl overflow-hidden min-h-[350px] md:min-h-[450px] flex flex-col justify-end group">
             <Image
               src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&h=1200&fit=crop"
               alt="Real Estate Agent"
@@ -146,10 +146,10 @@ export default function BlogPage() {
               className="object-cover group-hover:scale-105 transition-transform duration-1000"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-            <div className="relative p-8 space-y-6 text-white">
-              <h3 className="text-2xl font-bold leading-tight">We can help you find a local real estate agent</h3>
-              <p className="text-sm text-white/80 font-medium leading-relaxed">Connect with a trusted agent who knows the market inside out - whether you're buying or selling.</p>
-              <Button className="w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-12 rounded-xl">
+            <div className="relative p-6 md:p-8 space-y-4 md:space-y-6 text-white">
+              <h3 className="text-xl md:text-2xl font-bold leading-tight">We can help you find a local real estate agent</h3>
+              <p className="text-xs md:text-sm text-white/80 font-medium leading-relaxed">Connect with a trusted agent who knows the market inside out - whether you're buying or selling.</p>
+              <Button className="w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-10 md:h-12 rounded-lg md:rounded-xl text-sm md:text-base">
                 Connect with an agent
               </Button>
             </div>

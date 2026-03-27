@@ -23,7 +23,7 @@ export default function TransportationPage() {
   return (
     <div className="min-h-screen bg-gray-50/30">
       {/* Hero Section */}
-      <div className="relative h-[450px] flex items-center justify-center text-center px-6">
+      <div className="relative h-[300px] md:h-[450px] flex items-center justify-center text-center px-4 md:px-6">
         <Image
           src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2000&h=800&fit=crop"
           alt="Road Background"
@@ -31,19 +31,19 @@ export default function TransportationPage() {
           className="object-cover brightness-[0.4]"
           priority
         />
-        <div className="relative max-w-4xl space-y-4">
+        <div className="relative max-w-4xl space-y-3 md:space-y-4 pt-10 md:pt-0">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold text-white"
+            className="text-3xl md:text-5xl font-bold text-white leading-tight"
           >
-            Book Airport Pickup or <br /> Private Transport
+            Book Airport Pickup or <br className="hidden md:block"/> Private Transport
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-white/80 font-medium max-w-2xl mx-auto"
+            className="text-sm md:text-lg text-white/80 font-medium max-w-2xl mx-auto px-4"
           >
             Reliable airport pickup, drop-off, and private transportation services across Ethiopia.
           </motion.p>
@@ -51,14 +51,14 @@ export default function TransportationPage() {
       </div>
 
       {/* Booking Form Card */}
-      <div className="container mx-auto px-6 mt-4 pb-24 relative z-10">
+      <div className="container mx-auto px-4 md:px-6 mt-[-30px] md:-mt-12 pb-16 md:pb-24 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="max-w-4xl mx-auto bg-white rounded-[2rem] shadow-xl shadow-black/5 p-8 lg:p-12 border border-white"
+          className="max-w-4xl mx-auto bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-xl shadow-black/5 p-6 md:p-8 lg:p-12 border border-white"
         >
-          <form className="space-y-8">
+          <form className="space-y-6 md:space-y-8">
             {/* Requester Name */}
             <div className="space-y-2">
               <FormLabel>Requester's Full Name</FormLabel>
@@ -69,7 +69,7 @@ export default function TransportationPage() {
             </div>
 
             {/* Service Type & Drop-off */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <FormLabel>Service Type</FormLabel>
                 <Select>
@@ -93,7 +93,7 @@ export default function TransportationPage() {
             </div>
 
             {/* Pickup Date & Time */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <FormLabel>Pickup Date</FormLabel>
                 <Input
@@ -112,7 +112,7 @@ export default function TransportationPage() {
             </div>
 
             {/* Passengers & Luggage */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <FormLabel>Number of Passengers</FormLabel>
                 <Select>
@@ -143,7 +143,7 @@ export default function TransportationPage() {
             </div>
 
             {/* Vehicle Type & Flight Number */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <FormLabel>Vehicle Type</FormLabel>
                 <Select>
@@ -176,7 +176,7 @@ export default function TransportationPage() {
             </div>
 
             {/* Phone & Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <FormLabel>Phone Number <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">(WhatsApp Preferred)</span></FormLabel>
                 <Input

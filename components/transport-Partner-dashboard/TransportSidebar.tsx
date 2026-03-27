@@ -38,7 +38,13 @@ const sidebarItems = [
 
 export function TransportSidebar() {
   const pathname = usePathname();
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, setCollapsed } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (window.innerWidth < 1024) {
+      setCollapsed(true);
+    }
+  };
 
   return (
     <aside className={cn(
@@ -104,6 +110,7 @@ export function TransportSidebar() {
                     <TooltipTrigger render={
                       <Link
                         href={item.href}
+                        onClick={handleLinkClick}
                         className={cn(
                           'flex items-center text-sm font-medium transition-colors relative z-10',
                           isCollapsed ? 'justify-center py-3' : 'gap-3 px-4 py-3',
@@ -143,6 +150,7 @@ export function TransportSidebar() {
                             <li key={child.name}>
                               <Link
                                 href={child.href}
+                                onClick={handleLinkClick}
                                 className={cn(
                                   'flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors',
                                   isChildActive ? 'text-white' : 'text-white/60 hover:text-white'

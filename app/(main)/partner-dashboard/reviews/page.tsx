@@ -89,7 +89,7 @@ export default function PartnerDashboardReviews() {
     <div className="space-y-8">
 
       {/* Top Tabs */}
-      <div className="bg-white rounded-sm px-8 py-[22px] flex gap-10 shadow-sm border border-[#F2F2F2]">
+      <div className="bg-white rounded-sm px-4 md:px-8 py-4 md:py-[22px] flex gap-6 md:gap-10 shadow-sm border border-[#F2F2F2] overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {['All', 'Positive', 'Negative'].map((tab) => {
           const isActive = activeTab === tab;
           return (
@@ -109,7 +109,7 @@ export default function PartnerDashboardReviews() {
       </div>
 
       {/* Main Container */}
-      <div className="bg-white rounded-sm p-8 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-sm p-4 md:p-8 shadow-sm border border-gray-100">
 
         {/* Header Setup */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -184,9 +184,9 @@ export default function PartnerDashboardReviews() {
           {filteredReviews.map((review, idx) => (
             <div
               key={idx}
-              className="flex gap-6 py-8 border-b border-[#F2F2F2] last:border-0"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 py-6 sm:py-8 border-b border-[#F2F2F2] last:border-0"
             >
-              <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 shadow-sm border border-gray-100">
+              <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 shadow-sm border border-gray-100">
                 <Image
                   src={review.avatar}
                   alt={review.name}
@@ -223,7 +223,7 @@ export default function PartnerDashboardReviews() {
                   ))}
                 </div>
 
-                <p className="text-[#2C2E33] text-[15px] font-medium leading-relaxed max-w-[90%]">
+                <p className="text-[#2C2E33] text-[14px] sm:text-[15px] font-medium leading-relaxed max-w-full sm:max-w-[90%]">
                   {review.content}
                 </p>
               </div>

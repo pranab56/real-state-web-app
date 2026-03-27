@@ -179,7 +179,7 @@ export default function PropertiesPage() {
             {/* Amenities Checklist */}
             <div className="space-y-6 pt-4 border-t border-gray-50">
               <h3 className="font-medium text-neutral-1">Amenities:</h3>
-              <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                   <div key={i} className="flex items-center space-x-2 bg-[#F7F7F7] p-3 rounded-sm cursor-pointer hover:bg-gray-100 transition-colors group/item">
                     <Checkbox id={`amenity-${i}`} className="border-neutral-2 data-[state=checked]:bg-primary" />
@@ -229,12 +229,12 @@ export default function PropertiesPage() {
         {/* Main Content */}
         <main className="flex-1 space-y-8 mt-12 lg:mt-0">
           {/* List Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-gray-100 gap-4 sm:gap-0">
             <span className="text-neutral-2 font-medium italic text-sm">Showing <span className="text-neutral-1 font-bold not-italic">1-6</span> of <span className="text-neutral-1 font-bold not-italic">24</span> properties</span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest">Sort by:</span>
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest hidden sm:inline">Sort by:</span>
               <Select defaultValue="newest">
-                <SelectTrigger className="w-40 h-10 border-none bg-transparent font-bold text-neutral-1 shadow-none">
+                <SelectTrigger className="w-[140px] sm:w-40 h-10 border-none bg-transparent font-bold text-neutral-1 shadow-none">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent className='rounded-xl'>
@@ -269,46 +269,46 @@ export default function PropertiesPage() {
                       <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">For Sale</span>
                     </div>
                     {/* Quick Actions Overlay */}
-                    <div className="absolute bottom-4 right-4 flex gap-2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                      <button className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                        <Repeat size={18} />
+                    <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex gap-1.5 sm:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-12 md:group-hover:translate-y-0 transition-all duration-300">
+                      <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                        <Repeat className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" />
                       </button>
-                      <button className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                        <Heart size={18} />
+                      <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                        <Heart className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" />
                       </button>
-                      <button className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                        <Maximize2 size={18} />
+                      <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                        <Maximize2 className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-5 space-y-6">
-                    <div className="space-y-3">
-                      <h3 className="text-2xl font-black text-neutral-1">{property.price}</h3>
+                  <div className="p-4 sm:p-5 space-y-4 sm:space-y-6">
+                    <div className="space-y-2 sm:space-y-3">
+                      <h3 className="text-xl sm:text-2xl font-black text-neutral-1">{property.price}</h3>
                       <Link
                         href={`/properties/${property.id}`}
-                        className="text-lg font-bold text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight"
+                        className="text-base sm:text-lg font-bold text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight"
                       >
                         {property.title}
                       </Link>
                       <div className="flex items-start gap-1.5 text-neutral-2">
-                        <MapPin size={16} className="mt-1 flex-shrink-0 text-primary" />
-                        <p className="font-medium text-sm italic">{property.address}</p>
+                        <MapPin size={16} className="mt-1 flex-shrink-0 text-primary w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <p className="font-medium text-[13px] sm:text-sm italic">{property.address}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-50 text-neutral-2 gap-2">
-                      <div className="flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider">
-                        <BedDouble size={16} className="text-primary" />
-                        <span>Beds <span className="text-neutral-1 font-black">{property.beds}</span></span>
+                    <div className="flex items-center justify-between pt-4 sm:pt-6 border-t border-gray-50 text-neutral-2 gap-1 sm:gap-2">
+                      <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
+                        <BedDouble className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                        <span className="whitespace-nowrap">Beds <span className="text-neutral-1 font-black">{property.beds}</span></span>
                       </div>
-                      <div className="flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider">
-                        <Bath size={16} className="text-primary" />
-                        <span>Baths <span className="text-neutral-1 font-black">{property.baths}</span></span>
+                      <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
+                        <Bath className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                        <span className="whitespace-nowrap">Baths <span className="text-neutral-1 font-black">{property.baths}</span></span>
                       </div>
-                      <div className="flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider">
-                        <Maximize2 size={16} className="text-primary" />
-                        <span>SqFt <span className="text-neutral-1 font-black">{property.size.split(' ')[0]}</span></span>
+                      <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
+                        <Maximize2 className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                        <span className="whitespace-nowrap">SqFt <span className="text-neutral-1 font-black">{property.size.split(' ')[0]}</span></span>
                       </div>
                     </div>
                   </div>
@@ -318,21 +318,21 @@ export default function PropertiesPage() {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center gap-4 pt-12">
-            <button className="flex items-center gap-2 p-2 px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-sm cursor-pointer shadow-sm">
-              <ChevronLeft size={18} />
-              Previous
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-8 sm:pt-12">
+            <button className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm">
+              <ChevronLeft className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+              <span className="hidden sm:inline">Previous</span>
             </button>
-            <div className="flex items-center gap-2">
-              <button className="w-10 h-10 rounded-lg bg-primary text-white font-black shadow-lg shadow-primary/20 cursor-pointer">1</button>
-              <button className="w-10 h-10 rounded-lg text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">2</button>
-              <button className="w-10 h-10 rounded-lg text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">3</button>
-              <span className="px-2 text-neutral-2">...</span>
-              <button className="w-10 h-10 rounded-lg text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer">12</button>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center bg-primary text-white font-black shadow-lg shadow-primary/20 cursor-pointer text-xs sm:text-base">1</button>
+              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg hidden min-[360px]:flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">2</button>
+              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg hidden sm:flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">3</button>
+              <span className="px-1 sm:px-2 text-neutral-2">...</span>
+              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">12</button>
             </div>
-            <button className="flex items-center gap-2 p-2 px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-sm cursor-pointer shadow-sm">
-              Next
-              <ChevronRight size={18} />
+            <button className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm">
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
             </button>
           </div>
         </main>

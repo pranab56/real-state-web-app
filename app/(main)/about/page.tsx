@@ -19,7 +19,7 @@ const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = fa
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    className={`p-10 rounded-2xl flex flex-col items-center text-center space-y-6 ${dark ? 'bg-white shadow-sm' : 'bg-[#F7F7F7]'}`}
+    className={`p-6 md:p-10 rounded-2xl flex flex-col items-center text-center space-y-4 md:space-y-6 ${dark ? 'bg-white shadow-sm' : 'bg-[#F7F7F7]'}`}
   >
     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
       <Icon size={32} />
@@ -37,9 +37,9 @@ const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = fa
 );
 
 const ServiceStep = ({ title, description }: { title: string, description: string }) => (
-  <div className="p-8 rounded-xl border border-white/10 hover:border-primary/30 transition-colors space-y-4">
-    <h3 className="text-lg font-bold text-white">{title}</h3>
-    <p className="text-sm text-white/50 leading-relaxed font-medium">{description}</p>
+  <div className="p-6 md:p-8 rounded-xl border border-white/10 hover:border-primary/30 transition-colors space-y-3 md:space-y-4">
+    <h3 className="text-base md:text-lg font-bold text-white">{title}</h3>
+    <p className="text-xs md:text-sm text-white/50 leading-relaxed font-medium">{description}</p>
   </div>
 );
 
@@ -47,15 +47,15 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="container mx-auto px-6 pt-24 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="container mx-auto px-4 md:px-6 pt-24 pb-12 md:pt-24 md:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
+            className="space-y-6 md:space-y-8"
           >
-            <h1 className="text-4xl md:text-4xl font-black text-neutral-1 leading-tight tracking-tight uppercase">
-              About ZilaHomes - Helping <br /> You Find Trusted Properties <br /> and Services Across Ethiopia
+            <h1 className="text-3xl md:text-4xl font-black text-neutral-1 leading-tight tracking-tight uppercase">
+              About ZilaHomes - Helping <br className="hidden md:block" /> You Find Trusted Properties <br className="hidden md:block" /> and Services Across Ethiopia
             </h1>
             <p className="text-lg text-neutral-2 max-w-xl font-medium leading-relaxed">
               Simplifying your search for excellence in the Ethiopian real estate market. We bridge the gap between dream homes and reality.
@@ -81,8 +81,8 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision Section */}
-      <section className="container mx-auto px-6 py-24 space-y-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-neutral-1 text-center tracking-tight">Our Mission & Vision</h2>
+      <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
+        <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 text-center tracking-tight">Our Mission & Vision</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           <InfoCard
             icon={Target}
@@ -98,9 +98,9 @@ export default function AboutPage() {
       </section>
 
       {/* What We Do Section */}
-      <section className="bg-[#1E2024] py-24">
-        <div className="container mx-auto px-6 space-y-16">
-          <h2 className="text-4xl font-bold text-white text-center tracking-tight">What We Do</h2>
+      <section className="bg-[#1E2024] py-16 md:py-24">
+        <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
+          <h2 className="text-2xl md:text-4xl font-bold text-white text-center tracking-tight">What We Do</h2>
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -131,9 +131,9 @@ export default function AboutPage() {
       </section>
 
       {/* How Can We Help You? Section */}
-      <section className="container mx-auto px-6 py-24 space-y-16">
-        <div className="text-center space-y-4 max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-neutral-1 tracking-tight">How Can We Help You?</h2>
+      <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
+        <div className="text-center space-y-3 md:space-y-4 max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">How Can We Help You?</h2>
           <p className="text-neutral-2 font-medium italic">Thousands of luxury home enthusiasts just like you visit our website.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -159,10 +159,10 @@ export default function AboutPage() {
       </section>
 
       {/* Trust Section */}
-      <section className="bg-orange-50/20 py-24">
-        <div className="container mx-auto px-6 space-y-16">
-          <div className="text-center space-y-4 max-w-3xl mx-auto font-medium">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-1 tracking-tight">Why Choose Zila Legal?</h2>
+      <section className="bg-orange-50/20 py-16 md:py-24">
+        <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
+          <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
+            <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">Why Choose Zila Legal?</h2>
             <p className="text-neutral-2">Secure and reliable legal services tailored for the global diaspora, ensuring your investments are protected across borders.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -170,7 +170,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white p-10 rounded-2xl flex flex-col items-center text-center space-y-6 shadow-sm"
+              className="bg-white p-6 md:p-10 rounded-2xl flex flex-col items-center text-center space-y-4 md:space-y-6 shadow-sm"
             >
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <Lock size={32} />
@@ -183,7 +183,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="bg-white p-10 rounded-2xl flex flex-col items-center text-center space-y-6 shadow-sm"
+              className="bg-white p-6 md:p-10 rounded-2xl flex flex-col items-center text-center space-y-4 md:space-y-6 shadow-sm"
             >
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <UserCheck size={32} />
@@ -196,7 +196,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="bg-white p-10 rounded-2xl flex flex-col items-center text-center space-y-6 shadow-sm"
+              className="bg-white p-6 md:p-10 rounded-2xl flex flex-col items-center text-center space-y-4 md:space-y-6 shadow-sm"
             >
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <Globe size={32} />

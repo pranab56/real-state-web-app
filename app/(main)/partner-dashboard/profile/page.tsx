@@ -101,12 +101,12 @@ export default function PartnerDashboardProfile() {
         )}
 
         {/* Container 1: Personal Information */}
-        <div className="bg-white rounded-[20px] p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-[#F2F2F2]">
+        <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-[#F2F2F2]">
 
           {/* Profile Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
             <div className="relative">
-              <div className="w-[100px] h-[100px] rounded-[16px] overflow-hidden bg-gray-200 border border-gray-100 relative shadow-sm">
+              <div className="w-20 h-20 md:w-[100px] md:h-[100px] rounded-[16px] overflow-hidden bg-gray-200 border border-gray-100 relative shadow-sm">
                 <Image
                   src={previewUrl}
                   alt="Profile"
@@ -213,7 +213,7 @@ export default function PartnerDashboardProfile() {
         </div>
 
         {/* Container 2: Password */}
-        <div className="bg-white rounded-[20px] p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-[#F2F2F2]">
+        <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-[#F2F2F2]">
           <h2 className="text-[20px] font-bold text-[#2C2E33] pb-6 border-b border-[#F2F2F2] mb-8">
             Account Password
           </h2>
@@ -287,17 +287,17 @@ export default function PartnerDashboardProfile() {
         </div>
 
         {/* Container 3: Actions */}
-        <div className="bg-white rounded-[20px] p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-[#F2F2F2] flex items-center justify-end gap-4">
+        <div className="bg-white rounded-[20px] p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-[#F2F2F2] flex flex-col sm:flex-row items-center justify-end gap-4">
           <button
             type="button"
             onClick={() => { setErrors({}); setSuccessMessage(''); }}
-            className="px-8 py-3.5 rounded-[10px] bg-[#F5F5F5] hover:bg-[#EBEBEB] text-[#2C2E33] font-bold text-[15px] transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-[10px] bg-[#F5F5F5] hover:bg-[#EBEBEB] text-[#2C2E33] font-bold text-[15px] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-8 py-3.5 rounded-[10px] bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold text-[15px] shadow-sm transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-[10px] bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold text-[15px] shadow-sm transition-colors cursor-pointer"
           >
             Save Changes
           </button>

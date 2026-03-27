@@ -30,7 +30,7 @@ export default function PartnerDashboardHotels() {
     <div className="space-y-8">
 
       {/* Top Tabs */}
-      <div className="bg-white rounded-sm px-8 py-[22px] flex gap-10 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-sm px-4 md:px-8 py-4 md:py-[22px] flex gap-6 md:gap-10 shadow-sm border border-gray-100 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {['All', 'Saved Properties', 'Recent Properties'].map((tab) => {
           const isActive = activeTab === tab;
           return (
@@ -120,9 +120,9 @@ export default function PartnerDashboardHotels() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 pt-4 pb-4">
-        <button className="flex items-center gap-2 px-4 py-2 bg-white text-[#6C757D] font-semibold text-[15px] rounded-lg border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">
-          <ChevronLeft size={16} strokeWidth={2.5} /> Previous
+      <div className="flex flex-wrap justify-center items-center gap-2 pt-4 pb-4">
+        <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white text-[#6C757D] font-semibold text-[13px] sm:text-[15px] rounded-lg border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">
+          <ChevronLeft size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">Previous</span>
         </button>
         <button className="w-10 h-10 flex items-center justify-center bg-[#F1913D] text-white font-bold rounded-lg shadow-sm">
           1
@@ -139,8 +139,8 @@ export default function PartnerDashboardHotels() {
         <button className="w-10 h-10 flex items-center justify-center bg-white text-[#2C2E33] border border-gray-100 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
           12
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white text-[#2C2E33] font-semibold text-[15px] rounded-lg border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">
-          Next <ChevronRight size={16} strokeWidth={2.5} />
+        <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white text-[#2C2E33] font-semibold text-[13px] sm:text-[15px] rounded-lg border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">
+          <span className="hidden sm:inline">Next</span> <ChevronRight size={16} strokeWidth={2.5} />
         </button>
       </div>
 

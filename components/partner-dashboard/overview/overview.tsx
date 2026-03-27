@@ -145,7 +145,7 @@ export function Overview() {
         </h2>
 
         {/* Tabs */}
-        <div className="flex items-center gap-8 border-b-2 border-transparent mb-6">
+        <div className="flex items-center gap-4 md:gap-8 border-b-2 border-transparent mb-6 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {['All', 'Properties', 'Hotels', 'Transportation'].map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -241,7 +241,7 @@ export function Overview() {
 
       {/* Portfolio Growth */}
       < div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm relative overflow-hidden" >
-        <div className="flex justify-between items-start mb-8 z-10 relative">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 z-10 relative">
           <div>
             <h2 className="text-[22px] font-bold text-[#2C2E33]">
               Portfolio Growth

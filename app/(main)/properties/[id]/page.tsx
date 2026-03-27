@@ -29,13 +29,13 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 const OverviewItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string }) => (
-  <div className="flex items-center gap-4 bg-[#F7F7F7] p-6 rounded-lg">
-    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-      <Icon size={24} />
+  <div className="flex items-center gap-3 sm:gap-4 bg-[#F7F7F7] p-3 sm:p-6 rounded-lg">
+    <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
     </div>
-    <div>
-      <p className="text-xs text-neutral-2 font-medium">{label}</p>
-      <p className="text-sm font-bold text-neutral-1">{value}</p>
+    <div className="min-w-0">
+      <p className="text-[10px] sm:text-xs text-neutral-2 font-medium truncate">{label}</p>
+      <p className="text-xs sm:text-sm font-bold text-neutral-1 truncate">{value}</p>
     </div>
   </div>
 );
@@ -112,9 +112,9 @@ export default function PropertyDetailPage() {
   return (
     <div className="min-h-screen bg-white pt-10">
       {/* Photo Gallery Header */}
-      <section className="container mx-auto px-6 pt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[500px]">
-          <div className="lg:col-span-1 relative rounded-[2rem] overflow-hidden group">
+      <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 h-auto md:h-[500px]">
+          <div className="lg:col-span-1 relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group">
             <Image
               src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200"
               alt="Property"
@@ -122,7 +122,7 @@ export default function PropertyDetailPage() {
               className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
           </div>
-          <div className="lg:col-span-1 relative rounded-[2rem] overflow-hidden group">
+          <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
             <Image
               src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=1200"
               alt="Property"
@@ -130,7 +130,7 @@ export default function PropertyDetailPage() {
               className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
           </div>
-          <div className="lg:col-span-1 relative rounded-[2rem] overflow-hidden group">
+          <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
             <Image
               src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200"
               alt="Property"
@@ -142,40 +142,40 @@ export default function PropertyDetailPage() {
       </section>
 
       {/* Property Basic Info */}
-      <section className="container mx-auto px-6 py-12">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-12 border-b border-gray-100">
-          <div className="space-y-4">
+      <section className="container mx-auto px-4 md:px-6 py-8 md:py-12">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 md:pb-12 border-b border-gray-100">
+          <div className="space-y-3 md:space-y-4">
             <span className="inline-block bg-[#2B9724] text-white text-[10px] font-bold px-4 py-1.5 rounded-full">For Rent</span>
-            <h1 className="text-3xl md:text-4xl font-black text-neutral-1">Lakeview Haven, Lake Tahoe</h1>
-            <div className="flex flex-wrap items-center gap-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-1 leading-tight">Lakeview Haven, Lake Tahoe</h1>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
-                <BedDouble size={20} className="text-primary" />
-                <span className="text-sm font-bold text-neutral-2">3 Bedroom</span>
+                <BedDouble size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <span className="text-xs sm:text-sm font-bold text-neutral-2">3 Bedroom</span>
               </div>
               <div className="flex items-center gap-2">
-                <Bath size={20} className="text-primary" />
-                <span className="text-sm font-bold text-neutral-2">2 Bedroom</span>
+                <Bath size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <span className="text-xs sm:text-sm font-bold text-neutral-2">2 Bedroom</span>
               </div>
               <div className="flex items-center gap-2">
-                <Car size={20} className="text-primary" />
-                <span className="text-sm font-bold text-neutral-2">1 Bedroom</span>
+                <Car size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <span className="text-xs sm:text-sm font-bold text-neutral-2">1 Bedroom</span>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin size={20} className="text-primary" />
-                <span className="text-sm font-bold text-neutral-2">St Shadalaly, Brooklyn, New York</span>
+              <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                <MapPin size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
+                <span className="text-xs sm:text-sm font-bold text-neutral-2">St Shadalaly, Brooklyn, New York</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-6 lg:text-right">
+          <div className="flex flex-row items-center justify-between lg:justify-end gap-6 lg:text-right w-full lg:w-auto pt-4 lg:pt-0 border-t lg:border-none border-gray-100">
             <div>
-              <h2 className="text-4xl font-black text-primary uppercase">ETB250,00 <span className="text-sm text-neutral-2 font-bold lowercase">/month</span></h2>
+              <h2 className="text-3xl md:text-4xl font-black text-primary uppercase">ETB250,00 <span className="text-xs md:text-sm text-neutral-2 font-bold lowercase">/month</span></h2>
             </div>
-            <div className="flex gap-3">
-              <button className="w-12 h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                <Share2 size={24} />
+            <div className="flex gap-2 sm:gap-3">
+              <button className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                <Share2 className="w-5 h-5 md:w-6 md:h-6" />
               </button>
-              <button className="w-12 h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer border-2 border-primary/20">
-                <Heart size={24} />
+              <button className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer border-2 border-primary/20">
+                <Heart className="w-5 h-5 md:w-6 md:h-6" />
               </button>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function PropertyDetailPage() {
             </div>
 
             {/* Property Details */}
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               <h3 className="text-2xl font-bold text-neutral-1">Property Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
                 <div>
@@ -272,10 +272,10 @@ export default function PropertyDetailPage() {
             </div>
 
             {/* Nearby */}
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               <h3 className="text-2xl font-bold text-neutral-1">What's nearby?</h3>
               <p className="text-sm text-neutral-2 font-medium">Explore nearby amenities to precisely locate your property and identify surrounding conveniences, promoting cost-effective and time-efficient visit of your property's convenience.</p>
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-x-12 gap-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2 sm:gap-y-4">
                 {[
                   { label: 'School', dist: '0.7 km' },
                   { label: 'Univeryity', dist: '1.3 km' },
@@ -441,15 +441,15 @@ export default function PropertyDetailPage() {
       </section>
 
       {/* Featured Properties Section */}
-      <section className="container mx-auto px-6 py-24 space-y-12">
-        <div className="flex items-end justify-between">
-          <div className="space-y-4 text-left">
-            <h2 className="text-4xl md:text-5xl font-black text-neutral-1 tracking-tight">Featured Verified Properties</h2>
-            <p className="text-neutral-2 font-medium italic">Explore all the different types of properties so you can choose the best option for you.</p>
+      <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-8 md:space-y-12">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-0">
+          <div className="space-y-3 md:space-y-4 text-left">
+            <h2 className="text-3xl md:text-5xl font-black text-neutral-1 tracking-tight">Featured Verified Properties</h2>
+            <p className="text-sm md:text-base text-neutral-2 font-medium italic">Explore all the different types of properties so you can choose the best option for you.</p>
           </div>
-          <Button variant="outline" className="h-12 px-8 rounded-lg font-bold border-gray-200">View All</Button>
+          <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-lg font-bold border-gray-200">View All</Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {[1, 2, 3].map((i) => (
             <motion.div
               key={i}

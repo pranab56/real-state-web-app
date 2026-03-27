@@ -52,21 +52,21 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-[#1E2024] text-white py-16 px-6">
+    <footer className="bg-[#1E2024] text-white py-12 md:py-16 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
           {/* Brand Column */}
-          <div className="md:col-span-4 flex flex-col gap-10">
+          <div className="md:col-span-4 flex flex-col items-center md:items-start gap-6 md:gap-10 text-center md:text-left">
             <Logo />
-            <p className="text-[#A1A1A1] text-lg leading-relaxed max-w-sm">
+            <p className="text-[#A1A1A1] text-base md:text-lg leading-relaxed max-w-sm">
               Premium real estate and travel solutions for the modern explorer. From villas to private jets, we handle it all.
             </p>
           </div>
 
           {/* Links Columns */}
-          <div className="md:col-span-2 flex flex-col gap-6">
-            <h3 className="text-xl font-bold">Company</h3>
-            <div className="flex flex-col gap-5 text-[#A1A1A1] text-base">
+          <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+            <h3 className="text-lg md:text-xl font-bold">Company</h3>
+            <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
               <Link href="/properties" className="hover:text-white transition-colors">Properties</Link>
               <Link href="/hotels" className="hover:text-white transition-colors">Hotels</Link>
               <Link href="/transportation" className="hover:text-white transition-colors">Transportation</Link>
@@ -74,27 +74,27 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="md:col-span-2 flex flex-col gap-6">
-            <h3 className="text-xl font-bold">Legal</h3>
-            <div className="flex flex-col gap-5 text-[#A1A1A1] text-base">
+          <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+            <h3 className="text-lg md:text-xl font-bold">Legal</h3>
+            <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
               <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             </div>
           </div>
 
           {/* Newsletter Column */}
-          <div className="md:col-span-4 flex flex-col gap-6">
-            <h3 className="text-xl font-bold">Newsletter</h3>
-            <p className="text-[#A1A1A1] text-base">Sign Up to receive the latest articles</p>
-            <div className="flex flex-col gap-4 max-w-sm">
+          <div className="md:col-span-4 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+            <h3 className="text-lg md:text-xl font-bold">Newsletter</h3>
+            <p className="text-[#A1A1A1] text-sm md:text-base">Sign Up to receive the latest articles</p>
+            <div className="flex flex-col gap-3 md:gap-4 w-full max-w-sm">
               <Input
                 type="email"
                 placeholder="Your email address here..."
-                className="h-14 bg-[#2C2E33] border border-white/60 placeholder:text-white/80 text-white rounded-xl px-4 text-base focus-visible:ring-1 focus-visible:ring-primary"
+                className="h-12 md:h-14 bg-[#2C2E33] border border-white/60 placeholder:text-white/60 text-white rounded-xl px-4 text-sm md:text-base focus-visible:ring-1 focus-visible:ring-primary"
               />
               <Button
                 size="lg"
-                className="h-14 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
+                className="h-12 md:h-14 text-white font-bold text-base md:text-lg rounded-xl transition-all shadow-lg w-full"
               >
                 Subscribe
               </Button>
@@ -103,9 +103,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-20 pt-10 border-t border-white/10 text-center">
-          <p className="text-[#A1A1A1] text-sm md:text-base flex items-center justify-center gap-1">
-            <span className="text-lg">©</span> 2025 Zila Homes. All rights reserved. SOC2 Type II Certified.
+        <div className="mt-12 md:mt-20 pt-8 md:pt-10 border-t border-white/10 text-center">
+          <p className="text-[#A1A1A1] text-xs md:text-base flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5">
+            <span>© 2025 Zila Homes. All rights reserved.</span>
+            <span className="hidden md:inline">•</span>
+            <span>SOC2 Type II Certified.</span>
           </p>
         </div>
       </div>

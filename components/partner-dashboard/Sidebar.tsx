@@ -29,12 +29,18 @@ const sidebarItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, setCollapsed } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (window.innerWidth < 1024) {
+      setCollapsed(true);
+    }
+  };
 
   return (
     <aside className={cn(
       "bg-[#2C2E33] flex flex-col h-screen fixed left-0 top-0 overflow-y-auto transition-all duration-300 z-50",
-      isCollapsed ? "w-[96px]" : "w-[280px]"
+      isCollapsed ? "-translate-x-full lg:translate-x-0 w-[280px] lg:w-[96px]" : "translate-x-0 w-[280px]"
     )}>
       {/* Logo Area */}
       <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
@@ -97,6 +103,7 @@ export function Sidebar() {
                   <TooltipTrigger render={
                     <Link
                       href={item.href}
+                      onClick={handleLinkClick}
                       className={cn(
                         'flex items-center text-sm font-medium transition-colors relative z-10',
                         isCollapsed ? 'justify-center py-3' : 'gap-3 px-6 py-3',
@@ -108,7 +115,7 @@ export function Sidebar() {
                     </Link>
                   } />
                   {isCollapsed && (
-                    <TooltipContent side="right" sideOffset={20} className="bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
+                    <TooltipContent side="right" sideOffset={20} className="hidden lg:block bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
                       {item.name}
                     </TooltipContent>
                   )}
@@ -132,7 +139,7 @@ export function Sidebar() {
             </button>
           } />
           {isCollapsed && (
-            <TooltipContent side="right" sideOffset={20} className="bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
+            <TooltipContent side="right" sideOffset={20} className="hidden lg:block bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
               Logout
             </TooltipContent>
           )}
