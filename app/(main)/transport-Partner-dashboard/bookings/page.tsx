@@ -164,25 +164,25 @@ export default function TransportBookingsPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] text-[#4B5563] text-sm font-semibold rounded-lg shadow-none hover:bg-gray-50 bg-white">
+                  <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] text-[#4B5563] text-sm font-semibold rounded-sm cursor-pointer shadow-none hover:bg-gray-50 bg-white">
                     <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                   </Button>
-                  <Button variant="default" className="h-9 w-9 p-0 bg-[#F1913D] hover:bg-[#F1913D]/90 shadow-none text-white flex items-center justify-center text-sm font-semibold rounded-lg">
+                  <Button variant="default" className="h-9 w-9 p-0 bg-[#F1913D] hover:bg-[#F1913D]/90 shadow-none text-white flex items-center justify-center text-sm font-semibold rounded-sm cursor-pointer">
                     1
                   </Button>
-                  <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-lg">
+                  <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-sm cursor-pointer">
                     2
                   </Button>
-                  <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-lg">
+                  <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-sm cursor-pointer">
                     3
                   </Button>
                   <div className="h-9 w-9 flex items-center justify-center text-[#9CA3AF]">
                     <MoreHorizontal className="w-4 h-4" />
                   </div>
-                  <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-lg">
+                  <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-sm cursor-pointer">
                     12
                   </Button>
-                  <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] text-[#4B5563] text-sm font-semibold rounded-lg shadow-none hover:bg-gray-50 bg-white">
+                  <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] text-[#4B5563] text-sm font-semibold rounded-sm cursor-pointer shadow-none hover:bg-gray-50 bg-white">
                     Next <ChevronRight className="w-4 h-4 ml-1" />
                   </Button>
                 </div>

@@ -160,7 +160,7 @@ export default function PartnerDashboardBookings() {
               <Plus size={18} strokeWidth={2.5} /> Add New Booking
             </button>
           } />
-          <DialogContent className="sm:max-w-[600px] bg-white border border-gray-100 shadow-xl rounded-sm p-6 lg:p-8">
+          <DialogContent className="sm:max-w-4xl bg-white border border-gray-100 shadow-xl rounded-sm p-6 lg:p-8">
             <DialogHeader className="mb-4">
               <DialogTitle className="text-[22px] font-bold text-[#2C2E33]">Add New Booking</DialogTitle>
             </DialogHeader>

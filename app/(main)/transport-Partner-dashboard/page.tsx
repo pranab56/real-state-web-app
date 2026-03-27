@@ -14,11 +14,10 @@ import { useState } from 'react';
 import {
   Area,
   AreaChart,
-  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts';
 
 const stats = [
@@ -178,13 +177,13 @@ export default function TransportPartnerDashboardPage() {
             </p>
           </div>
           <Select defaultValue="monthly">
-            <SelectTrigger className="w-[110px] bg-[#F9F9F9] border-none rounded-[8px] px-3 h-10 text-[14px] font-semibold text-[#6C757D] outline-none shadow-none">
+            <SelectTrigger className="w-[110px] py-5 bg-[#F9F9F9] border-none rounded-[8px] px-3 h-10 text-[14px] font-semibold text-[#6C757D] outline-none shadow-none">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="rounded-[8px] border-[#F2F2F2] shadow-xl">
-              <SelectItem value="monthly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] cursor-pointer">Monthly</SelectItem>
-              <SelectItem value="weekly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] cursor-pointer">Weekly</SelectItem>
-              <SelectItem value="yearly" className="font-semibold text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] cursor-pointer">Yearly</SelectItem>
+              <SelectItem value="monthly" className="font-medium text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] cursor-pointer">Monthly</SelectItem>
+              <SelectItem value="weekly" className="font-medium text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] cursor-pointer">Weekly</SelectItem>
+              <SelectItem value="yearly" className="font-medium text-[14px] text-[#6C757D] focus:bg-[#FFF4ED] focus:text-[#F1913D] cursor-pointer">Yearly</SelectItem>
             </SelectContent>
           </Select>
         </div>

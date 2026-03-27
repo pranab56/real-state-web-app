@@ -43,7 +43,7 @@ export default function PaymentsHistoryPage() {
   const isAllSelected = selectedIds.length === transactionData.length && transactionData.length > 0;
 
   return (
-    <div className="space-y-6 bg-transparent pb-10">
+    <div className="space-y-6 bg-transparent">
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, idx) => (
@@ -116,25 +116,25 @@ export default function PaymentsHistoryPage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] text-[#4B5563] text-sm font-semibold rounded-lg shadow-none hover:bg-gray-50 bg-white">
+              <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] cursor-pointer text-[#4B5563] text-sm font-semibold rounded-sm shadow-none hover:bg-gray-50 bg-white">
                 <ChevronLeft className="w-4 h-4 mr-1" /> Previous
               </Button>
-              <Button variant="default" className="h-9 w-9 p-0 bg-[#F1913D] hover:bg-[#F1913D]/90 shadow-none text-white flex items-center justify-center text-sm font-semibold rounded-lg">
+              <Button variant="default" className="h-9 w-9 p-0 bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 shadow-none text-white flex items-center justify-center text-sm font-semibold rounded-sm">
                 1
               </Button>
-              <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-lg">
+              <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center cursor-pointer justify-center text-sm font-semibold rounded-sm">
                 2
               </Button>
-              <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-lg">
+              <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center cursor-pointer justify-center text-sm font-semibold rounded-sm">
                 3
               </Button>
               <div className="h-9 w-9 flex items-center justify-center text-[#9CA3AF]">
                 <MoreHorizontal className="w-4 h-4" />
               </div>
-              <Button variant="outline" className="h-9 w-9 p-0 border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-lg">
+              <Button variant="outline" className="h-9 w-9 p-0 cursor-pointer border-[#F2F2F2] text-[#4B5563] bg-white hover:bg-gray-50 shadow-none flex items-center justify-center text-sm font-semibold rounded-sm">
                 12
               </Button>
-              <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] text-[#4B5563] text-sm font-semibold rounded-lg shadow-none hover:bg-gray-50 bg-white">
+              <Button variant="outline" className="h-9 px-3.5 border-[#F2F2F2] cursor-pointer text-[#4B5563] text-sm font-semibold rounded-sm shadow-none hover:bg-gray-50 bg-white">
                 Next <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>

@@ -59,7 +59,7 @@ export default function RoutesManagementPage() {
           <h2 className="text-[20px] font-bold text-[#2C2E33]">Vehicles List</h2>
 
           <Dialog open={isAddRouteOpen} onOpenChange={setIsAddRouteOpen}>
-            <DialogTrigger render={<Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-semibold h-11 px-6 rounded-lg shadow-none" />}>
+            <DialogTrigger render={<Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-semibold h-11 px-6 rounded-lg shadow-none" />}>
               <div className="flex items-center">
                 <Plus className="w-4 h-4 mr-2" /> Add New Vehicle
               </div>
@@ -134,12 +134,12 @@ export default function RoutesManagementPage() {
               <div className="px-6 py-5 flex justify-center sm:justify-end gap-3 border-t border-[#F2F2F2] bg-white">
                 <Button
                   variant="outline"
-                  className="h-11 px-8 bg-[#F9FAFB] hover:bg-gray-100 border-0 text-[#2C2E33] font-semibold text-[15px] rounded-lg shadow-none flex-1 sm:flex-none"
+                  className="h-11 px-8 bg-[#F9FAFB] cursor-pointer hover:bg-gray-100 border-0 text-[#2C2E33] font-semibold text-[15px] rounded-lg shadow-none flex-1 sm:flex-none"
                   onClick={() => setIsAddRouteOpen(false)}
                 >
                   Cancel
                 </Button>
-                <Button className="h-11 px-6 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-semibold text-[15px] rounded-lg shadow-none flex-1 sm:flex-none">
+                <Button className="h-11 px-6 bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-semibold text-[15px] rounded-lg shadow-none flex-1 sm:flex-none">
                   Add New Route
                 </Button>
               </div>

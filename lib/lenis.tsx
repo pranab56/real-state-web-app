@@ -13,7 +13,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
         smoothWheel: true,
       }}
     >
-      {children}
+      <>{children}</>
     </ReactLenis>
   );
 }
