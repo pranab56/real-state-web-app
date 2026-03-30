@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight, Clock, Search } from 'lucide-react';
@@ -132,28 +131,12 @@ export default function BlogPage() {
                 </div>
               ))}
             </div>
-            <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-10 md:h-12 rounded-lg mt-4 text-sm md:text-base">
+            {/* <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-10 md:h-12 rounded-lg mt-4 text-sm md:text-base">
               Send Inquiry
-            </Button>
+            </Button> */}
           </div>
 
-          {/* CTA Card */}
-          <div className="relative rounded-2xl md:rounded-3xl overflow-hidden min-h-[350px] md:min-h-[450px] flex flex-col justify-end group">
-            <Image
-              src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&h=1200&fit=crop"
-              alt="Real Estate Agent"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-1000"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-            <div className="relative p-6 md:p-8 space-y-4 md:space-y-6 text-white">
-              <h3 className="text-xl md:text-2xl font-bold leading-tight">We can help you find a local real estate agent</h3>
-              <p className="text-xs md:text-sm text-white/80 font-medium leading-relaxed">Connect with a trusted agent who knows the market inside out - whether you&apos;re buying or selling.</p>
-              <Button className="w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-10 md:h-12 rounded-lg md:rounded-xl text-sm md:text-base">
-                Connect with an agent
-              </Button>
-            </div>
-          </div>
+
         </aside>
       </div>
     </div>

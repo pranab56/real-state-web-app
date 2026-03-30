@@ -31,7 +31,7 @@ export default function Hero() {
   return (
     <section>
       {/* Hero Section */}
-      <section className="relative min-h-[100vh] w-full pt-32 pb-20 flex items-center overflow-hidden bg-[#1E2024]">
+      <section className="relative min-h-[100vh] w-full pt-24 md:pt-32 pb-12 md:pb-20 flex items-center overflow-hidden bg-[#1E2024]">
         {/* Video Background Layer */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/50 z-10" />
@@ -55,34 +55,34 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto space-y-6"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.1]">
-              Find Verified Homes, Hotels & <br /> Transportation in Ethiopia.
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.2] md:leading-[1.1]">
+              Find Verified Homes, Hotels & <br className="hidden md:block" /> Transportation in Ethiopia.
             </h1>
-            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed">
+            <p className="text-sm md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed px-4 md:px-0 opacity-80 md:opacity-100">
               We are a real estate agency that will help you find the best residence you dream of, let&apos;s discuss for your dream house?
             </p>
 
             {/* Contact Row */}
-            <div className="flex flex-wrap justify-center items-center gap-8 pt-4">
-              <div className="flex items-center gap-3 group cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-[#F1913D] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Phone size={18} className="text-white fill-white" />
+            <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 pt-4">
+              <div className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-2 md:p-0 rounded-full border border-white/10 md:border-none">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#F1913D] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                  <Phone size={16} className="md:size-[18px] text-white fill-white" />
                 </div>
-                <span className="text-white font-bold text-lg">7070</span>
+                <span className="text-white font-bold text-sm md:text-lg">7070</span>
               </div>
               <div className="w-px h-6 bg-white/30 hidden md:block" />
-              <div className="flex items-center gap-3 group cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-[#2B9724] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <span className="text-white font-bold text-xs uppercase">WA</span>
+              <div className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-2 md:p-0 rounded-full border border-white/10 md:border-none">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#2B9724] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                  <span className="text-white font-bold text-[10px] md:text-xs uppercase">WA</span>
                 </div>
-                <span className="text-white font-bold text-lg">WhatsApp</span>
+                <span className="text-white font-bold text-sm md:text-lg">WhatsApp</span>
               </div>
               <div className="w-px h-6 bg-white/30 hidden md:block" />
-              <div className="flex items-center gap-3 group cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-[#F1913D] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Mail size={18} className="text-white fill-white" />
+              <div className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-2 md:p-0 rounded-full border border-white/10 md:border-none">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#F1913D] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
+                  <Mail size={16} className="md:size-[18px] text-white fill-white" />
                 </div>
-                <span className="text-white font-bold text-lg">support@zilahomes.com</span>
+                <span className="text-white font-bold text-sm md:text-lg truncate max-w-[140px] md:max-w-none">support@zilahomes.com</span>
               </div>
             </div>
           </motion.div>
@@ -90,13 +90,13 @@ export default function Hero() {
           {/* Search Component Container */}
           <div className="mt-16 max-w-6xl mx-auto">
             {/* Top Tabs */}
-            <div className="flex flex-wrap items-center justify-center bg-white/10 backdrop-blur-md rounded-t-xl overflow-hidden border-x border-t border-white/20 w-fit mx-auto">
+            <div className="flex flex-nowrap overflow-x-auto md:flex-wrap items-center md:justify-center bg-white/10 backdrop-blur-md rounded-t-xl border-x border-t border-white/20 w-full md:w-fit mx-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {mainTabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveMainTab(tab)}
                   className={cn(
-                    "px-8 py-4 text-sm font-bold cursor-pointer transition-all whitespace-nowrap",
+                    "px-6 md:px-8 py-3.5 md:py-4 text-[13px] md:text-sm font-bold cursor-pointer transition-all whitespace-nowrap outline-none",
                     activeMainTab === tab
                       ? "bg-[#F1913D] text-white shadow-xl"
                       : "text-white hover:bg-white/10"
@@ -110,7 +110,7 @@ export default function Hero() {
             {/* Search Panel */}
             <motion.div
               layout
-              className="bg-white rounded-xl  shadow-2xl overflow-hidden p-6 md:p-8"
+              className="bg-white rounded-b-xl md:rounded-b-xl md:rounded-tr-xl shadow-2xl overflow-hidden p-4 md:p-8"
             >
               {/* Sub Tabs */}
               <div className="flex gap-6 mb-8 border-b border-gray-100">
@@ -180,19 +180,20 @@ export default function Hero() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-row md:flex-row gap-3">
                   <button
                     onClick={() => setShowAdvanced(!showAdvanced)}
                     className={cn(
-                      "h-12 px-6 rounded flex items-center justify-center cursor-pointer transition-all",
+                      "h-12 w-12 md:w-auto md:px-6 rounded flex items-center justify-center cursor-pointer transition-all shrink-0",
                       showAdvanced ? "bg-red-500 text-white" : "bg-[#2B9724] text-white hover:bg-[#2B9724]/90"
                     )}
                   >
-                    {showAdvanced ? <X size={24} /> : <span className="font-bold">Advanced</span>}
+                    {showAdvanced ? <X size={24} /> : <span className="font-bold hidden md:inline">Advanced</span>}
+                    {!showAdvanced && <span className="md:hidden"><div className="w-5 h-px bg-white mb-1"/><div className="w-5 h-px bg-white mb-1"/><div className="w-5 h-px bg-white"/></span>}
                   </button>
-                  <Button className="h-12 px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white rounded flex items-center gap-3 shadow-xl transition-all flex-1 md:flex-none">
-                    <span className="font-bold">Search Now</span>
-                    <Search size={22} />
+                  <Button className="h-12 px-6 md:px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white rounded flex items-center justify-center gap-2 md:gap-3 shadow-xl transition-all flex-1">
+                    <span className="font-bold text-sm md:text-base">Search Now</span>
+                    <Search size={20} className="md:size-[22px]" />
                   </Button>
                 </div>
               </div>

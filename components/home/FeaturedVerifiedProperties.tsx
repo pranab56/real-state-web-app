@@ -10,8 +10,7 @@ import {
   ChevronRight,
   Heart,
   MapPin,
-  Maximize2,
-  Search as SearchIcon
+  Maximize2
 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -98,12 +97,12 @@ export default function FeaturedVerifiedProperties() {
     <section className="py-12 md:py-24 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center mb-8 md:mb-12 space-y-2 md:space-y-4 px-2 md:px-0">
+        <div className="text-center mb-10 md:mb-16 space-y-3 md:space-y-4 px-2 md:px-0">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl sm:text-3xl md:text-5xl font-bold text-neutral-1 leading-tight"
+            className="text-[28px] sm:text-3xl md:text-5xl font-bold text-neutral-1 leading-[1.2] md:leading-tight"
           >
             Featured Verified Properties
           </motion.h2>
@@ -112,32 +111,34 @@ export default function FeaturedVerifiedProperties() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto"
+            className="text-[13px] sm:text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto leading-relaxed"
           >
-            We have hundreds of properties for you to choose from.
+            Explore our hand-picked selection of verified properties tailored to your needs.
           </motion.p>
         </div>
 
         {/* Categories - Scrollable on mobile */}
-        <div className="flex overflow-x-auto justify-start md:justify-center gap-2 sm:gap-3 md:gap-4 mb-10 md:mb-16 pb-2 md:pb-0 px-4 md:px-0 -mx-4 md:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {categories.map((cat, index) => (
-            <motion.button
-              key={cat}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => setActiveTab(cat)}
-              className={cn(
-                "px-5 sm:px-6 md:px-8 py-2 md:py-2.5 rounded cursor-pointer font-bold transition-all border whitespace-nowrap text-[13px] sm:text-sm md:text-base shrink-0",
-                activeTab === cat
-                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                  : "bg-white text-neutral-2 border-gray-100 hover:border-primary hover:text-primary"
-              )}
-            >
-              {cat}
-            </motion.button>
-          ))}
+        <div className="flex overflow-x-auto justify-start md:justify-center gap-3 sm:gap-3 md:gap-4 mb-10 md:mb-16 pb-4 md:pb-0 px-4 md:px-0 -mx-4 md:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex md:flex-wrap gap-2 md:gap-4 ml-auto mr-auto">
+            {categories.map((cat, index) => (
+              <motion.button
+                key={cat}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => setActiveTab(cat)}
+                className={cn(
+                  "px-6 sm:px-6 md:px-8 py-2 md:py-3 rounded-[10px] md:rounded-lg cursor-pointer font-bold transition-all border whitespace-nowrap text-[14px] md:text-base shrink-0",
+                  activeTab === cat
+                    ? "bg-primary text-white border-primary shadow-[0_8px_20px_-6px_rgba(241,145,61,0.4)]"
+                    : "bg-white text-neutral-2 border-gray-100 hover:border-primary hover:text-primary"
+                )}
+              >
+                {cat}
+              </motion.button>
+            ))}
+          </div>
         </div>
 
         {/* Grid */}
@@ -182,32 +183,41 @@ export default function FeaturedVerifiedProperties() {
                     <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
                       <Heart size={16} className="md:size-[18px]" />
                     </button>
-                    <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
+                    {/* <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
                       <SearchIcon size={16} className="md:size-[18px]" />
-                    </button>
+                    </button> */}
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-5 md:p-6 pt-1 md:pt-2 space-y-3 md:space-y-4">
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-neutral-1">{property.price}</h3>
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
-                    <MapPin size={16} className="shrink-0 md:size-[18px]" />
-                    <span className="text-[13px] sm:text-sm md:text-sm font-medium line-clamp-1">{property.address}</span>
+                <div className="p-4 md:p-6 pt-2 md:pt-2 space-y-3 md:space-y-4">
+                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-1">{property.price}</h3>
+                  <div className="flex items-center gap-2 text-neutral-2">
+                    <MapPin size={14} className="shrink-0 md:size-[18px]" />
+                    <span className="text-[12px] md:text-[15px] font-medium line-clamp-1">{property.address}</span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
-                      <Bed size={16} className="md:size-5 shrink-0" />
-                      <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-neutral-1 whitespace-nowrap">Beds {property.beds}</span>
+                  <div className="flex items-center justify-between pt-3 md:pt-5 border-t border-gray-100">
+                    <div className="flex items-center gap-1.5 md:gap-2.5">
+                      <Bed size={15} className="md:size-[18px] text-primary shrink-0" />
+                      <div className="flex flex-col md:flex-row md:gap-1">
+                        <span className="text-[11px] md:text-sm font-bold text-neutral-1">{property.beds}</span>
+                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Beds</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
-                      <Bath size={16} className="md:size-5 shrink-0" />
-                      <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-neutral-1 whitespace-nowrap">Baths {property.baths}</span>
+                    <div className="flex items-center gap-1.5 md:gap-2.5">
+                      <Bath size={15} className="md:size-[18px] text-primary shrink-0" />
+                      <div className="flex flex-col md:flex-row md:gap-1">
+                        <span className="text-[11px] md:text-sm font-bold text-neutral-1">{property.baths}</span>
+                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Baths</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-2">
-                      <Maximize2 size={16} className="md:size-5 shrink-0" />
-                      <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-neutral-1 whitespace-nowrap">m2 {property.size}</span>
+                    <div className="flex items-center gap-1.5 md:gap-2.5">
+                      <Maximize2 size={15} className="md:size-[18px] text-primary shrink-0" />
+                      <div className="flex flex-col md:flex-row md:gap-1">
+                        <span className="text-[11px] md:text-sm font-bold text-neutral-1">{property.size}</span>
+                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Sqft</span>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -117,20 +117,21 @@ export default function HotelDetailPage() {
   const [checkOut, setCheckOut] = useState<Date>();
 
   return (
-    <div className="min-h-screen bg-white pt-10 font-sans">
+    <div className="min-h-screen bg-white pt-20 md:pt-28 font-sans">
       {/* Gallery Section */}
-      <section className="container mx-auto px-4 sm:px-6 pt-6 sm:pt-12">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 h-auto md:h-[500px]">
-          <div className="md:col-span-8 relative aspect-[16/10] md:aspect-auto rounded-lg overflow-hidden group shadow-xl">
+      <section className="container mx-auto px-4 sm:px-6 pt-4 md:pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 h-auto md:h-[500px]">
+          <div className="md:col-span-8 relative aspect-[4/3] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-xl">
             <Image
               src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
               alt="Hotel"
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-700"
+              priority
             />
           </div>
-          <div className="md:col-span-4 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-4 sm:gap-6">
-            <div className="relative aspect-square md:aspect-auto rounded-lg overflow-hidden group shadow-lg">
+          <div className="md:col-span-4 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-3 sm:gap-6">
+            <div className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg">
               <Image
                 src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800"
                 alt="Hotel"
@@ -138,7 +139,7 @@ export default function HotelDetailPage() {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
-            <div className="relative aspect-square md:aspect-auto rounded-lg overflow-hidden group shadow-lg">
+            <div className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg">
               <Image
                 src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=800"
                 alt="Hotel"
@@ -153,14 +154,13 @@ export default function HotelDetailPage() {
       {/* Hotel Info & Booking */}
       <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 sm:pb-12 border-b border-gray-100">
-          <div className="space-y-4">
+          <div className="space-y-4 md:space-y-6">
             <span className="inline-block bg-[#2B9724] text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-lg shadow-green-500/10">Best Seller</span>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-1">Grand Palais Royale</h1>
+            <h1 className="text-3xl md:text-5xl font-black text-neutral-1 tracking-tight">Grand Palais Royale</h1>
             <div className="space-y-2">
-              <p className="text-[10px] sm:text-xs text-neutral-2 font-bold uppercase tracking-widest">Location:</p>
               <div className="flex items-center gap-2">
-                <MapPin size={18} className="text-primary sm:w-5 sm:h-5" />
-                <span className="text-xs sm:text-sm font-extrabold text-neutral-2">8 Broadway, Brooklyn, New York</span>
+                <MapPin size={18} className="text-primary shrink-0" />
+                <span className="text-xs sm:text-sm font-extrabold text-neutral-2 opacity-80">8 Broadway, Brooklyn, New York</span>
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function HotelDetailPage() {
             {/* Description */}
             <div className="space-y-4 sm:space-y-6">
               <h3 className="text-xl sm:text-2xl font-bold text-neutral-1">Description</h3>
-              <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed italic">
+              <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed">
                 Experience the pinnacle of French elegance at the Grand Palais Royale. Located in
                 the heart of Paris, our hotel combines historic grandeur with contemporary luxury.
                 Each detail is meticulously curated to provide an unforgettable stay.
@@ -235,37 +235,15 @@ export default function HotelDetailPage() {
               </div>
             </div>
 
-            {/* Leave a Reply */}
-            <div className="space-y-6 sm:space-y-8 p-6 sm:p-10 bg-[#FDFDFD] border border-gray-100 rounded-2xl sm:rounded-3xl shadow-sm">
-              <h3 className="text-xl sm:text-2xl font-black text-neutral-1">Leave A Reply</h3>
-              <form className="space-y-4 sm:space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <label className="text-xs sm:text-sm font-bold text-neutral-1 ml-1">Name</label>
-                    <Input placeholder="Enter your name here..." className="h-10 sm:h-12 bg-[#F6F6F6] border-none rounded-lg px-4 sm:px-6 font-medium focus:ring-1 focus:ring-primary shadow-none text-xs sm:text-sm" />
-                  </div>
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <label className="text-xs sm:text-sm font-bold text-neutral-1 ml-1">Email Address</label>
-                    <Input placeholder="Enter your email address here..." className="h-10 sm:h-12 bg-[#F6F6F6] border-none rounded-lg px-4 sm:px-6 font-medium focus:ring-1 focus:ring-primary shadow-none text-xs sm:text-sm" />
-                  </div>
-                </div>
-                <div className="space-y-1.5 sm:space-y-2">
-                  <label className="text-xs sm:text-sm font-bold text-neutral-1 ml-1">Review</label>
-                  <Textarea placeholder="Write Comments here..." className="min-h-[120px] sm:min-h-[150px] bg-[#F6F6F6] border-none rounded-lg p-4 sm:p-6 font-medium resize-none shadow-none focus:ring-1 focus:ring-primary text-xs sm:text-sm" />
-                </div>
-                <Button className="h-10 sm:h-12 px-8 sm:px-10 bg-primary hover:bg-primary/90 text-white font-black rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95 text-sm sm:text-base">
-                  Post Comment
-                </Button>
-              </form>
             </div>
-
-          </div>
 
           {/* Sidebar */}
           <aside className="space-y-8">
-            <div className="bg-[#FAF6F2] rounded-lg p-6 sm:p-10 space-y-8 sm:space-y-10 border border-primary/5 shadow-lg">
+            <div className="bg-[#FAF6F2] rounded-2xl p-6 sm:p-10 space-y-8 sm:space-y-10 border border-primary/5 shadow-xl">
               <h3 className="text-xl sm:text-2xl font-black text-neutral-1 flex items-center gap-3">
-                <Bookmark className="text-primary fill-primary/20 w-5 h-5 sm:w-6 sm:h-6" />
+                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg">
+                  <Bookmark className="w-6 h-6" />
+                </div>
                 Reserve Stay
               </h3>
               <div className="space-y-5 sm:space-y-6">
@@ -277,7 +255,7 @@ export default function HotelDetailPage() {
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Guests</label>
                   <Select defaultValue="2">
-                    <SelectTrigger className="w-full h-10 sm:h-12 py-5 sm:py-6 bg-white border-none font-bold text-neutral-1 shadow-none transition-all active:scale-95 text-xs sm:text-sm">
+                    <SelectTrigger className="w-full h-10 py-6 sm:h-12 sm:py-6 bg-white border-none font-bold text-neutral-1 shadow-none transition-all active:scale-95 text-xs sm:text-sm">
                       <SelectValue placeholder="Guests" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-none shadow-2xl">
@@ -291,7 +269,7 @@ export default function HotelDetailPage() {
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Room Type</label>
                   <Select defaultValue="deluxe">
-                    <SelectTrigger className="w-full h-10 sm:h-12 bg-white border-none font-bold text-neutral-1 shadow-none transition-all active:scale-95 text-xs sm:text-sm">
+                    <SelectTrigger className="w-full h-10 py-6 sm:h-12 bg-white border-none font-bold text-neutral-1 shadow-none transition-all active:scale-95 text-xs sm:text-sm">
                       <SelectValue placeholder="Select Room" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-none shadow-2xl">
@@ -311,7 +289,7 @@ export default function HotelDetailPage() {
                     <span className="text-neutral-2 font-extrabold">Service Fee</span>
                     <span className="text-neutral-1 font-black">$85</span>
                   </div>
-                  <div className="flex justify-between pt-4 sm:pt-6 border-t border-primary/10 text-lg sm:text-xl font-black italic tracking-tight">
+                  <div className="flex justify-between pt-4 sm:pt-6 border-t border-primary/10 text-lg sm:text-xl font-black  tracking-tight">
                     <span className="text-neutral-1 uppercase">Total Price</span>
                     <span className="text-primary">$2,335</span>
                   </div>
@@ -320,7 +298,7 @@ export default function HotelDetailPage() {
                 <Button className="w-full h-14 bg-primary hover:bg-black text-white font-black rounded-xl shadow-xl shadow-primary/30 transition-all active:scale-95 text-lg uppercase tracking-tighter">
                   Book This Hotel
                 </Button>
-                <p className="text-center text-[10px] font-black text-neutral-2/40 uppercase tracking-widest italic">Verification may be required</p>
+                <p className="text-center text-[10px] font-black text-neutral-2/40 uppercase tracking-widest">Verification may be required</p>
               </div>
             </div>
           </aside>
@@ -332,7 +310,7 @@ export default function HotelDetailPage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div className="space-y-3 sm:space-y-4 text-left">
             <h2 className="text-3xl sm:text-4xl font-black text-neutral-1 tracking-tight">Top Destinations</h2>
-            <p className="text-sm sm:text-base text-neutral-2 font-medium italic">Explore hundreds of luxury stays across the globe.</p>
+            <p className="text-sm sm:text-base text-neutral-2 font-medium">Explore hundreds of luxury stays across the globe.</p>
           </div>
           <Button variant="outline" className="h-10 sm:h-12 px-6 sm:px-8 rounded-lg font-bold border-gray-200 hover:bg-primary hover:text-white transition-all shadow-sm w-fit">View All</Button>
         </div>
@@ -362,7 +340,7 @@ export default function HotelDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between pt-6 sm:pt-8 border-t border-gray-50">
-                  <div className="flex items-baseline gap-1 italic">
+                  <div className="flex items-baseline gap-1">
                     <span className="text-xl sm:text-2xl font-black text-neutral-1">ETB42</span>
                     <span className="text-[9px] sm:text-[10px] text-neutral-2 font-bold opacity-40">/ night</span>
                   </div>

@@ -86,27 +86,58 @@ export default function HotelsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Breadcrumbs */}
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 flex items-center gap-2 text-xs sm:text-sm mt-8 lg:mt-12">
-        <span className="text-primary font-medium hover:underline cursor-pointer">Home</span>
-        <ChevronRight size={14} className="text-neutral-2" />
-        <span className="text-neutral-2">Listing Hotel</span>
-      </div>
+      {/* Hero Header */}
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-[#1E2024] overflow-hidden">
+        {/* Background Image/Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop" 
+            alt="Hotels Hero" 
+            fill 
+            className="object-cover opacity-40 scale-105"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2024] via-transparent to-transparent" />
+        </div>
 
-      <div className="container mx-auto px-4 sm:px-6 pb-16 lg:pb-24 lg:flex gap-8 xl:gap-12">
+        <div className="container mx-auto px-6 relative z-10 text-center md:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-4 md:space-y-6"
+          >
+            {/* Breadcrumbs */}
+            <div className="flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+              <ChevronRight size={10} />
+              <span className="text-white">Hotels</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight">
+              Listing <span className="text-primary">Hotels</span>
+            </h1>
+            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed mx-auto md:mx-0">
+              Find the perfect place to stay from our curated collection of verified hotels and guest houses across Ethiopia.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 md:px-6 py-12 md:pb-24 lg:flex gap-12">
 
         <button 
           onClick={() => setShowFilters(!showFilters)}
-          className="lg:hidden w-full mb-6 py-3 px-4 bg-white border border-gray-100 rounded-xl flex items-center justify-between font-bold text-neutral-1"
+          className="lg:hidden w-full mb-8 h-12 px-5 bg-white border border-gray-100 rounded-xl flex items-center justify-between font-bold text-neutral-1 shadow-sm active:scale-95 transition-all"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Search size={18} className="text-primary" />
-            <span>Show Filters</span>
+            <span className="text-sm">Filter Search</span>
           </div>
           <motion.div
             animate={{ rotate: showFilters ? 180 : 0 }}
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={16} />
           </motion.div>
         </button>
 
@@ -147,12 +178,12 @@ export default function HotelsPage() {
 
             {/* Amenities */}
             <div className="space-y-6">
-              <h3 className="font-bold text-neutral-1 text-sm sm:text-base">Amenities:</h3>
-              <div className="space-y-3 sm:space-y-4">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="flex items-center gap-2 bg-[#F7F7F7] p-2.5 sm:p-3 rounded-sm cursor-pointer hover:bg-gray-100 transition-all">
-                    <Checkbox id={`hotel-amenity-${i}`} className="border-neutral-2 data-[state=checked]:bg-primary" />
-                    <label htmlFor={`hotel-amenity-${i}`} className="text-xs sm:text-sm font-medium text-neutral-1 cursor-pointer">Bed Linens</label>
+              <h3 className="font-bold text-neutral-1 text-sm sm:text-base uppercase tracking-wider">Amenities:</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="flex items-center gap-3 bg-[#F7F7F7] p-3 rounded-lg cursor-pointer hover:bg-primary/5 transition-all group/item">
+                    <Checkbox id={`hotel-amenity-${i}`} className="w-5 h-5 border-neutral-2 data-[state=checked]:bg-primary" />
+                    <label htmlFor={`hotel-amenity-${i}`} className="text-[13px] font-bold text-neutral-2 group-hover/item:text-primary cursor-pointer transition-colors">Bed Linens</label>
                   </div>
                 ))}
               </div>

@@ -118,19 +118,50 @@ const SidebarSelect = ({ placeholder }: { placeholder: string }) => (
 
 export default function PropertiesPage() {
   return (
-    <div className="min-h-screen bg-white pt-20">
-      {/* Breadcrumbs */}
-      <div className="container mx-auto px-6 py-6 flex items-center gap-2 text-sm">
-        <span className="text-primary font-medium">Home</span>
-        <ChevronRight size={14} className="text-neutral-2" />
-        <span className="text-neutral-2">Listing Property</span>
-      </div>
+    <div className="min-h-screen bg-white">
+      {/* Hero Header */}
+      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-[#1E2024] overflow-hidden">
+        {/* Background Image/Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop" 
+            alt="Properties Hero" 
+            fill 
+            className="object-cover opacity-40"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2024] via-transparent to-transparent" />
+        </div>
 
-      <div className="container mx-auto px-6 pb-24 lg:flex gap-12">
+        <div className="container mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-4 md:space-y-6"
+          >
+            {/* Breadcrumbs */}
+            <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/60">
+              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+              <ChevronRight size={10} />
+              <span className="text-white">Properties</span>
+            </div>
+            
+            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight">
+              Listing <span className="text-primary">Property</span>
+            </h1>
+            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed">
+              Discover your perfect match from our exclusive collection of verified premium properties across Ethiopia.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 md:px-6 py-12 md:pb-24 lg:flex gap-12">
 
         {/* Sidebar Filters */}
         <aside className="lg:w-[320px] flex-shrink-0 space-y-10">
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 space-y-8 shadow-sm">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-8 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-neutral-1">Property Search</h2>
               <button className="text-sm text-neutral-2 hover:text-primary transition-colors">Clear All</button>
@@ -177,13 +208,13 @@ export default function PropertiesPage() {
             </div>
 
             {/* Amenities Checklist */}
-            <div className="space-y-6 pt-4 border-t border-gray-50">
-              <h3 className="font-medium text-neutral-1">Amenities:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                  <div key={i} className="flex items-center space-x-2 bg-[#F7F7F7] p-3 rounded-sm cursor-pointer hover:bg-gray-100 transition-colors group/item">
-                    <Checkbox id={`amenity-${i}`} className="border-neutral-2 data-[state=checked]:bg-primary" />
-                    <label htmlFor={`amenity-${i}`} className="text-sm font-medium text-neutral-2 group-hover/item:text-primary cursor-pointer transition-colors">Bed Linens</label>
+            <div className="space-y-6 pt-6 border-t border-gray-50">
+              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Amenities:</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="flex items-center space-x-3 bg-[#F7F7F7] p-3 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors group/item">
+                    <Checkbox id={`amenity-${i}`} className="w-5 h-5 border-gray-300 data-[state=checked]:bg-primary" />
+                    <label htmlFor={`amenity-${i}`} className="text-[13px] font-bold text-neutral-2 group-hover/item:text-primary cursor-pointer transition-colors">Bed Linens</label>
                   </div>
                 ))}
               </div>
@@ -227,10 +258,10 @@ export default function PropertiesPage() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 space-y-8 mt-12 lg:mt-0">
+        <main className="flex-1 space-y-8 mt-10 md:mt-12 lg:mt-0">
           {/* List Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-gray-100 gap-4 sm:gap-0">
-            <span className="text-neutral-2 font-medium italic text-sm">Showing <span className="text-neutral-1 font-bold not-italic">1-6</span> of <span className="text-neutral-1 font-bold not-italic">24</span> properties</span>
+          <div className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-gray-100 gap-4 sm:gap-0">
+            <span className="text-neutral-2 font-medium italic text-[13px] md:text-sm">Showing <span className="text-neutral-1 font-bold not-italic">1-6</span> of <span className="text-neutral-1 font-bold not-italic">24</span> properties</span>
             <div className="flex items-center gap-2 self-end sm:self-auto">
               <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest hidden sm:inline">Sort by:</span>
               <Select defaultValue="newest">

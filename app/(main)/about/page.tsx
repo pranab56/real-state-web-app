@@ -62,13 +62,13 @@ export default function AboutPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-6 md:space-y-8"
           >
-            <h1 className="text-3xl md:text-4xl font-black text-neutral-1 leading-tight tracking-tight uppercase">
+            <h1 className="text-xl md:text-4xl font-black text-neutral-1 leading-tight tracking-tight uppercase">
               About ZilaHomes - Helping <br className="hidden md:block" /> You Find Trusted Properties <br className="hidden md:block" /> and Services Across Ethiopia
             </h1>
-            <p className="text-lg text-neutral-2 max-w-xl font-medium leading-relaxed">
+            <p className="sm:text-lg text-sm text-neutral-2 max-w-xl font-medium leading-relaxed">
               Simplifying your search for excellence in the Ethiopian real estate market. We bridge the gap between dream homes and reality.
             </p>
-            <Button className="h-12 px-8 bg-primary hover:bg-primary/90 cursor-pointer text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all">
+            <Button className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 cursor-pointer text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all">
               Explore Listings
             </Button>
           </motion.div>
