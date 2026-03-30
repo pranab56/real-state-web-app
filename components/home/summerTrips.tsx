@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import 'swiper/css';
-import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
+import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -102,7 +102,7 @@ export default function SummerTrips() {
                     Experience the Ultimate Beach Getaway
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
-                    Unwind on pristine shores with our curated luxury villa collections. 
+                    Unwind on pristine shores with our curated luxury villa collections.
                   </p>
                   <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
                     Plan Your Trip
@@ -145,7 +145,7 @@ export default function SummerTrips() {
                     Modern Living in the Heart of the City
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
-                    Discover chic apartments and lofts at the center of the world's most vibrant hubs.
+                    Discover chic apartments and lofts at the center of the world&apos;s most vibrant hubs.
                   </p>
                   <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
                     View City Lofts

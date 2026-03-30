@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
@@ -15,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { motion } from 'framer-motion';
@@ -235,7 +233,7 @@ export default function HotelDetailPage() {
               </div>
             </div>
 
-            </div>
+          </div>
 
           {/* Sidebar */}
           <aside className="space-y-8">
