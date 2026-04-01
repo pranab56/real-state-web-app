@@ -14,8 +14,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-
-const categories = ['All', 'For Rent', 'For Sale', 'Sold'];
+import { useTranslation } from 'react-i18next';
 
 const properties = [
   {
@@ -87,11 +86,22 @@ const properties = [
 ];
 
 export default function FeaturedVerifiedProperties() {
-  const [activeTab, setActiveTab] = useState('All');
+  const { t } = useTranslation('common');
+  const categories = [
+    t('featured.categories.all'), 
+    t('featured.categories.rent'), 
+    t('featured.categories.sale'), 
+    t('featured.categories.sold')
+  ];
+  const [activeTab, setActiveTab] = useState(categories[0]);
 
-  const filteredProperties = properties.filter(p =>
-    activeTab === 'All' || p.category === activeTab
-  );
+  const filteredProperties = properties.filter(p => {
+    if (activeTab === t('featured.categories.all')) return true;
+    if (activeTab === t('featured.categories.rent')) return p.category === 'For Rent';
+    if (activeTab === t('featured.categories.sale')) return p.category === 'For Sale';
+    if (activeTab === t('featured.categories.sold')) return p.category === 'Sold';
+    return true;
+  });
 
   return (
     <section className="py-12 md:py-24 bg-white">
@@ -104,7 +114,7 @@ export default function FeaturedVerifiedProperties() {
             viewport={{ once: true }}
             className="text-[28px] sm:text-3xl md:text-5xl font-bold text-neutral-1 leading-[1.2] md:leading-tight"
           >
-            Featured Verified Properties
+            {t('featured.title')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -113,7 +123,7 @@ export default function FeaturedVerifiedProperties() {
             transition={{ delay: 0.1 }}
             className="text-[13px] sm:text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto leading-relaxed"
           >
-            Explore our hand-picked selection of verified properties tailored to your needs.
+            {t('featured.subtitle')}
           </motion.p>
         </div>
 
@@ -167,11 +177,11 @@ export default function FeaturedVerifiedProperties() {
                   <div className="absolute top-3 left-3 md:top-4 md:left-4 flex gap-2">
                     {property.verified && (
                       <span className="bg-[#2B9724] text-white text-[9px] md:text-[10px] font-bold px-2.5 md:px-3 py-1 rounded-full flex items-center gap-1">
-                        Zila Verified
+                        {t('featured.property.verified')}
                       </span>
                     )}
                     <span className="bg-primary text-white text-[9px] md:text-[10px] font-bold px-2.5 md:px-3 py-1 rounded-full text-center">
-                      {property.category}
+                      {property.category === 'For Rent' ? t('featured.categories.rent') : property.category === 'For Sale' ? t('featured.categories.sale') : t('featured.categories.sold')}
                     </span>
                   </div>
 
@@ -183,9 +193,6 @@ export default function FeaturedVerifiedProperties() {
                     <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
                       <Heart size={16} className="md:size-[18px]" />
                     </button>
-                    {/* <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
-                      <SearchIcon size={16} className="md:size-[18px]" />
-                    </button> */}
                   </div>
                 </div>
 
@@ -202,21 +209,21 @@ export default function FeaturedVerifiedProperties() {
                       <Bed size={15} className="md:size-[18px] text-primary shrink-0" />
                       <div className="flex flex-col md:flex-row md:gap-1">
                         <span className="text-[11px] md:text-sm font-bold text-neutral-1">{property.beds}</span>
-                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Beds</span>
+                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">{t('featured.property.beds')}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 md:gap-2.5">
                       <Bath size={15} className="md:size-[18px] text-primary shrink-0" />
                       <div className="flex flex-col md:flex-row md:gap-1">
                         <span className="text-[11px] md:text-sm font-bold text-neutral-1">{property.baths}</span>
-                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Baths</span>
+                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">{t('featured.property.baths')}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 md:gap-2.5">
                       <Maximize2 size={15} className="md:size-[18px] text-primary shrink-0" />
                       <div className="flex flex-col md:flex-row md:gap-1">
                         <span className="text-[11px] md:text-sm font-bold text-neutral-1">{property.size}</span>
-                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Sqft</span>
+                        <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">{t('featured.property.sqft')}</span>
                       </div>
                     </div>
                   </div>

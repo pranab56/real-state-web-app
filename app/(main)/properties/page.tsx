@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 const properties = [
   {
@@ -103,20 +104,25 @@ const featuredHomes = [
   { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=100&h=100&fit=crop' },
 ];
 
-const SidebarSelect = ({ placeholder }: { placeholder: string }) => (
-  <Select>
-    <SelectTrigger className="w-full h-12 py-6 bg-[#F7F7F7] border-none rounded-sm text-neutral-2 shadow-none">
-      <SelectValue placeholder={placeholder} />
-    </SelectTrigger>
-    <SelectContent className="rounded">
-      <SelectItem className='rounded-none py-1' value="all">All {placeholder}</SelectItem>
-      <SelectItem className='rounded-none py-1' value="1">Option 1</SelectItem>
-      <SelectItem className='rounded-none py-1' value="2">Option 2</SelectItem>
-    </SelectContent>
-  </Select>
-);
+const SidebarSelect = ({ placeholder, label }: { placeholder: string; label: string }) => {
+  const { t } = useTranslation('common');
+  return (
+    <Select>
+      <SelectTrigger className="w-full h-12 py-6 bg-[#F7F7F7] border-none rounded-sm text-neutral-2 shadow-none">
+        <SelectValue placeholder={label} />
+      </SelectTrigger>
+      <SelectContent className="rounded">
+        <SelectItem className='rounded-none py-1' value="all">{t('listing.sidebar.all', { placeholder: label })}</SelectItem>
+        <SelectItem className='rounded-none py-1' value="1">Option 1</SelectItem>
+        <SelectItem className='rounded-none py-1' value="2">Option 2</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
 
 export default function PropertiesPage() {
+  const { t } = useTranslation('common');
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Header */}
@@ -142,16 +148,17 @@ export default function PropertiesPage() {
           >
             {/* Breadcrumbs */}
             <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+              <Link href="/" className="hover:text-primary transition-colors">{t('listing.hero.home')}</Link>
               <ChevronRight size={10} />
-              <span className="text-white">Properties</span>
+              <span className="text-white">{t('listing.hero.properties')}</span>
             </div>
             
-            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight">
-              Listing <span className="text-primary">Property</span>
-            </h1>
+            <h1 
+              className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight"
+              dangerouslySetInnerHTML={{ __html: t('listing.hero.title') }}
+            />
             <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed">
-              Discover your perfect match from our exclusive collection of verified premium properties across Ethiopia.
+              {t('listing.hero.subtitle')}
             </p>
           </motion.div>
         </div>
@@ -163,14 +170,14 @@ export default function PropertiesPage() {
         <aside className="lg:w-[320px] flex-shrink-0 space-y-10">
           <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-8 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-neutral-1">Property Search</h2>
-              <button className="text-sm text-neutral-2 hover:text-primary transition-colors">Clear All</button>
+              <h2 className="text-xl font-bold text-neutral-1">{t('listing.sidebar.search_title')}</h2>
+              <button className="text-sm text-neutral-2 hover:text-primary transition-colors">{t('listing.sidebar.clear_all')}</button>
             </div>
 
             {/* Search Input */}
             <div className="relative">
               <Input
-                placeholder="Search City, State or Area"
+                placeholder={t('listing.sidebar.search_placeholder')}
                 className="h-12 bg-[#F7F7F7] border-none rounded-sm pl-12 pr-4 text-neutral-1 font-medium"
               />
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-2" size={20} />
@@ -178,38 +185,42 @@ export default function PropertiesPage() {
 
             {/* Basic Selects */}
             <div className="space-y-4">
-              <SidebarSelect placeholder="Status" />
-              <SidebarSelect placeholder="Type" />
-              <SidebarSelect placeholder="Bath" />
-              <SidebarSelect placeholder="Bed" />
+              <SidebarSelect placeholder="Status" label={t('listing.sidebar.status')} />
+              <SidebarSelect placeholder="Type" label={t('listing.sidebar.type')} />
+              <SidebarSelect placeholder="Bath" label={t('listing.sidebar.bath')} />
+              <SidebarSelect placeholder="Bed" label={t('listing.sidebar.bed')} />
             </div>
 
             {/* Price Range */}
             <div className="space-y-6">
-              <div className="flex justify-between items-end">
-                <span className="text-sm font-bold text-neutral-1">Price Range from <span className="text-primary">ETB100</span> to <span className="text-primary">ETB650,000</span></span>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-bold text-neutral-1">
+                  {t('listing.sidebar.price_range')} <span className="text-primary truncate">ETB100</span> {t('listing.sidebar.to')} <span className="text-primary truncate">ETB650,000</span>
+                </span>
               </div>
               <Slider defaultValue={[20, 80]} max={100} step={1} className="text-primary" />
             </div>
             {/* Size Range */}
             <div className="space-y-6">
-              <div className="flex justify-between items-end">
-                <span className="text-sm font-bold text-neutral-1">Size Range from <span className="text-primary">500 SqFt</span> to <span className="text-primary">1,500 SqFt</span></span>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-bold text-neutral-1">
+                  {t('listing.sidebar.size_range')} <span className="text-primary truncate">500 SqFt</span> {t('listing.sidebar.to')} <span className="text-primary truncate">1,500 SqFt</span>
+                </span>
               </div>
               <Slider defaultValue={[30, 70]} max={100} step={1} />
             </div>
 
             {/* Advanced Selects */}
             <div className="space-y-4 pt-4 border-t border-gray-50">
-              <SidebarSelect placeholder="Province/States" />
-              <SidebarSelect placeholder="Room" />
-              <SidebarSelect placeholder="Garage" />
-              <SidebarSelect placeholder="Label" />
+              <SidebarSelect placeholder="Province" label={t('listing.sidebar.province')} />
+              <SidebarSelect placeholder="Room" label={t('listing.sidebar.room')} />
+              <SidebarSelect placeholder="Garage" label={t('listing.sidebar.garage')} />
+              <SidebarSelect placeholder="Label" label={t('listing.sidebar.label')} />
             </div>
 
             {/* Amenities Checklist */}
             <div className="space-y-6 pt-6 border-t border-gray-50">
-              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Amenities:</h3>
+              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">{t('listing.sidebar.amenities')}</h3>
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="flex items-center space-x-3 bg-[#F7F7F7] p-3 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors group/item">
@@ -223,7 +234,7 @@ export default function PropertiesPage() {
 
           {/* Featured Properties (Mini) */}
           <div className="space-y-6 border border-gray-100 bg-white p-6 rounded-2xl shadow-sm">
-            <h3 className="font-bold text-neutral-1 mb-4">Featured Homes</h3>
+            <h3 className="font-bold text-neutral-1 mb-4">{t('listing.sidebar.featured_homes')}</h3>
             {featuredHomes.map((home, idx) => (
               <div key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
@@ -231,7 +242,9 @@ export default function PropertiesPage() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm font-bold text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{home.title}</h4>
-                  <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">{home.beds} Beds | {home.baths} Baths</p>
+                  <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">
+                    {home.beds} {t('featured.property.beds')} | {home.baths} {t('featured.property.baths')}
+                  </p>
                   <p className="text-sm font-black text-primary">{home.price}</p>
                 </div>
               </div>
@@ -248,10 +261,10 @@ export default function PropertiesPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="relative p-8 space-y-6 text-white">
-              <h3 className="text-2xl font-black leading-tight tracking-tight">Expert Agent Assistance</h3>
-              <p className="text-sm text-white/80 font-medium">Connect with a trusted agent who knows the luxury market inside out.</p>
+              <h3 className="text-2xl font-black leading-tight tracking-tight">{t('listing.sidebar.agent_title')}</h3>
+              <p className="text-sm text-white/80 font-medium">{t('listing.sidebar.agent_desc')}</p>
               <Button className="w-full bg-[#F1913D] hover:bg-white hover:text-primary text-white font-bold h-12 rounded-xl transition-all">
-                Connect With An Agent
+                {t('listing.sidebar.agent_btn')}
               </Button>
             </div>
           </div>
@@ -261,16 +274,19 @@ export default function PropertiesPage() {
         <main className="flex-1 space-y-8 mt-10 md:mt-12 lg:mt-0">
           {/* List Header */}
           <div className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-gray-100 gap-4 sm:gap-0">
-            <span className="text-neutral-2 font-medium italic text-[13px] md:text-sm">Showing <span className="text-neutral-1 font-bold not-italic">1-6</span> of <span className="text-neutral-1 font-bold not-italic">24</span> properties</span>
+            <span 
+              className="text-neutral-2 font-medium italic text-[13px] md:text-sm"
+              dangerouslySetInnerHTML={{ __html: t('listing.main.showing', { start: 1, end: 6, total: 24 }) }}
+            />
             <div className="flex items-center gap-2 self-end sm:self-auto">
-              <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest hidden sm:inline">Sort by:</span>
+              <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest hidden sm:inline">{t('listing.main.sort_by')}</span>
               <Select defaultValue="newest">
                 <SelectTrigger className="w-[140px] sm:w-40 h-10 border-none bg-transparent font-bold text-neutral-1 shadow-none">
-                  <SelectValue placeholder="Sort" />
+                  <SelectValue placeholder={t('listing.main.sort_placeholder')} />
                 </SelectTrigger>
                 <SelectContent className='rounded-xl'>
-                  <SelectItem className='py-2' value="newest">Newest first</SelectItem>
-                  <SelectItem className='py-2' value="oldest">Oldest first</SelectItem>
+                  <SelectItem className='py-2' value="newest">{t('listing.main.sort_newest')}</SelectItem>
+                  <SelectItem className='py-2' value="oldest">{t('listing.main.sort_oldest')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -296,8 +312,8 @@ export default function PropertiesPage() {
                     />
                     {/* Badges */}
                     <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">Zila Verified</span>
-                      <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">For Sale</span>
+                      <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">{t('featured.property.verified')}</span>
+                      <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">{t('featured.categories.sale')}</span>
                     </div>
                     {/* Quick Actions Overlay */}
                     <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex gap-1.5 sm:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-12 md:group-hover:translate-y-0 transition-all duration-300">
@@ -331,15 +347,15 @@ export default function PropertiesPage() {
                     <div className="flex items-center justify-between pt-4 sm:pt-6 border-t border-gray-50 text-neutral-2 gap-1 sm:gap-2">
                       <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
                         <BedDouble className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span className="whitespace-nowrap">Beds <span className="text-neutral-1 font-black">{property.beds}</span></span>
+                        <span className="whitespace-nowrap">{t('featured.property.beds')} <span className="text-neutral-1 font-black">{property.beds}</span></span>
                       </div>
                       <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
                         <Bath className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span className="whitespace-nowrap">Baths <span className="text-neutral-1 font-black">{property.baths}</span></span>
+                        <span className="whitespace-nowrap">{t('featured.property.baths')} <span className="text-neutral-1 font-black">{property.baths}</span></span>
                       </div>
                       <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
                         <Maximize2 className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span className="whitespace-nowrap">SqFt <span className="text-neutral-1 font-black">{property.size.split(' ')[0]}</span></span>
+                        <span className="whitespace-nowrap">{t('featured.property.sqft')} <span className="text-neutral-1 font-black">{property.size.split(' ')[0]}</span></span>
                       </div>
                     </div>
                   </div>
@@ -352,7 +368,7 @@ export default function PropertiesPage() {
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-8 sm:pt-12">
             <button className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm">
               <ChevronLeft className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-              <span className="hidden sm:inline">Previous</span>
+              <span className="hidden sm:inline">{t('listing.main.previous')}</span>
             </button>
             <div className="flex items-center gap-1 sm:gap-2">
               <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center bg-primary text-white font-black shadow-lg shadow-primary/20 cursor-pointer text-xs sm:text-base">1</button>
@@ -362,7 +378,7 @@ export default function PropertiesPage() {
               <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">12</button>
             </div>
             <button className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm">
-              <span className="hidden sm:inline">Next</span>
+              <span className="hidden sm:inline">{t('listing.main.next')}</span>
               <ChevronRight className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
             </button>
           </div>

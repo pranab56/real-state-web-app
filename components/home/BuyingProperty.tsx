@@ -3,23 +3,26 @@
 import { motion } from 'framer-motion';
 import { Check, FileText, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
-
-const features = [
-  {
-    title: 'Power of Attorney Services',
-    description: 'Authorize a trusted representative to buy, sell, or manage property and business matters on your behalf.'
-  },
-  {
-    title: 'Legal Verification',
-    description: 'Ensure property ownership, title deeds, and documentation are legally verified.'
-  },
-  {
-    title: 'Document Assistance',
-    description: 'Get help preparing POA documents, legal paperwork, and registration support.'
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 export default function BuyingProperty() {
+  const { t } = useTranslation('common');
+
+  const features = [
+    {
+      title: t('buying.f1_title'),
+      description: t('buying.f1_desc')
+    },
+    {
+      title: t('buying.f2_title'),
+      description: t('buying.f2_desc')
+    },
+    {
+      title: t('buying.f3_title'),
+      description: t('buying.f3_desc')
+    }
+  ];
+
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-white overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
@@ -33,11 +36,9 @@ export default function BuyingProperty() {
             className="space-y-6 md:space-y-8 text-center lg:text-left"
           >
             <div className="space-y-3 md:space-y-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-1 leading-tight">
-                Buying Property From <br className="hidden md:block" /> Abroad?
-              </h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('buying.title') }} />
               <p className="text-sm md:text-base text-neutral-2 font-medium max-w-lg mx-auto lg:mx-0">
-                Zila Legal helps diaspora buyers complete property transactions securely through Power of Attorney and verified legal partners.
+                {t('buying.subtitle')}
               </p>
             </div>
 
@@ -88,8 +89,8 @@ export default function BuyingProperty() {
                   <ShieldCheck size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[8px] md:text-[10px] font-bold text-neutral-2 uppercase tracking-widest leading-none mb-1">Status</p>
-                  <p className="text-[10px] sm:text-[12px] md:text-sm font-bold text-neutral-1 leading-tight">Verified</p>
+                  <p className="text-[8px] md:text-[10px] font-bold text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.status')}</p>
+                  <p className="text-[10px] sm:text-[12px] md:text-sm font-bold text-neutral-1 leading-tight">{t('buying.verified')}</p>
                 </div>
               </motion.div>
 
@@ -104,8 +105,8 @@ export default function BuyingProperty() {
                   <FileText size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[8px] md:text-[10px] font-bold text-neutral-2 uppercase tracking-widest leading-none mb-1">Doc</p>
-                  <p className="text-[10px] sm:text-[12px] md:text-sm font-bold text-neutral-1 leading-tight">POA Certified</p>
+                  <p className="text-[8px] md:text-[10px] font-bold text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.doc')}</p>
+                  <p className="text-[10px] sm:text-[12px] md:text-sm font-bold text-neutral-1 leading-tight">{t('buying.poa_certified')}</p>
                 </div>
               </motion.div>
             </div>

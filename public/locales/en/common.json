@@ -1,0 +1,217 @@
+{
+  "navbar": {
+    "home": "Home",
+    "properties": "Properties",
+    "hotels": "Hotels",
+    "transportation": "Transportation",
+    "blog": "Blog",
+    "company": "Company",
+    "poa": "POA",
+    "about": "About Us",
+    "sell_property": "Sell Property",
+    "select_language": "Select Language"
+  },
+  "hero": {
+    "title": "Find Verified Homes, Hotels & <br class=\"hidden md:block\" /> Transportation in Ethiopia.",
+    "subtitle": "We are a real estate agency that will help you find the best residence you dream of, let's discuss for your dream house?",
+    "search": "Search Now",
+    "advanced": "Advanced",
+    "real_estate": "Real Estate",
+    "hotels": "Hotels",
+    "guesthouses": "Guesthouses",
+    "transportation": "Transportation",
+    "legal": "POA/Legal",
+    "houses": "Houses",
+    "commercial": "Commercial",
+    "price_range": "Price Range from",
+    "size_range": "Size Range from",
+    "rooms": "Rooms",
+    "bathrooms": "Bathrooms",
+    "bedrooms": "Bedrooms",
+    "type": "Type",
+    "amenities": "Amenities"
+  },
+  "buying": {
+    "title": "Buying Property From <br class=\"hidden md:block\" /> Abroad?",
+    "subtitle": "Zila Legal helps diaspora buyers complete property transactions securely through Power of Attorney and verified legal partners.",
+    "f1_title": "Power of Attorney Services",
+    "f1_desc": "Authorize a trusted representative to buy, sell, or manage property and business matters on your behalf.",
+    "f2_title": "Legal Verification",
+    "f2_desc": "Ensure property ownership, title deeds, and documentation are legally verified.",
+    "f3_title": "Document Assistance",
+    "f3_desc": "Get help preparing POA documents, legal paperwork, and registration support.",
+    "status": "Status",
+    "verified": "Verified",
+    "doc": "Doc",
+    "poa_certified": "POA Certified"
+  },
+  "featured": {
+    "title": "Featured Verified Properties",
+    "subtitle": "Explore our hand-picked selection of verified properties tailored to your needs.",
+    "categories": {
+      "all": "All",
+      "rent": "For Rent",
+      "sale": "For Sale",
+      "sold": "Sold"
+    },
+    "property": {
+      "verified": "Zila Verified",
+      "beds": "Beds",
+      "baths": "Baths",
+      "sqft": "Sqft"
+    }
+  },
+  "help": {
+    "title": "How Can We Help You?",
+    "subtitle": "Thousands of luxury home enthusiasts just like you visit our website.",
+    "services": {
+      "buy_title": "Buy a Home",
+      "rent_title": "Rent a Home",
+      "sell_title": "Sell a Home",
+      "desc": "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
+      "learn_more": "Learn More"
+    }
+  },
+  "cities": {
+    "title": "Properties By Cities",
+    "subtitle": "Display your properties by city or area.",
+    "properties_count": "{{count}} Properties",
+    "promo1_title": "Annual Vacation Sale",
+    "promo1_desc": "Members save up to 40% on select hotels and homes.",
+    "promo1_link": "Book now",
+    "promo2_title": "Exclusive Member Deals",
+    "promo2_desc": "Unlock hidden prices and save extra 10%.",
+    "promo2_link": "Join Free",
+    "promo3_title": "Summer Beach Getaway",
+    "promo3_desc": "Plan your perfect summer vacation.",
+    "promo3_link": "Explore Beachside"
+  },
+  "top_dest": {
+    "title": "Top Destination",
+    "subtitle": "We have hundreds of place for you to choose from.",
+    "book_now": "Book Now",
+    "per_night": "/ night"
+  },
+  "summer": {
+    "featured": "Featured",
+    "exclusive": "Exclusive",
+    "urban": "Urban",
+    "slide1_title": "Save 30% on summer trips",
+    "slide1_desc": "Book your transportation and hotel together to unlock exclusive rewards.",
+    "slide1_btn": "Explore Deals",
+    "slide2_title": "Experience the Ultimate Beach Getaway",
+    "slide2_desc": "Unwind on pristine shores with our curated luxury villa collections.",
+    "slide2_btn": "Plan Your Trip",
+    "slide3_title": "Modern Living in the Heart of the City",
+    "slide3_desc": "Discover chic apartments and lofts at the center of the world's most vibrant hubs.",
+    "slide3_btn": "View City Lofts"
+  },
+  "travel": {
+    "plan_title": "Plan Your Stay & Travel in Ethiopia",
+    "plan_subtitle": "Discover comfortable guesthouses, hotels, and reliable transportation services to make your trip smooth and enjoyable.",
+    "cards": {
+      "hotels_title": "Hotels",
+      "hotels_desc": "Browse hotels and private houses that offer comfort, convenience, and great locations.",
+      "guesthouses_title": "Guesthouses",
+      "guesthouses_desc": "Find your place with an immersive photo experience and the most listings, including things you won’t find anywhere else.",
+      "rides_title": "Airport Pickup, Dropoff and City Rides.",
+      "rides_desc": "Book reliable airport transportation for easy arrival and departure."
+    },
+    "ready_title": "Ready to experience Ethiopia?",
+    "ready_subtitle": "Book your complete travel package with EliteEstates today. We handle everything so you can focus on the journey.",
+    "ready_btn": "Book now",
+    "how_title": "How Zilahomes Works",
+    "how_subtitle": "Discover verified properties and services through our seamless, secure, and transparent ecosystem.",
+    "steps": {
+      "step1": "Search Listings",
+      "step1_desc": "Browse houses, commercial properties, hotels, guesthouses, and transportation options across Ethiopia with advanced filtering.",
+      "step2": "Verified Properties",
+      "step2_desc": "Every listing is visited by our team. Photographs, legal agreements, and documentation are rigorously reviewed and kept secure.",
+      "step3": "Secure Transactions",
+      "step3_desc": "Buying and selling processes are managed via ZilaHomes protocols to ensure a fully protected and trusted financial experience.",
+      "step4": "Connect & Complete",
+      "step4_desc": "Directly contact verified providers and finalize your booking or purchase with full confidence and professional support."
+    }
+  },
+  "why": {
+    "title": "Why Choose Zila Legal?",
+    "subtitle": "Secure and reliable legal services tailored for the global diaspora, ensuring your investments are protected across borders.",
+    "benefits": {
+      "secure_title": "Secure Transactions",
+      "secure_desc": "End-to-end encryption and bank-grade security protocols for all your legal documents and private data.",
+      "partners_title": "Verified Partners",
+      "partners_desc": "Direct access to our hand-vetted network of top-tier legal professionals and qualified solicitors.",
+      "remote_title": "Remote Management",
+      "remote_desc": "Complete control over your international assets from anywhere in the world without the need for travel."
+    }
+  },
+  "insights": {
+    "title": "Insight & Opinion",
+    "subtitle": "Thousands of luxury home enthusiasts just like you visit our website.",
+    "read_more": "Read More",
+    "featured_title": "Featured Verified Properties",
+    "featured_subtitle": "We have hundreds of properties for you to choose from.",
+    "find_agent": "Find your location agent"
+  },
+  "listing": {
+    "hero": {
+      "home": "Home",
+      "properties": "Properties",
+      "title": "Listing <span class=\"text-primary\">Property</span>",
+      "subtitle": "Discover your perfect match from our exclusive collection of verified premium properties across Ethiopia."
+    },
+    "sidebar": {
+      "search_title": "Property Search",
+      "clear_all": "Clear All",
+      "search_placeholder": "Search City, State or Area",
+      "status": "Status",
+      "type": "Type",
+      "bath": "Bath",
+      "bed": "Bed",
+      "all": "All {{placeholder}}",
+      "price_range": "Price Range from",
+      "size_range": "Size Range from",
+      "to": "to",
+      "province": "Province/States",
+      "room": "Room",
+      "garage": "Garage",
+      "label": "Label",
+      "amenities": "Amenities:",
+      "featured_homes": "Featured Homes",
+      "agent_title": "Expert Agent Assistance",
+      "agent_desc": "Connect with a trusted agent who knows the luxury market inside out.",
+      "agent_btn": "Connect With An Agent"
+    },
+    "main": {
+      "showing": "Showing <span class=\"text-neutral-1 font-bold not-italic\">{{start}}-{{end}}</span> of <span class=\"text-neutral-1 font-bold not-italic\">{{total}}</span> properties",
+      "sort_by": "Sort by:",
+      "sort_newest": "Newest first",
+      "sort_oldest": "Oldest first",
+      "sort_placeholder": "Sort",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "hotels": {
+    "hero": {
+      "title": "Listing <span class=\"text-primary\">Hotels</span>",
+      "subtitle": "Find the perfect place to stay from our curated collection of verified hotels and guest houses across Ethiopia."
+    },
+    "sidebar": {
+      "filter_search": "Filter Search",
+      "filters": "Filters",
+      "rating": "Hotel Rating",
+      "stars": "Stars",
+      "available": "Available Only"
+    },
+    "main": {
+      "showing": "Showing <span class=\"text-neutral-1 font-bold\">{{start}}-{{end}}</span> of <span class=\"text-neutral-1 font-bold\">{{total}} Hotels</span>",
+      "book_now": "Book Now",
+      "per_night": "/ night"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "company": "ZilaHomes"
+  }
+}

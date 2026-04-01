@@ -8,8 +8,11 @@ import 'swiper/css/autoplay';
 import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useTranslation } from 'react-i18next';
 
 export default function SummerTrips() {
+  const { t } = useTranslation('common');
+
   return (
     <section className="py-12 bg-white overflow-hidden">
       <div className="container mx-auto px-4 md:px-6">
@@ -53,16 +56,16 @@ export default function SummerTrips() {
                   className="max-w-xl md:ml-12 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
                 >
                   <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
-                    Featured
+                    {t('summer.featured')}
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
-                    Save 30% on summer trips
+                    {t('summer.slide1_title')}
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
-                    Book your transportation and hotel together to unlock exclusive rewards.
+                    {t('summer.slide1_desc')}
                   </p>
                   <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
-                    Explore Deals
+                    {t('summer.slide1_btn')}
                   </Button>
                 </motion.div>
               </div>
@@ -96,16 +99,16 @@ export default function SummerTrips() {
                   className="max-w-xl md:ml-12 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
                 >
                   <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
-                    Exclusive
+                    {t('summer.exclusive')}
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
-                    Experience the Ultimate Beach Getaway
+                    {t('summer.slide2_title')}
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
-                    Unwind on pristine shores with our curated luxury villa collections.
+                    {t('summer.slide2_desc')}
                   </p>
                   <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
-                    Plan Your Trip
+                    {t('summer.slide2_btn')}
                   </Button>
                 </motion.div>
               </div>
@@ -139,16 +142,16 @@ export default function SummerTrips() {
                   className="max-w-xl md:ml-12 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
                 >
                   <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
-                    Urban
+                    {t('summer.urban')}
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
-                    Modern Living in the Heart of the City
+                    {t('summer.slide3_title')}
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
-                    Discover chic apartments and lofts at the center of the world&apos;s most vibrant hubs.
+                    {t('summer.slide3_desc')}
                   </p>
                   <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
-                    View City Lofts
+                    {t('summer.slide3_btn')}
                   </Button>
                 </motion.div>
               </div>

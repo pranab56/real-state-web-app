@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 const hotels = [
   {
@@ -83,6 +84,7 @@ const hotels = [
 
 export default function HotelsPage() {
   const [showFilters, setShowFilters] = useState(false);
+  const { t } = useTranslation('common');
 
   return (
     <div className="min-h-screen bg-white">
@@ -109,16 +111,17 @@ export default function HotelsPage() {
           >
             {/* Breadcrumbs */}
             <div className="flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+              <Link href="/" className="hover:text-primary transition-colors">{t('listing.hero.home')}</Link>
               <ChevronRight size={10} />
-              <span className="text-white">Hotels</span>
+              <span className="text-white">{t('hotels.hero.title').replace(/<[^>]*>?/gm, '')}</span>
             </div>
             
-            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight">
-              Listing <span className="text-primary">Hotels</span>
-            </h1>
+            <h1 
+              className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight"
+              dangerouslySetInnerHTML={{ __html: t('hotels.hero.title') }}
+            />
             <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed mx-auto md:mx-0">
-              Find the perfect place to stay from our curated collection of verified hotels and guest houses across Ethiopia.
+              {t('hotels.hero.subtitle')}
             </p>
           </motion.div>
         </div>
@@ -132,7 +135,7 @@ export default function HotelsPage() {
         >
           <div className="flex items-center gap-3">
             <Search size={18} className="text-primary" />
-            <span className="text-sm">Filter Search</span>
+            <span className="text-sm">{t('hotels.sidebar.filter_search')}</span>
           </div>
           <motion.div
             animate={{ rotate: showFilters ? 180 : 0 }}
@@ -145,21 +148,23 @@ export default function HotelsPage() {
         <aside className={`${showFilters ? 'block' : 'hidden'} lg:block lg:w-[300px] xl:w-[320px] flex-shrink-0 space-y-10 mb-8 lg:mb-0`}>
           <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl font-bold text-neutral-1">Filters</h2>
-              <button className="text-sm text-neutral-2 hover:text-primary transition-colors">Clear All</button>
+              <h2 className="text-lg sm:text-xl font-bold text-neutral-1">{t('hotels.sidebar.filters')}</h2>
+              <button className="text-sm text-neutral-2 hover:text-primary transition-colors">{t('listing.sidebar.clear_all')}</button>
             </div>
 
             {/* Price Range */}
             <div className="space-y-6">
-              <div className="flex justify-between items-end">
-                <span className="text-xs sm:text-sm font-bold text-neutral-1">Price Range from <span className="text-primary">$100</span> to <span className="text-primary">$650,000</span></span>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs sm:text-sm font-bold text-neutral-1">
+                  {t('listing.sidebar.price_range')} <span className="text-primary truncate">$100</span> {t('listing.sidebar.to')} <span className="text-primary truncate">$650,000</span>
+                </span>
               </div>
               <Slider defaultValue={[20, 80]} max={100} step={1} className="text-primary" />
             </div>
 
             {/* Hotel Rating */}
             <div className="space-y-4">
-              <h3 className="font-bold text-neutral-1 text-sm sm:text-base">Hotel Rating</h3>
+              <h3 className="font-bold text-neutral-1 text-sm sm:text-base">{t('hotels.sidebar.rating')}</h3>
               <div className="space-y-3 sm:space-y-4">
                 {[5, 4, 3].map((star) => (
                   <div key={star} className="flex items-center justify-between group cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-lg transition-colors">
@@ -170,7 +175,7 @@ export default function HotelsPage() {
                         {[...Array(5 - star)].map((_, i) => <Star key={i} size={14} className="sm:w-4 sm:h-4 text-gray-200" />)}
                       </div>
                     </div>
-                    <span className="text-xs sm:text-sm text-neutral-1 font-bold">{star} Stars</span>
+                    <span className="text-xs sm:text-sm text-neutral-1 font-bold">{star} {t('hotels.sidebar.stars')}</span>
                   </div>
                 ))}
               </div>
@@ -178,7 +183,7 @@ export default function HotelsPage() {
 
             {/* Amenities */}
             <div className="space-y-6">
-              <h3 className="font-bold text-neutral-1 text-sm sm:text-base uppercase tracking-wider">Amenities:</h3>
+              <h3 className="font-bold text-neutral-1 text-sm sm:text-base uppercase tracking-wider">{t('listing.sidebar.amenities')}</h3>
               <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="flex items-center gap-3 bg-[#F7F7F7] p-3 rounded-lg cursor-pointer hover:bg-primary/5 transition-all group/item">
@@ -191,7 +196,7 @@ export default function HotelsPage() {
 
             {/* Available Only */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-              <span className="font-bold text-neutral-1 text-sm sm:text-base">Available Only</span>
+              <span className="font-bold text-neutral-1 text-sm sm:text-base">{t('hotels.sidebar.available')}</span>
               <Switch className="data-[state=checked]:bg-primary" />
             </div>
           </div>
@@ -201,16 +206,19 @@ export default function HotelsPage() {
         <main className="flex-1 space-y-8 mt-12 lg:mt-0">
           {/* List Header */}
           <div className="flex items-center justify-between gap-2 pb-4 border-b border-gray-100">
-            <span className="text-neutral-2 font-medium text-xs sm:text-base">Showing <span className="text-neutral-1 font-bold">1-6</span> of <span className="text-neutral-1 font-bold">24 Hotels</span></span>
+            <span 
+              className="text-neutral-2 font-medium text-xs sm:text-base"
+              dangerouslySetInnerHTML={{ __html: t('hotels.main.showing', { start: 1, end: 6, total: 24 }) }}
+            />
             <div className="flex items-center gap-1 sm:gap-2">
-              <span className="text-[10px] sm:text-sm text-neutral-2 font-medium">Sort by:</span>
+              <span className="text-[10px] sm:text-sm text-neutral-2 font-medium">{t('listing.main.sort_by')}</span>
               <Select defaultValue="newest">
                 <SelectTrigger className="w-32 sm:w-40 h-8 sm:h-10 border-none bg-transparent font-bold text-neutral-1 shadow-none focus:ring-0">
-                  <SelectValue placeholder="Sort" />
+                  <SelectValue placeholder={t('listing.main.sort_placeholder')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-none">
-                  <SelectItem className="rounded-none py-1" value="newest">Newest First</SelectItem>
-                  <SelectItem className="rounded-none py-1" value="oldest">Oldest First</SelectItem>
+                  <SelectItem className="rounded-none py-1" value="newest">{t('listing.main.sort_newest')}</SelectItem>
+                  <SelectItem className="rounded-none py-1" value="oldest">{t('listing.main.sort_oldest')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -264,10 +272,10 @@ export default function HotelsPage() {
                     <div className="flex items-center justify-between pt-4 sm:pt-6 border-t border-gray-50">
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl sm:text-3xl font-extrabold text-neutral-1">{hotel.price}</span>
-                        <span className="text-neutral-2 text-xs sm:text-sm font-medium">/ night</span>
+                        <span className="text-neutral-2 text-xs sm:text-sm font-medium">{t('hotels.main.per_night')}</span>
                       </div>
                       <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-10 sm:h-12 px-4 sm:px-6 rounded-sm transition-all active:scale-95 text-sm sm:text-base">
-                        Book Now
+                        {t('hotels.main.book_now')}
                       </Button>
                     </div>
                   </div>
@@ -280,7 +288,7 @@ export default function HotelsPage() {
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-8 sm:pt-12 pb-12">
             <button className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 px-3 sm:px-4 rounded-sm border border-gray-100 text-neutral-2 hover:text-primary hover:border-primary cursor-pointer transition-all font-bold text-xs sm:text-sm">
               <ChevronLeft size={16} className="sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Previous</span>
+              <span className="hidden sm:inline">{t('listing.main.previous')}</span>
             </button>
             <div className="flex items-center gap-1 sm:gap-2">
               <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-sm bg-primary text-white font-medium shadow-lg shadow-primary/20 text-xs sm:text-sm">1</button>
@@ -290,7 +298,7 @@ export default function HotelsPage() {
               <button className="hidden sm:flex w-10 h-10 items-center justify-center rounded-sm text-neutral-2 font-medium hover:bg-gray-50 outline-none cursor-pointer text-sm">12</button>
             </div>
             <button className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 px-3 sm:px-4 rounded-sm border border-gray-100 text-neutral-2 hover:text-primary cursor-pointer hover:border-primary transition-all font-bold text-xs sm:text-sm">
-              <span className="hidden sm:inline">Next</span>
+              <span className="hidden sm:inline">{t('listing.main.next')}</span>
               <ChevronRight size={16} className="sm:w-5 sm:h-5" />
             </button>
           </div>

@@ -2,26 +2,29 @@
 
 import { motion } from 'framer-motion';
 import { Globe2, ShieldCheck, Users } from 'lucide-react';
-
-const benefits = [
-  {
-    title: 'Secure Transactions',
-    description: 'End-to-end encryption and bank-grade security protocols for all your legal documents and private data.',
-    icon: <ShieldCheck className="w-16 h-16 text-primary" />
-  },
-  {
-    title: 'Verified Partners',
-    description: 'Direct access to our hand-vetted network of top-tier legal professionals and qualified solicitors.',
-    icon: <Users className="w-16 h-16 text-primary" />
-  },
-  {
-    title: 'Remote Management',
-    description: 'Complete control over your international assets from anywhere in the world without the need for travel.',
-    icon: <Globe2 className="w-16 h-16 text-primary" />
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 export default function WhyChoose() {
+  const { t } = useTranslation('common');
+
+  const benefits = [
+    {
+      title: t('why.benefits.secure_title'),
+      description: t('why.benefits.secure_desc'),
+      icon: <ShieldCheck className="w-16 h-16 text-primary" />
+    },
+    {
+      title: t('why.benefits.partners_title'),
+      description: t('why.benefits.partners_desc'),
+      icon: <Users className="w-16 h-16 text-primary" />
+    },
+    {
+      title: t('why.benefits.remote_title'),
+      description: t('why.benefits.remote_desc'),
+      icon: <Globe2 className="w-16 h-16 text-primary" />
+    }
+  ];
+
   return (
     <section className="py-16 md:py-24 bg-[#FFF9F2]">
       <div className="container mx-auto px-4 md:px-6">
@@ -33,7 +36,7 @@ export default function WhyChoose() {
             viewport={{ once: true }}
             className="text-2xl md:text-4xl font-bold text-neutral-1 leading-tight"
           >
-            Why Choose Zila Legal?
+            {t('why.title')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -42,7 +45,7 @@ export default function WhyChoose() {
             transition={{ delay: 0.1 }}
             className="text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto font-medium"
           >
-            Secure and reliable legal services tailored for the global diaspora, ensuring your investments are protected across borders.
+            {t('why.subtitle')}
           </motion.p>
         </div>
 

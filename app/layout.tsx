@@ -1,3 +1,4 @@
+import { I18nProvider } from "@/components/providers/i18n-provider";
 import { LenisProvider } from "@/lib/lenis";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -29,9 +30,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white text-black selection:bg-zinc-100">
-        <LenisProvider>
-          {children}
-        </LenisProvider>
+        <I18nProvider>
+          <LenisProvider>
+            {children}
+          </LenisProvider>
+        </I18nProvider>
       </body>
     </html>
   );

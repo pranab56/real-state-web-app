@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Search } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
 const articles = [
   {
@@ -29,6 +30,8 @@ const articles = [
 ];
 
 export default function InsightOpinionSection() {
+  const { t } = useTranslation('common');
+
   return (
     <section className="bg-white pt-16 md:pt-24">
       {/* Blog Section */}
@@ -39,8 +42,8 @@ export default function InsightOpinionSection() {
           viewport={{ once: true }}
           className="space-y-2 md:space-y-4 mb-10 md:mb-16"
         >
-          <h2 className="text-2xl md:text-4xl font-bold text-neutral-1">Insight & Opinion</h2>
-          <p className="text-sm md:text-lg text-neutral-2 font-medium">Thousands of luxury home enthusiasts just like you visit our website.</p>
+          <h2 className="text-2xl md:text-4xl font-bold text-neutral-1">{t('insights.title')}</h2>
+          <p className="text-sm md:text-lg text-neutral-2 font-medium">{t('insights.subtitle')}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
@@ -76,7 +79,7 @@ export default function InsightOpinionSection() {
                   {article.title}
                 </h3>
                 <button className="flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all cursor-pointer text-sm md:text-base">
-                  Read More
+                  {t('insights.read_more')}
                   <div className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-primary flex items-center justify-center">
                     <ArrowRight size={12} className="md:size-[14px]" />
                   </div>
@@ -86,7 +89,7 @@ export default function InsightOpinionSection() {
           ))}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination Slice */}
         <div className="flex items-center justify-center gap-6 md:gap-8">
           <button className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded-full flex items-center justify-center text-neutral-2 hover:border-primary hover:text-primary transition-all cursor-pointer">
             <ChevronLeft size={20} className="md:size-6" />
@@ -110,14 +113,14 @@ export default function InsightOpinionSection() {
       <div className="bg-primary py-10 md:py-12">
         <div className="container mx-auto px-4 md:px-6 flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8">
           <div className="text-white space-y-1 md:space-y-2 text-center lg:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold">Featured Verified Properties</h2>
-            <p className="text-sm md:text-lg opacity-90">We have hundreds of properties for you to choose from.</p>
+            <h2 className="text-2xl md:text-3xl font-bold">{t('insights.featured_title')}</h2>
+            <p className="text-sm md:text-lg opacity-90">{t('insights.featured_subtitle')}</p>
           </div>
 
           <div className="relative w-full max-w-sm px-4 md:px-0">
             <input
               type="text"
-              placeholder="Find your location agent"
+              placeholder={t('insights.find_agent')}
               className="w-full h-12 md:h-14 bg-white rounded-lg px-5 md:px-6 pr-12 text-neutral-1 font-medium focus:outline-none shadow-lg focus:ring-2 focus:ring-white/20 text-sm md:text-base"
             />
             <Search className="absolute right-8 md:right-4 top-1/2 -translate-y-1/2 text-primary size-5 md:size-6" />

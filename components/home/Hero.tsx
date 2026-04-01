@@ -20,14 +20,16 @@ import {
   X
 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function Hero() {
-  const [activeMainTab, setActiveMainTab] = useState('Real Estate');
-  const [activeSubTab, setActiveSubTab] = useState('Houses');
+  const { t } = useTranslation('common');
+  const [activeMainTab, setActiveMainTab] = useState(t('hero.real_estate'));
+  const [activeSubTab, setActiveSubTab] = useState(t('hero.houses'));
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const mainTabs = ['Real Estate', 'Hotels', 'Guesthouses', 'Transportation', 'POA/Legal'];
-  const amenities = ['Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor', 'Floor'];
+  const mainTabs = [t('hero.real_estate'), t('hero.hotels'), t('hero.guesthouses'), t('hero.transportation'), t('hero.legal')];
+  const amenities = [t('hero.amenities'), t('hero.amenities')]; // Scalable later
   return (
     <section>
       {/* Hero Section */}
@@ -55,11 +57,9 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="max-w-5xl mx-auto space-y-6"
           >
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.2] md:leading-[1.1]">
-              Find Verified Homes, Hotels & <br className="hidden md:block" /> Transportation in Ethiopia.
-            </h1>
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.2] md:leading-[1.1]" dangerouslySetInnerHTML={{ __html: t('hero.title') }} />
             <p className="text-sm md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed px-4 md:px-0 opacity-80 md:opacity-100">
-              We are a real estate agency that will help you find the best residence you dream of, let&apos;s discuss for your dream house?
+              {t('hero.subtitle')}
             </p>
 
             {/* Contact Row */}
@@ -136,7 +136,7 @@ export default function Hero() {
                     <Search className="absolute left-4 top-6 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors z-10" size={20} />
                     <input
                       type="text"
-                      placeholder="Search Now"
+                      placeholder={t('hero.search')}
                       className="w-full h-12 pl-12 pr-4 bg-[#F2F2F2] border-none rounded-sm text-gray-800 placeholder:text-gray-700 font-medium focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
@@ -188,11 +188,11 @@ export default function Hero() {
                       showAdvanced ? "bg-red-500 text-white" : "bg-[#2B9724] text-white hover:bg-[#2B9724]/90"
                     )}
                   >
-                    {showAdvanced ? <X size={24} /> : <span className="font-bold hidden md:inline">Advanced</span>}
+                    {showAdvanced ? <X size={24} /> : <span className="font-bold hidden md:inline">{t('hero.advanced')}</span>}
                     {!showAdvanced && <span className="md:hidden"><div className="w-5 h-px bg-white mb-1"/><div className="w-5 h-px bg-white mb-1"/><div className="w-5 h-px bg-white"/></span>}
                   </button>
                   <Button className="h-12 px-6 md:px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white rounded flex items-center justify-center gap-2 md:gap-3 shadow-xl transition-all flex-1">
-                    <span className="font-bold text-sm md:text-base">Search Now</span>
+                    <span className="font-bold text-sm md:text-base">{t('hero.search')}</span>
                     <Search size={20} className="md:size-[22px]" />
                   </Button>
                 </div>
@@ -212,14 +212,14 @@ export default function Hero() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         <div className="space-y-6">
                           <div className="flex justify-between items-center text-sm font-bold">
-                            <span className="text-gray-800">Price Range from</span>
+                            <span className="text-gray-800">{t('hero.price_range')}</span>
                             <span className="text-primary uppercase tracking-wider">ETB100 to ETB650,000</span>
                           </div>
                           <Slider defaultValue={[25, 75]} max={100} step={1} className="w-full" />
                         </div>
                         <div className="space-y-6">
                           <div className="flex justify-between items-center text-sm font-bold">
-                            <span className="text-gray-800">Size Range from</span>
+                            <span className="text-gray-800">{t('hero.size_range')}</span>
                             <span className="text-primary uppercase tracking-wider">500 SqFt to 1,500 SqFt</span>
                           </div>
                           <Slider defaultValue={[0, 100]} max={100} step={1} className="w-full" />
@@ -229,10 +229,10 @@ export default function Hero() {
                       {/* Selects Row */}
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
-                          { label: 'Rooms', count: '2' },
-                          { label: 'Bathrooms', count: '2' },
-                          { label: 'Bedrooms', count: '2' },
-                          { label: 'Type', count: 'Apartment' }
+                          { label: t('hero.rooms'), count: '2' },
+                          { label: t('hero.bathrooms'), count: '2' },
+                          { label: t('hero.bedrooms'), count: '2' },
+                          { label: t('hero.type'), count: 'Apartment' }
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <Label className="text-sm font-bold text-gray-800">{item.label}</Label>

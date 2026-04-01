@@ -8,6 +8,7 @@ import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useTranslation } from 'react-i18next';
 
 const cities = [
   { name: 'Bahir Dar', count: 2, image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=400&h=400&fit=crop' },
@@ -22,8 +23,10 @@ const cities = [
 ];
 
 export default function PropertiesByCities() {
+  const { t } = useTranslation('common');
+
   return (
-    <section className="bg-white pb-20   overflow-hidden">
+    <section className="bg-white pb-20 overflow-hidden">
       {/* Promo Banner Slider */}
       <Swiper
         modules={[Autoplay]}
@@ -35,80 +38,65 @@ export default function PropertiesByCities() {
         className="promo-swiper"
       >
         <SwiperSlide>
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-[#FFF9F2] py-3 md:py-4 px-4 md:px-12 flex items-center gap-4"
-          >
+          <div className="bg-[#FFF9F2] py-3 md:py-4 px-4 md:px-12 flex items-center gap-4">
             <div className="container mx-auto flex items-center gap-3 md:gap-4 py-3 md:py-5">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl flex items-center justify-center rotate-[-15deg] shadow-lg shrink-0">
                 <Tag className="text-white fill-white size-5 md:size-6" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">Annual Vacation Sale</h4>
+                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">{t('cities.promo1_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  Members save up to 40% <span className="hidden sm:inline">on select hotels and homes</span>. <span className="font-bold underline cursor-pointer">Book now</span>
+                  {t('cities.promo1_desc')} <span className="font-bold underline cursor-pointer">{t('cities.promo1_link')}</span>
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </SwiperSlide>
 
         <SwiperSlide>
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-[#F2F9FF] py-3 md:py-4 px-4 md:px-12 flex items-center gap-4"
-          >
+          <div className="bg-[#F2F9FF] py-3 md:py-4 px-4 md:px-12 flex items-center gap-4">
             <div className="container mx-auto flex items-center gap-3 md:gap-4 py-3 md:py-5">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-[#007AFF] rounded-xl flex items-center justify-center rotate-[15deg] shadow-lg shrink-0">
                 <Tag className="text-white fill-white size-5 md:size-6" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">Exclusive Member Deals</h4>
+                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">{t('cities.promo2_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  Unlock hidden prices and save extra 10%. <span className="font-bold underline cursor-pointer">Join Free</span>
+                  {t('cities.promo2_desc')} <span className="font-bold underline cursor-pointer">{t('cities.promo2_link')}</span>
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </SwiperSlide>
 
         <SwiperSlide>
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-[#F9F2FF] py-3 md:py-4  md:px-12 flex items-center gap-4"
-          >
+          <div className="bg-[#F9F2FF] py-3 md:py-4 px-4 md:px-12 flex items-center gap-4">
             <div className="container mx-auto flex items-center gap-3 md:gap-4 py-3 md:py-5">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-[#8E44AD] rounded-xl flex items-center justify-center rotate-[-5deg] shadow-lg shrink-0">
                 <Tag className="text-white fill-white size-5 md:size-6" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">Summer Beach Getaway</h4>
+                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">{t('cities.promo3_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  Plan your perfect summer vacation. <span className="font-bold underline cursor-pointer">Explore Beachside</span>
+                  {t('cities.promo3_desc')} <span className="font-bold underline cursor-pointer">{t('cities.promo3_link')}</span>
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </SwiperSlide>
       </Swiper>
 
       <div className="container mx-auto px-4 md:px-0 py-12 md:py-32 text-center">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-8 md:mb-16 space-y-2 md:space-y-4"
+           initial={{ opacity: 0, y: 30 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           transition={{ duration: 0.8 }}
+           className="mb-8 md:mb-16 space-y-2 md:space-y-4"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-neutral-1 tracking-tight">Properties By Cities</h2>
-          <p className="text-sm md:text-lg text-neutral-2 font-medium">Display your properties by city or area.</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-neutral-1 tracking-tight">{t('cities.title')}</h2>
+          <p className="text-sm md:text-lg text-neutral-2 font-medium">{t('cities.subtitle')}</p>
         </motion.div>
 
         {/* Swiper Slider */}
@@ -151,7 +139,7 @@ export default function PropertiesByCities() {
                       {city.name}
                     </h5>
                     <p className="text-[10px] md:text-sm text-neutral-2 font-medium mt-0.5 md:mt-1">
-                      {city.count} Properties
+                      {t('cities.properties_count', { count: city.count })}
                     </p>
                   </div>
                 </motion.div>

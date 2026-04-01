@@ -14,8 +14,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 export function Navbar() {
+  const { t, i18n } = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -31,22 +33,33 @@ export function Navbar() {
   }, []);
 
   const menuItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Properties', href: '/properties' },
+    { name: t('navbar.home'), href: '/' },
+    { name: 'Properties', href: '/properties' }, // User might have more to translate later, sticking to common keys first
     { name: 'Hotels', href: '/hotels' },
     { name: 'Transportation', href: '/transportation' },
     { name: 'Blog', href: '/blog' },
     {
-      name: 'Company',
+      name: t('navbar.company'),
       href: '#',
       hasDropdown: true,
       subItems: [
-        { name: 'POA', href: '/poa' },
-        { name: 'About us', href: '/about' }
+        { name: t('navbar.poa'), href: '/poa' },
+        { name: t('navbar.about'), href: '/about' }
       ]
-    },
-    // { name: 'EN', href: '#', hasDropdown: true, isLang: true },
+    }
   ];
+
+  const languages = [
+    { name: 'EN', fullName: 'English', flag: '🇺🇸', code: 'en' },
+    { name: 'AM', fullName: 'Amharic', flag: '🇪🇹', code: 'am' },
+    { name: 'RU', fullName: 'Russian', flag: '🇷🇺', code: 'ru' },
+  ];
+  
+  const selectedLang = languages.find(l => l.code === i18n.language) || languages[0];
+
+  const handleLanguageChange = (lang: typeof languages[0]) => {
+    i18n.changeLanguage(lang.code);
+  };
 
   // Logic for background - Always solid on internal pages, scroll-based on Home
   const showBackground = !isHome || scrolled || isOpen;
@@ -155,6 +168,41 @@ export function Navbar() {
 
         {/* Right Side Actions & Mobile Toggle */}
         <div className="flex items-center gap-2 md:gap-4">
+          {/* Language Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="outline-none">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2  px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 py-2.5 cursor-pointer hover:bg-white/20 transition-all text-white text-sm font-bold min-w-[100px] justify-center"
+              >
+                <span>{selectedLang.flag}</span>
+                <span>{selectedLang.name}</span>
+                <ChevronDown size={12} className="opacity-50" />
+              </motion.div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-gray-800 border-white/10 text-white rounded-xl p-1.5 min-w-[140px] shadow-2xl z-[60]">
+              {languages.map((lang) => (
+                <DropdownMenuItem
+                  key={lang.name}
+                  className="focus:bg-white/10 p-2 rounded-lg outline-none cursor-pointer"
+                  onClick={() => handleLanguageChange(lang)}
+                >
+                  <div
+                    className={cn(
+                      "w-full px-2 py-1 text-sm font-medium transition-all flex items-center gap-3",
+                      selectedLang.name === lang.name ? "text-primary" : "text-white/70 hover:text-white"
+                    )}
+                  >
+                    <span className="text-base leading-none">{lang.flag}</span>
+                    <span>{lang.name}</span>
+                    {selectedLang.name === lang.name && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -167,7 +215,7 @@ export function Navbar() {
             className="hidden sm:flex bg-primary hover:bg-primary/90 text-white font-bold h-9 md:h-10 px-4 md:px-5 rounded-lg items-center gap-2 shadow-lg shadow-primary/20 transition-all border-none"
           >
             <Building2 size={18} />
-            <span>Sell Property</span>
+            <span>{t('navbar.sell_property')}</span>
           </Button>
 
           {/* Mobile Menu Toggle */}
@@ -191,6 +239,28 @@ export function Navbar() {
             className="absolute top-full left-0 right-0 bg-[#1E2024]/95 backdrop-blur-xl border-t border-white/10 shadow-2xl lg:hidden p-4 flex flex-col max-h-[calc(100vh-80px)] overflow-y-auto z-40"
           >
             <div className="flex flex-col gap-1 pb-4">
+              {/* Mobile Language Switcher */}
+              <div className="px-4 py-2 mb-2">
+                <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-3">Select Language</p>
+                <div className="grid grid-cols-3 gap-2 ">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.name}
+                      onClick={() => handleLanguageChange(lang)}
+                      className={cn(
+                        "flex flex-col items-center  justify-center gap-1.5 py-3 rounded-xl border transition-all",
+                        selectedLang.name === lang.name
+                          ? "bg-primary/20 border-primary/50 text-white"
+                          : "bg-white/5 border-white/10 text-white/60"
+                      )}
+                    >
+                      <span className="text-xl">{lang.flag}</span>
+                      <span className="text-[10px] font-bold">{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {menuItems.map((item) => {
                 const isActive = pathname === item.href || (item.subItems?.some(sub => pathname === sub.href));
 

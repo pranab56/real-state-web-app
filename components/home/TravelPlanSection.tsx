@@ -4,49 +4,52 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Building2, CheckCircle2, Search, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
-
-const travelCards = [
-  {
-    title: 'Hotels',
-    description: 'Browse hotels and private houses that offer comfort, convenience, and great locations.',
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=600&h=400&fit=crop'
-  },
-  {
-    title: 'Guesthouses',
-    description: 'Find your place with an immersive photo experience and the most listings, including things you won’t find anywhere else.',
-    image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=600&h=400&fit=crop'
-  },
-  {
-    title: 'Airport Pickup, Dropoff and City Rides.',
-    description: 'Book reliable airport transportation for easy arrival and departure.',
-    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=600&h=400&fit=crop'
-  }
-];
-
-const howItWorks = [
-  {
-    title: 'Search Listings',
-    description: 'Browse houses, commercial properties, hotels, guesthouses, and transportation options across Ethiopia with advanced filtering.',
-    icon: <Building2 className="w-12 h-12 text-primary" />
-  },
-  {
-    title: 'Verified Properties',
-    description: 'Every listing is visited by our team. Photographs, legal agreements, and documentation are rigorously reviewed and kept secure.',
-    icon: <Search className="w-12 h-12 text-primary" />
-  },
-  {
-    title: 'Secure Transactions',
-    description: 'Buying and selling processes are managed via ZilaHomes protocols to ensure a fully protected and trusted financial experience.',
-    icon: <ShieldCheck className="w-12 h-12 text-primary" />
-  },
-  {
-    title: 'Connect & Complete',
-    description: 'Directly contact verified providers and finalize your booking or purchase with full confidence and professional support.',
-    icon: <CheckCircle2 className="w-12 h-12 text-primary" />
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 export default function TravelPlanSection() {
+  const { t } = useTranslation('common');
+
+  const travelCards = [
+    {
+      title: t('travel.cards.hotels_title'),
+      description: t('travel.cards.hotels_desc'),
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=600&h=400&fit=crop'
+    },
+    {
+      title: t('travel.cards.guesthouses_title'),
+      description: t('travel.cards.guesthouses_desc'),
+      image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=600&h=400&fit=crop'
+    },
+    {
+      title: t('travel.cards.rides_title'),
+      description: t('travel.cards.rides_desc'),
+      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=600&h=400&fit=crop'
+    }
+  ];
+
+  const howItWorks = [
+    {
+      title: t('travel.steps.step1'),
+      description: t('travel.steps.step1_desc'),
+      icon: <Building2 className="w-12 h-12 text-primary" />
+    },
+    {
+      title: t('travel.steps.step2'),
+      description: t('travel.steps.step2_desc'),
+      icon: <Search className="w-12 h-12 text-primary" />
+    },
+    {
+      title: t('travel.steps.step3'),
+      description: t('travel.steps.step3_desc'),
+      icon: <ShieldCheck className="w-12 h-12 text-primary" />
+    },
+    {
+      title: t('travel.steps.step4'),
+      description: t('travel.steps.step4_desc'),
+      icon: <CheckCircle2 className="w-12 h-12 text-primary" />
+    }
+  ];
+
   return (
     <div className="bg-white">
       {/* 1. Plan Your Stay & Travel Section */}
@@ -59,10 +62,10 @@ export default function TravelPlanSection() {
               viewport={{ once: true }}
               className="text-2xl md:text-4xl font-bold px-4"
             >
-              Plan Your Stay & Travel in Ethiopia
+              {t('travel.plan_title')}
             </motion.h2>
             <p className="max-w-xl mx-auto text-neutral-2 text-sm md:text-lg font-medium px-4">
-              Discover comfortable guesthouses, hotels, and reliable transportation services to make your trip smooth and enjoyable.
+              {t('travel.plan_subtitle')}
             </p>
           </div>
 
@@ -87,7 +90,7 @@ export default function TravelPlanSection() {
                     {card.description}
                   </p>
                   <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-xl transition-all w-full text-sm">
-                    Learn More
+                    {t('help.services.learn_more')}
                   </Button>
                 </div>
               </motion.div>
@@ -106,14 +109,12 @@ export default function TravelPlanSection() {
             className="bg-[#FFF9F2] rounded-3xl md:rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row relative min-h-0 md:min-h-[450px]"
           >
             <div className="lg:w-2/3 p-8 md:p-12 lg:p-20 space-y-6 md:space-y-8 z-10 text-center lg:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-neutral-1 leading-tight">
-                Ready to experience <br className="hidden md:block" /> Ethiopia?
-              </h2>
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('travel.ready_title') }} />
               <p className="text-neutral-2 text-sm md:text-lg max-w-lg mx-auto lg:mx-0 font-medium">
-                Book your complete travel package with EliteEstates today. We handle everything so you can focus on the journey.
+                {t('travel.ready_subtitle')}
               </p>
               <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-12 md:h-14 px-10 md:px-12 rounded-xl text-base md:text-lg shadow-xl shadow-primary/20 w-full md:w-auto">
-                Book now
+                {t('travel.ready_btn')}
               </Button>
             </div>
 
@@ -139,10 +140,10 @@ export default function TravelPlanSection() {
               viewport={{ once: true }}
               className="text-2xl md:text-4xl font-bold text-neutral-1"
             >
-              How Zilahomes Works
+              {t('travel.how_title')}
             </motion.h2>
             <p className="max-w-2xl mx-auto text-neutral-2 text-sm md:text-lg font-medium">
-              Discover verified properties and services through our seamless, secure, and transparent ecosystem.
+              {t('travel.how_subtitle')}
             </p>
           </div>
 

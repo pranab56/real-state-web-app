@@ -3,29 +3,32 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Building2, Home as HomeIcon, Search } from 'lucide-react';
-
-const services = [
-  {
-    title: 'Buy a Home',
-    description: "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
-    icon: <Building2 className="w-16 h-16 text-primary" />,
-    btnText: 'Learn More'
-  },
-  {
-    title: 'Rent a Home',
-    description: "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
-    icon: <HomeIcon className="w-16 h-16 text-primary" />,
-    btnText: 'Learn More'
-  },
-  {
-    title: 'Sell a Home',
-    description: "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
-    icon: <Search className="w-16 h-16 text-primary" />,
-    btnText: 'Learn More'
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 export default function HelpSection() {
+  const { t } = useTranslation('common');
+
+  const services = [
+    {
+      title: t('help.services.buy_title'),
+      description: t('help.services.desc'),
+      icon: <Building2 className="w-16 h-16 text-primary" />,
+      btnText: t('help.services.learn_more')
+    },
+    {
+      title: t('help.services.rent_title'),
+      description: t('help.services.desc'),
+      icon: <HomeIcon className="w-16 h-16 text-primary" />,
+      btnText: t('help.services.learn_more')
+    },
+    {
+      title: t('help.services.sell_title'),
+      description: t('help.services.desc'),
+      icon: <Search className="w-16 h-16 text-primary" />,
+      btnText: t('help.services.learn_more')
+    }
+  ];
+
   return (
     <section className="py-16 md:py-24 bg-[#F7F7F7]">
       <div className="container mx-auto px-4 md:px-6 text-center">
@@ -37,7 +40,7 @@ export default function HelpSection() {
             viewport={{ once: true }}
             className="text-2xl md:text-4xl font-bold text-neutral-1"
           >
-            How Can We Help You?
+            {t('help.title')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -46,7 +49,7 @@ export default function HelpSection() {
             transition={{ delay: 0.1 }}
             className="text-sm md:text-base text-neutral-2 max-w-2xl mx-auto"
           >
-            Thousands of luxury home enthusiasts just like you visit our website.
+            {t('help.subtitle')}
           </motion.p>
         </div>
 
