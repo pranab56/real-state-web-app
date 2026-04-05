@@ -11,15 +11,18 @@ import {
 } from "@/components/ui/select";
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
-const FormLabel = ({ children, optional }: { children: React.ReactNode, optional?: boolean }) => (
+const FormLabel = ({ children, optional, optionalText }: { children: React.ReactNode, optional?: boolean, optionalText?: string }) => (
   <label className="text-sm font-semibold text-neutral-1 flex gap-1 mb-2">
     {children}
-    {optional && <span className="text-neutral-2 font-medium opacity-60">(Optional)</span>}
+    {optional && <span className="text-neutral-2 font-medium opacity-60">{optionalText}</span>}
   </label>
 );
 
 export default function TransportationPage() {
+  const { t } = useTranslation('common');
+
   return (
     <div className="min-h-screen bg-gray-50/30">
       {/* Hero Section */}
@@ -36,16 +39,15 @@ export default function TransportationPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl md:text-5xl font-bold text-white leading-tight"
-          >
-            Book Airport Pickup or <br className="hidden md:block"/> Private Transport
-          </motion.h1>
+            dangerouslySetInnerHTML={{ __html: t('transportation.hero.title') }}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="text-sm md:text-lg text-white/80 font-medium max-w-2xl mx-auto px-4"
           >
-            Reliable airport pickup, drop-off, and private transportation services across Ethiopia.
+            {t('transportation.hero.subtitle')}
           </motion.p>
         </div>
       </div>
@@ -61,9 +63,9 @@ export default function TransportationPage() {
           <form className="space-y-6 md:space-y-8">
             {/* Requester Name */}
             <div className="space-y-2">
-              <FormLabel>Requester&apos;s Full Name</FormLabel>
+              <FormLabel>{t('transportation.form.requester_name')}</FormLabel>
               <Input
-                placeholder="Hermela Araya"
+                placeholder={t('transportation.form.requester_placeholder')}
                 className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
               />
             </div>
@@ -71,22 +73,22 @@ export default function TransportationPage() {
             {/* Service Type & Drop-off */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <FormLabel>Service Type</FormLabel>
+                <FormLabel>{t('transportation.form.service_type')}</FormLabel>
                 <Select>
                   <SelectTrigger className="h-12 w-full p-6 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium">
-                    <SelectValue placeholder="Airport Pickup" />
+                    <SelectValue placeholder={t('transportation.form.service_pickup')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-sm ">
-                    <SelectItem className="rounded-none py-2 " value="pickup">Airport Pickup</SelectItem>
-                    <SelectItem className="rounded-none py-2 " value="dropoff">Airport Drop-off</SelectItem>
-                    <SelectItem className="rounded-none py-2 " value="private">Private Hire</SelectItem>
+                    <SelectItem className="rounded-none py-2 " value="pickup">{t('transportation.form.service_pickup')}</SelectItem>
+                    <SelectItem className="rounded-none py-2 " value="dropoff">{t('transportation.form.service_dropoff')}</SelectItem>
+                    <SelectItem className="rounded-none py-2 " value="private">{t('transportation.form.service_private')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <FormLabel>Drop-off Location</FormLabel>
+                <FormLabel>{t('transportation.form.dropoff_location')}</FormLabel>
                 <Input
-                  placeholder="Enter destination address or hotel"
+                  placeholder={t('transportation.form.dropoff_placeholder')}
                   className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
                 />
               </div>
@@ -95,17 +97,17 @@ export default function TransportationPage() {
             {/* Pickup Date & Time */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <FormLabel>Pickup Date</FormLabel>
+                <FormLabel>{t('transportation.form.pickup_date')}</FormLabel>
                 <Input
                   type="date"
                   className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
                 />
               </div>
               <div className="space-y-2">
-                <FormLabel>Pickup Time</FormLabel>
+                <FormLabel>{t('transportation.form.pickup_time')}</FormLabel>
                 <Input
                   type="time"
-                  placeholder="10:30 AM"
+                  placeholder={t('transportation.form.pickup_time_placeholder')}
                   className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
                 />
               </div>
@@ -114,7 +116,7 @@ export default function TransportationPage() {
             {/* Passengers & Luggage */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <FormLabel>Number of Passengers</FormLabel>
+                <FormLabel>{t('transportation.form.passengers')}</FormLabel>
                 <Select>
                   <SelectTrigger className="h-12 py-6 w-full  bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium">
                     <SelectValue placeholder="4" />
@@ -127,16 +129,16 @@ export default function TransportationPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <FormLabel>Number of Luggage</FormLabel>
+                <FormLabel>{t('transportation.form.luggage')}</FormLabel>
                 <Select>
                   <SelectTrigger className="h-12 w-full py-6  bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium">
-                    <SelectValue placeholder="1-2 bags" />
+                    <SelectValue placeholder={t('transportation.form.luggage_1_2')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-sm">
-                    <SelectItem className="rounded-none px-4 py-2" value="0">No luggage</SelectItem>
-                    <SelectItem className="rounded-none px-4 py-2" value="1-2">1-2 bags</SelectItem>
-                    <SelectItem className="rounded-none px-4 py-2" value="3-4">3-4 bags</SelectItem>
-                    <SelectItem className="rounded-none px-4 py-2" value="5+">5+ bags</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="0">{t('transportation.form.luggage_none')}</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="1-2">{t('transportation.form.luggage_1_2')}</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="3-4">{t('transportation.form.luggage_3_4')}</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="5+">{t('transportation.form.luggage_5_plus')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -145,22 +147,22 @@ export default function TransportationPage() {
             {/* Vehicle Type & Flight Number */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <FormLabel>Vehicle Type</FormLabel>
+                <FormLabel>{t('transportation.form.vehicle_type')}</FormLabel>
                 <Select>
                   <SelectTrigger className="h-12 w-full py-6 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium">
-                    <SelectValue placeholder="Sedan (1-3 passengers)" />
+                    <SelectValue placeholder={t('transportation.form.vehicle_sedan')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-sm">
-                    <SelectItem className="rounded-none px-4 py-2" value="sedan">Sedan (1-3 passengers)</SelectItem>
-                    <SelectItem className="rounded-none px-4 py-2" value="suv">SUV (4-5 passengers)</SelectItem>
-                    <SelectItem className="rounded-none px-4 py-2" value="van">Van (6-8 passengers)</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="sedan">{t('transportation.form.vehicle_sedan')}</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="suv">{t('transportation.form.vehicle_suv')}</SelectItem>
+                    <SelectItem className="rounded-none px-4 py-2" value="van">{t('transportation.form.vehicle_van')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <FormLabel optional>Flight Number</FormLabel>
+                <FormLabel optional optionalText={t('transportation.form.optional')}>{t('transportation.form.flight_number')}</FormLabel>
                 <Input
-                  placeholder="e.g. ET 500"
+                  placeholder={t('transportation.form.flight_placeholder')}
                   className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
                 />
               </div>
@@ -168,9 +170,9 @@ export default function TransportationPage() {
 
             {/* Contact Information */}
             <div className="space-y-2 pt-4">
-              <FormLabel>Contact Information</FormLabel>
+              <FormLabel>{t('transportation.form.contact_info')}</FormLabel>
               <Input
-                placeholder="Hermela Araya"
+                placeholder={t('transportation.form.requester_placeholder')}
                 className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
               />
             </div>
@@ -178,16 +180,19 @@ export default function TransportationPage() {
             {/* Phone & Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <FormLabel>Phone Number <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">(WhatsApp Preferred)</span></FormLabel>
+                <FormLabel>
+                  {t('transportation.form.phone_number')} 
+                  <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">{t('transportation.form.whatsapp_preferred')}</span>
+                </FormLabel>
                 <Input
-                  placeholder="+251 9xx xxx xxxx"
+                  placeholder={t('transportation.form.phone_placeholder')}
                   className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
                 />
               </div>
               <div className="space-y-2">
-                <FormLabel optional>Email Address</FormLabel>
+                <FormLabel optional optionalText={t('transportation.form.optional')}>{t('transportation.form.email_address')}</FormLabel>
                 <Input
-                  placeholder="Enter your email address"
+                  placeholder={t('transportation.form.email_placeholder')}
                   className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
                 />
               </div>
@@ -195,9 +200,12 @@ export default function TransportationPage() {
 
             {/* Passenger Name (Optional) */}
             <div className="space-y-2">
-              <FormLabel optional>Passenger Name <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">- if different from requester</span></FormLabel>
+              <FormLabel optional optionalText={t('transportation.form.optional')}>
+                {t('transportation.form.passenger_name')} 
+                <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">{t('transportation.form.passenger_note')}</span>
+              </FormLabel>
               <Input
-                placeholder="e.g. Name of person being picked up"
+                placeholder={t('transportation.form.passenger_placeholder')}
                 className="h-12 bg-[#F6F6F6] border-none rounded-sm px-6 text-neutral-1 font-medium"
               />
             </div>
@@ -205,10 +213,10 @@ export default function TransportationPage() {
             {/* Confirm Button */}
             <div className="pt-8 space-y-6 text-center">
               <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-lg transition-transform active:scale-[0.98]">
-                Confirm Booking
+                {t('transportation.form.confirm_button')}
               </Button>
               <p className="text-sm text-neutral-2 font-medium opacity-70">
-                Price includes tax and gratuity. Free cancellation up to 24h before.
+                {t('transportation.form.footer_note')}
               </p>
             </div>
           </form>

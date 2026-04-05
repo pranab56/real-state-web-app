@@ -104,7 +104,7 @@ const featuredHomes = [
   { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=100&h=100&fit=crop' },
 ];
 
-const SidebarSelect = ({ placeholder, label }: { placeholder: string; label: string }) => {
+const SidebarSelect = ({ label }: { label: string }) => {
   const { t } = useTranslation('common');
   return (
     <Select>
@@ -185,10 +185,10 @@ export default function PropertiesPage() {
 
             {/* Basic Selects */}
             <div className="space-y-4">
-              <SidebarSelect placeholder="Status" label={t('listing.sidebar.status')} />
-              <SidebarSelect placeholder="Type" label={t('listing.sidebar.type')} />
-              <SidebarSelect placeholder="Bath" label={t('listing.sidebar.bath')} />
-              <SidebarSelect placeholder="Bed" label={t('listing.sidebar.bed')} />
+              <SidebarSelect label={t('listing.sidebar.status')} />
+              <SidebarSelect label={t('listing.sidebar.type')} />
+              <SidebarSelect label={t('listing.sidebar.bath')} />
+              <SidebarSelect label={t('listing.sidebar.bed')} />
             </div>
 
             {/* Price Range */}
@@ -212,10 +212,10 @@ export default function PropertiesPage() {
 
             {/* Advanced Selects */}
             <div className="space-y-4 pt-4 border-t border-gray-50">
-              <SidebarSelect placeholder="Province" label={t('listing.sidebar.province')} />
-              <SidebarSelect placeholder="Room" label={t('listing.sidebar.room')} />
-              <SidebarSelect placeholder="Garage" label={t('listing.sidebar.garage')} />
-              <SidebarSelect placeholder="Label" label={t('listing.sidebar.label')} />
+              <SidebarSelect label={t('listing.sidebar.province')} />
+              <SidebarSelect label={t('listing.sidebar.room')} />
+              <SidebarSelect label={t('listing.sidebar.garage')} />
+              <SidebarSelect label={t('listing.sidebar.label')} />
             </div>
 
             {/* Amenities Checklist */}

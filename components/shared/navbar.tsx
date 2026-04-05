@@ -34,10 +34,10 @@ export function Navbar() {
 
   const menuItems = [
     { name: t('navbar.home'), href: '/' },
-    { name: 'Properties', href: '/properties' }, // User might have more to translate later, sticking to common keys first
-    { name: 'Hotels', href: '/hotels' },
-    { name: 'Transportation', href: '/transportation' },
-    { name: 'Blog', href: '/blog' },
+    { name: t('navbar.properties'), href: '/properties' },
+    { name: t('navbar.hotels'), href: '/hotels' },
+    { name: t('navbar.transportation'), href: '/transportation' },
+    { name: t('navbar.blog'), href: '/blog' },
     {
       name: t('navbar.company'),
       href: '#',
@@ -54,7 +54,7 @@ export function Navbar() {
     { name: 'AM', fullName: 'Amharic', flag: '🇪🇹', code: 'am' },
     { name: 'RU', fullName: 'Russian', flag: '🇷🇺', code: 'ru' },
   ];
-  
+
   const selectedLang = languages.find(l => l.code === i18n.language) || languages[0];
 
   const handleLanguageChange = (lang: typeof languages[0]) => {

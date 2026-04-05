@@ -15,6 +15,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     setIsMounted(true);
     try {
       const saved = localStorage.getItem('sidebar-collapsed');
@@ -26,6 +27,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // ignore
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const setCollapsed = (collapsed: boolean) => {

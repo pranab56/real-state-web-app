@@ -7,24 +7,22 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 import { getOptions } from './settings';
 
 // Initialize i18next only on the client side
-if (typeof window !== 'undefined') {
-  i18next
-    .use(initReactI18next)
-    .use(LanguageDetector)
-    .use(
-      resourcesToBackend(
-        (language: string, namespace: string) =>
-          import(`../../public/locales/${language}/${namespace}.json`)
-      )
+i18next
+  .use(initReactI18next)
+  .use(LanguageDetector)
+  .use(
+    resourcesToBackend(
+      (language: string, namespace: string) =>
+        import(`../../public/locales/${language}/${namespace}.json`)
     )
-    .init({
-      ...getOptions(),
-      detection: {
-        caches: ['localStorage', 'cookie'],
-        order: ['querystring', 'localStorage', 'cookie', 'navigator', 'htmlTag', 'path', 'subdomain'],
-      },
-      preload: ['en'], // Preload fallback
-    });
-}
+  )
+  .init({
+    ...getOptions(),
+    detection: {
+      caches: ['localStorage', 'cookie'],
+      order: ['querystring', 'localStorage', 'cookie', 'navigator', 'htmlTag', 'path', 'subdomain'],
+    },
+    preload: ['en'], // Preload fallback
+  });
 
 export default i18next;

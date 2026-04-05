@@ -9,14 +9,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Initializing on client
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
-
-  if (!mounted) {
-    // Return children to avoid blocking SSR entirely, 
-    // though translations will only appear on hydration if we don't do SSR i18n
-    return <>{children}</>;
-  }
 
   return <I18nextProvider i18n={i18nClient}>{children}</I18nextProvider>;
 }

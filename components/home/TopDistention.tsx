@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Heart, MapPin, Search, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, MapPin, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 

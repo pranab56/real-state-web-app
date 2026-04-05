@@ -189,7 +189,7 @@ export default function Hero() {
                     )}
                   >
                     {showAdvanced ? <X size={24} /> : <span className="font-bold hidden md:inline">{t('hero.advanced')}</span>}
-                    {!showAdvanced && <span className="md:hidden"><div className="w-5 h-px bg-white mb-1"/><div className="w-5 h-px bg-white mb-1"/><div className="w-5 h-px bg-white"/></span>}
+                    {!showAdvanced && <span className="md:hidden"><div className="w-5 h-px bg-white mb-1" /><div className="w-5 h-px bg-white mb-1" /><div className="w-5 h-px bg-white" /></span>}
                   </button>
                   <Button className="h-12 px-6 md:px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white rounded flex items-center justify-center gap-2 md:gap-3 shadow-xl transition-all flex-1">
                     <span className="font-bold text-sm md:text-base">{t('hero.search')}</span>

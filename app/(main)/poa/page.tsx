@@ -13,6 +13,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
 interface FeatureCardProps {
   icon: React.ElementType;
@@ -44,6 +45,8 @@ const ProcessStep = ({ title, description }: { title: string, description: strin
 );
 
 export default function POAPage() {
+  const { t } = useTranslation('common');
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -54,17 +57,18 @@ export default function POAPage() {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-6 md:space-y-8"
           >
-            <h1 className="text-3xl md:text-4xl font-black text-neutral-1 uppercase leading-tight tracking-tight">
-              Legal & Power of <br className="hidden md:block" /> Attorney (POA) Services
-            </h1>
+            <h1 
+              className="text-3xl md:text-4xl font-black text-neutral-1 uppercase leading-tight tracking-tight"
+              dangerouslySetInnerHTML={{ __html: t('poa.title') }}
+            />
             <p className="text-sm md:text-lg  text-neutral-2 max-w-xl font-medium leading-relaxed">
-              Secure Property Transactions in Ethiopia. We represent buyers abroad to ensure safe, legal, and transparent investments through professional Power of Attorney management.
+              {t('poa.subtitle')}
             </p>
             <Button
               onClick={() => document.getElementById('consultation-form')?.scrollIntoView({ behavior: 'smooth' })}
               className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all cursor-pointer text-sm md:text-base"
             >
-              Request Legal Assistance
+              {t('poa.request_assistance')}
             </Button>
           </motion.div>
           <motion.div
@@ -74,7 +78,7 @@ export default function POAPage() {
           >
             <Image
               src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=1200&h=800&fit=crop"
-              alt="Legal Background"
+              alt={t('poa.hero_img_alt')}
               width={1200}
               height={800}
               className="object-cover"
@@ -86,24 +90,24 @@ export default function POAPage() {
       {/* Why Use ZilaHomes POA? Section */}
       <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
         <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-          <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">Why Use ZilaHomes POA?</h2>
-          <p className="text-neutral-2">We bridge the gap between your location abroad and the Ethiopian property market with ironclad legal protection.</p>
+          <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">{t('poa.why_title')}</h2>
+          <p className="text-neutral-2">{t('poa.why_subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
             icon={Search}
-            title="Verify Ownership"
-            description="Rigorous checks of land titles, historical records, and official registry to prevent fraud and disputes."
+            title={t('poa.features.verify_title')}
+            description={t('poa.features.verify_desc')}
           />
           <FeatureCard
             icon={FileText}
-            title="Manage Agreements"
-            description="Expert handling of sales and purchase contracts, ensuring terms are favorable and legally binding in Ethiopia."
+            title={t('poa.features.manage_title')}
+            description={t('poa.features.manage_desc')}
           />
           <FeatureCard
             icon={ShieldCheck}
-            title="Protect Investment"
-            description="Ensuring your funds are held securely and property rights are transferred only when all conditions are met."
+            title={t('poa.features.protect_title')}
+            description={t('poa.features.protect_desc')}
           />
         </div>
       </section>
@@ -112,7 +116,7 @@ export default function POAPage() {
       <section className="bg-[#1E2024] py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
           <div className="text-center font-bold">
-            <h2 className="text-2xl md:text-4xl text-white tracking-tight">Our 4-Step Secure Process</h2>
+            <h2 className="text-2xl md:text-4xl text-white tracking-tight">{t('poa.process.title')}</h2>
           </div>
           <motion.div
             initial="hidden"
@@ -124,20 +128,20 @@ export default function POAPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             <ProcessStep
-              title="Property Selection"
-              description="Choose from our verified listings or bring your own property for assessment."
+              title={t('poa.process.step1_title')}
+              description={t('poa.process.step1_desc')}
             />
             <ProcessStep
-              title="Legal Verification"
-              description="Our legal team conducts a full title search and due diligence at the sub-city land registry."
+              title={t('poa.process.step2_title')}
+              description={t('poa.process.step2_desc')}
             />
             <ProcessStep
-              title="POA Authorization"
-              description="Authorize ZilaHomes as your legal representative through the Ethiopian Embassy or Ministry of Foreign Affairs."
+              title={t('poa.process.step3_title')}
+              description={t('poa.process.step3_desc')}
             />
             <ProcessStep
-              title="Secure Transaction"
-              description="Finalize the purchase, manage payments via escrow, and receive the title deed in your name."
+              title={t('poa.process.step4_title')}
+              description={t('poa.process.step4_desc')}
             />
           </motion.div>
         </div>
@@ -149,35 +153,35 @@ export default function POAPage() {
           <div className="lg:w-1/2 relative min-h-[250px] md:min-h-[400px]">
             <Image
               src="/images/company/image1.png"
-              alt="Consultation"
+              alt={t('poa.consultation_img_alt')}
               fill
               className="object-cover brightness-[0.9]"
             />
           </div>
           <div className="lg:w-1/2 p-10 lg:p-16 space-y-8 bg-white">
             <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-neutral-1">Request a Legal Consultation</h2>
-              <p className="text-neutral-2 font-medium">Speak with our legal experts to understand how we can represent your interests in Ethiopia.</p>
+              <h2 className="text-3xl font-bold text-neutral-1">{t('poa.consultation.title')}</h2>
+              <p className="text-neutral-2 font-medium">{t('poa.consultation.subtitle')}</p>
             </div>
             <form className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-neutral-1 ml-1">Full Name</label>
-                <Input placeholder="John Doe" className="h-12 bg-[#F6F6F6] border-none rounded-lg px-6 font-medium" />
+                <label className="text-sm font-bold text-neutral-1 ml-1">{t('poa.consultation.name')}</label>
+                <Input placeholder={t('poa.consultation.name_placeholder')} className="h-12 bg-[#F6F6F6] border-none rounded-lg px-6 font-medium" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-neutral-1 ml-1">Email Address</label>
-                <Input placeholder="john@example.com" className="h-12 bg-[#F6F6F6] border-none rounded-lg px-6 font-medium" />
+                <label className="text-sm font-bold text-neutral-1 ml-1">{t('poa.consultation.email')}</label>
+                <Input placeholder={t('poa.consultation.email_placeholder')} className="h-12 bg-[#F6F6F6] border-none rounded-lg px-6 font-medium" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-neutral-1 ml-1">Phone Number</label>
-                <Input placeholder="+1 (234) 567-8900" className="h-12 bg-[#F6F6F6] border-none rounded-lg px-6 font-medium" />
+                <label className="text-sm font-bold text-neutral-1 ml-1">{t('poa.consultation.phone')}</label>
+                <Input placeholder={t('poa.consultation.phone_placeholder')} className="h-12 bg-[#F6F6F6] border-none rounded-lg px-6 font-medium" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-neutral-1 ml-1">Message</label>
-                <Textarea placeholder="Tell us about your property interests..." className="min-h-[120px] bg-[#F6F6F6] border-none rounded-lg p-6 font-medium resize-none" />
+                <label className="text-sm font-bold text-neutral-1 ml-1">{t('poa.consultation.message')}</label>
+                <Textarea placeholder={t('poa.consultation.message_placeholder')} className="min-h-[120px] bg-[#F6F6F6] border-none rounded-lg p-6 font-medium resize-none" />
               </div>
               <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-transform active:scale-[0.98]">
-                Request Consultation
+                {t('poa.consultation.submit')}
               </Button>
             </form>
           </div>
@@ -188,27 +192,27 @@ export default function POAPage() {
       <section className="bg-orange-50/20 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
           <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-            <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">Why Choose Zila Legal?</h2>
-            <p className="text-neutral-2">Secure and reliable legal services tailored for the global diaspora, ensuring your investments are protected across borders.</p>
+            <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">{t('why.title')}</h2>
+            <p className="text-neutral-2">{t('why.subtitle')}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <FeatureCard
               light
               icon={Lock}
-              title="Secure Transactions"
-              description="End-to-end encryption and bank-grade security protocols for all your legal documents and private data."
+              title={t('why.benefits.secure_title')}
+              description={t('why.benefits.secure_desc')}
             />
             <FeatureCard
               light
               icon={UserCheck}
-              title="Verified Partners"
-              description="Direct access to our hand-vetted network of top-tier legal professionals and qualified solicitors."
+              title={t('why.benefits.partners_title')}
+              description={t('why.benefits.partners_desc')}
             />
             <FeatureCard
               light
               icon={Globe}
-              title="Remote Management"
-              description="Complete control over your international assets from anywhere in the world without the need for travel."
+              title={t('why.benefits.remote_title')}
+              description={t('why.benefits.remote_desc')}
             />
           </div>
         </div>
