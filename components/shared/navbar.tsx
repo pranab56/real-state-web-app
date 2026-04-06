@@ -186,7 +186,7 @@ export function Navbar() {
               "group relative flex items-center cursor-pointer gap-2 text-[15px] font-bold transition-all outline-none py-1",
               "text-white/80 hover:text-white"
             )}>
-              <div className="relative w-6 h-4 overflow-hidden rounded-sm shadow-sm">
+              <div className="relative w-6 h-4 overflow-hidden rounded-sm ">
                 <Image src={selectedLang.flag} alt={selectedLang.name} fill className="object-cover" />
               </div>
               <span>{selectedLang.name}</span>
