@@ -8,7 +8,7 @@
     "company": "Company",
     "poa": "POA",
     "about": "About Us",
-    "sell_property": "Sell Property",
+    "sell_property": "Register Property",
     "select_language": "Select Language"
   },
   "hero": {
@@ -212,7 +212,7 @@
   },
   "transportation": {
     "hero": {
-      "title": "Book Airport Pickup or <br class=\"hidden md:block\"/> Private Transport",
+      "title": "Book Premium Airport Pickup & Drop-Off <br class=\"hidden md:block\"/> Services & Private Transportation",
       "subtitle": "Reliable airport pickup, drop-off, and private transportation services across Ethiopia."
     },
     "form": {
@@ -420,7 +420,14 @@
     ]
   },
   "footer": {
-    "rights": "All rights reserved",
-    "company": "ZilaHomes"
+    "tagline": "Premium real estate and travel solutions for the modern explorer. From villas to private jets, we handle it all.",
+    "company": "Company",
+    "legal": "Legal",
+    "newsletter": "Newsletter",
+    "newsletter_desc": "Sign Up to receive the latest articles",
+    "newsletter_placeholder": "Your email address here...",
+    "subscribe": "Subscribe",
+    "rights": "© 2025 Zila Homes. All rights reserved.",
+    "certified": "SOC2 Type II Certified."
   }
 }

@@ -181,7 +181,7 @@ export default function TransportationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <FormLabel>
-                  {t('transportation.form.phone_number')} 
+                  {t('transportation.form.phone_number')}
                   <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">{t('transportation.form.whatsapp_preferred')}</span>
                 </FormLabel>
                 <Input
@@ -201,7 +201,7 @@ export default function TransportationPage() {
             {/* Passenger Name (Optional) */}
             <div className="space-y-2">
               <FormLabel optional optionalText={t('transportation.form.optional')}>
-                {t('transportation.form.passenger_name')} 
+                {t('transportation.form.passenger_name')}
                 <span className="text-[10px] text-neutral-2 font-medium opacity-60 ml-1">{t('transportation.form.passenger_note')}</span>
               </FormLabel>
               <Input

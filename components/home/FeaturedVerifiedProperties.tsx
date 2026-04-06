@@ -3,11 +3,11 @@
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowRightLeft,
   Bath,
   Bed,
   ChevronLeft,
   ChevronRight,
+  Copy,
   Heart,
   MapPin,
   Maximize2
@@ -188,7 +188,7 @@ export default function FeaturedVerifiedProperties() {
                   {/* Hover Icons - Fixed for Touch */}
                   <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-500">
                     <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
-                      <ArrowRightLeft size={16} className="md:size-[18px]" />
+                      <Copy size={16} className="md:size-[18px]" />
                     </button>
                     <button className="w-9 h-9 md:w-10 md:h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors cursor-pointer">
                       <Heart size={16} className="md:size-[18px]" />

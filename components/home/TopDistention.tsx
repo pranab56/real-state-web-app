@@ -43,7 +43,7 @@ export default function TopDistention() {
     <section className="py-12 md:py-24 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 md:mb-16 text-center md:text-left px-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-center text-center gap-6 mb-10 md:mb-16 px-4">
           <div className="space-y-2 md:space-y-4">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -109,7 +109,7 @@ export default function TopDistention() {
                     <span className="text-2xl md:text-3xl font-bold text-primary">${dest.price}</span>
                     <span className="text-xs md:text-sm text-neutral-2 font-medium">{t('top_dest.per_night')}</span>
                   </div>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold px-6 md:px-8 py-2 md:py-3 rounded-xl transition-all text-sm md:text-base">
+                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold px-6 md:px-8 py-5 cursor-pointer md:py-6 rounded-sm transition-all text-sm md:text-base">
                     {t('top_dest.book_now')}
                   </Button>
                 </div>

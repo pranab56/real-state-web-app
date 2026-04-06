@@ -22,8 +22,11 @@ const PolicySection = ({ index, title, content }: { index: number; title: string
   );
 };
 
+
+
 export default function PrivacyPage() {
   const { t } = useTranslation('common');
+
 
   return (
     <div className="min-h-screen bg-white">

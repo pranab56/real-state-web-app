@@ -123,16 +123,18 @@ const SidebarSelect = ({ label }: { label: string }) => {
 export default function PropertiesPage() {
   const { t } = useTranslation('common');
 
+
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Header */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-[#1E2024] overflow-hidden">
         {/* Background Image/Overlay */}
         <div className="absolute inset-0 z-0">
-          <Image 
-            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop" 
-            alt="Properties Hero" 
-            fill 
+          <Image
+            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"
+            alt="Properties Hero"
+            fill
             className="object-cover opacity-40"
             priority
           />
@@ -152,8 +154,8 @@ export default function PropertiesPage() {
               <ChevronRight size={10} />
               <span className="text-white">{t('listing.hero.properties')}</span>
             </div>
-            
-            <h1 
+
+            <h1
               className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight"
               dangerouslySetInnerHTML={{ __html: t('listing.hero.title') }}
             />
@@ -165,7 +167,6 @@ export default function PropertiesPage() {
       </section>
 
       <div className="container mx-auto px-4 md:px-6 py-12 md:pb-24 lg:flex gap-12">
-
         {/* Sidebar Filters */}
         <aside className="lg:w-[320px] flex-shrink-0 space-y-10">
           <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-8 shadow-sm">
@@ -274,7 +275,7 @@ export default function PropertiesPage() {
         <main className="flex-1 space-y-8 mt-10 md:mt-12 lg:mt-0">
           {/* List Header */}
           <div className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-gray-100 gap-4 sm:gap-0">
-            <span 
+            <span
               className="text-neutral-2 font-medium italic text-[13px] md:text-sm"
               dangerouslySetInnerHTML={{ __html: t('listing.main.showing', { start: 1, end: 6, total: 24 }) }}
             />

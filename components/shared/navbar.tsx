@@ -2,7 +2,8 @@
 
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Building2, ChevronDown, Menu, User, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -34,25 +35,35 @@ export function Navbar() {
 
   const menuItems = [
     { name: t('navbar.home'), href: '/' },
-    { name: t('navbar.properties'), href: '/properties' },
-    { name: t('navbar.hotels'), href: '/hotels' },
-    { name: t('navbar.transportation'), href: '/transportation' },
+    {
+      name: t('navbar.properties'),
+      href: '#',
+      hasDropdown: true,
+      subItems: [
+        { name: 'Real Estate', href: '/properties' },
+        { name: 'Hotels', href: '/hotels' },
+        { name: 'Transportation', href: '/transportation' },
+      ]
+    },
     { name: t('navbar.blog'), href: '/blog' },
+    { name: t('navbar.poa'), href: '/poa' },
     {
       name: t('navbar.company'),
       href: '#',
       hasDropdown: true,
       subItems: [
-        { name: t('navbar.poa'), href: '/poa' },
-        { name: t('navbar.about'), href: '/about' }
+        { name: t('navbar.about'), href: '/about' },
+        { name: 'Terms of Service', href: '/terms' },
+        { name: 'Privacy Policy', href: '/privacy' },
       ]
     }
   ];
 
   const languages = [
-    { name: 'EN', fullName: 'English', flag: '🇺🇸', code: 'en' },
-    { name: 'AM', fullName: 'Amharic', flag: '🇪🇹', code: 'am' },
-    { name: 'RU', fullName: 'Russian', flag: '🇷🇺', code: 'ru' },
+    { name: 'EN', fullName: 'English', flag: '/icons/flags/en.png', code: 'en' },
+    { name: 'AR', fullName: 'العربية', flag: '/icons/flags/ar.png', code: 'ar' },
+    { name: 'RU', fullName: 'Русский', flag: '/icons/flags/ru.png', code: 'ru' },
+    { name: 'AM', fullName: 'አማርኛ', flag: '/icons/flags/am.png', code: 'am' },
   ];
 
   const selectedLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -61,7 +72,6 @@ export function Navbar() {
     i18n.changeLanguage(lang.code);
   };
 
-  // Logic for background - Always solid on internal pages, scroll-based on Home
   const showBackground = !isHome || scrolled || isOpen;
 
   const isDashboardRoute =
@@ -79,28 +89,39 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4 md:px-6',
-        showBackground ? 'bg-[#1E2024]/90 backdrop-blur-md py-3 shadow-xl' : 'bg-transparent py-4 md:py-6'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-3 md:px-6',
+        showBackground ? 'bg-[#1E2024]/80 backdrop-blur-md py-2.5 md:py-3 shadow-xl' : 'bg-transparent py-4 md:py-6'
       )}
     >
-      <div className="max-w-[1400px] mx-auto flex items-center justify-between relative z-10">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="relative w-8 h-8 md:w-10 md:h-10">
-            <svg viewBox="0 0 100 100" fill="none" className="w-full h-full drop-shadow-lg">
-              <path d="M20 50L50 25L80 50" stroke="#F1913D" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M30 45L70 45L30 85L70 85" stroke="#F1913D" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M45 55L55 65L85 35" stroke="#2B9724" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg md:text-xl font-black text-white tracking-tighter leading-none group-hover:text-primary transition-colors">ZilaHomes</span>
-            <span className="text-[5px] md:text-[6px] text-white/60 tracking-[0.2em] font-bold uppercase mt-0.5">Verified • Trusted • Connected</span>
+      <div className="max-w-[1440px] mx-auto flex items-center justify-between relative z-10 w-full overflow-hidden">
+        {/* Logo Container */}
+        <Link href="/" className="flex items-center shrink-0">
+          <div className="relative h-7 md:h-12 w-28 sm:w-32 md:w-48">
+            {/* Desktop Logo */}
+            <div className="hidden md:block relative w-full h-full">
+              <Image
+                src="/icons/logo.png"
+                alt="Zila Homes"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            {/* Mobile Logo */}
+            <div className="block md:hidden relative w-full h-full">
+              <Image
+                src="/icons/mobile-logo.png"
+                alt="Zila Homes"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
         </Link>
 
-        {/* Desktop Menu Items */}
-        <div className="hidden lg:flex items-center gap-8">
+        {/* Desktop Navigation Links */}
+        <div className="hidden lg:flex items-center gap-5 xl:gap-10">
           {menuItems.map((item) => {
             const isActive = pathname === item.href || (item.subItems?.some(sub => pathname === sub.href));
 
@@ -108,37 +129,38 @@ export function Navbar() {
               return (
                 <DropdownMenu key={item.name}>
                   <DropdownMenuTrigger className={cn(
-                    "group relative flex items-center cursor-pointer gap-1 text-sm font-semibold transition-colors tracking-wide outline-none py-1",
-                    isActive ? "text-white" : "text-white/70 hover:text-white"
+                    "group relative flex items-center cursor-pointer gap-1.5 text-[15px] font-bold transition-all outline-none py-1",
+                    isActive ? "text-white" : "text-white/80 hover:text-white"
                   )}>
                     {item.name}
-                    <ChevronDown size={14} className={cn("opacity-70 transition-transform duration-300", isActive && "rotate-180")} />
-                    {isActive && (
-                      <motion.div
-                        layoutId="nav-underline"
-                        className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-primary rounded-full shadow-lg shadow-primary/40"
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      />
-                    )}
+                    <ChevronDown size={16} className={cn("opacity-60 transition-transform duration-300", isActive && "rotate-180")} />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-gray-600 border-white/20 text-white rounded-xl p-2 min-w-[160px] shadow-2xl overflow-hidden">
-                    {item.subItems.map((sub) => {
-                      const isSubActive = pathname === sub.href;
-                      return (
-                        <DropdownMenuItem key={sub.name} className="focus:bg-transparent p-0">
-                          <Link
-                            href={sub.href}
-                            className={cn(
-                              "w-full px-4 py-2.5 text-sm font-medium rounded-lg transition-all flex items-center justify-between group/sub",
-                              isSubActive ? "bg-white/20 backdrop-blur-sm text-white" : "hover:bg-white/5 text-white/80 hover:text-white"
-                            )}
-                          >
-                            <span>{sub.name}</span>
-                            {isSubActive && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />}
-                          </Link>
-                        </DropdownMenuItem>
-                      );
-                    })}
+                  <DropdownMenuContent
+                    align="start"
+                    sideOffset={15}
+                    className="bg-[#EAEAEA] border-none text-neutral-1 rounded-[15px] p-1 min-w-[200px] shadow-2xl relative overflow-visible"
+                  >
+                    {/* Bubble Pointer */}
+                    <div className="absolute -top-1.5 left-6 w-3 h-3 bg-[#EAEAEA] rotate-45" />
+
+                    <div className="flex flex-col gap-1 relative z-10">
+                      {item.subItems.map((sub) => {
+                        const isSubActive = pathname === sub.href;
+                        return (
+                          <DropdownMenuItem key={sub.name} className="focus:bg-transparent p-0">
+                            <Link
+                              href={sub.href}
+                              className={cn(
+                                "w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center justify-between group/sub",
+                                isSubActive ? "bg-black/5 text-neutral-1" : "hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
+                              )}
+                            >
+                              <span>{sub.name}</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
               );
@@ -149,131 +171,113 @@ export function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "relative flex items-center gap-1 text-sm font-semibold transition-colors tracking-wide py-1",
-                  isActive ? "text-white" : "text-white/70 hover:text-white"
+                  "relative flex items-center gap-1 text-[15px] font-bold transition-all py-1",
+                  isActive ? "text-white" : "text-white/80 hover:text-white"
                 )}
               >
                 {item.name}
-                {isActive && (
-                  <motion.div
-                    layoutId="nav-underline"
-                    className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-primary rounded-full shadow-lg shadow-primary/40"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
               </Link>
             );
           })}
-        </div>
 
-        {/* Right Side Actions & Mobile Toggle */}
-        <div className="flex items-center gap-2 md:gap-4">
-          {/* Language Switcher */}
+          {/* Language Switcher in Primary Nav Row */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="outline-none">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2  px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 py-2.5 cursor-pointer hover:bg-white/20 transition-all text-white text-sm font-bold min-w-[100px] justify-center"
-              >
-                <span>{selectedLang.flag}</span>
-                <span>{selectedLang.name}</span>
-                <ChevronDown size={12} className="opacity-50" />
-              </motion.div>
+            <DropdownMenuTrigger className={cn(
+              "group relative flex items-center cursor-pointer gap-2 text-[15px] font-bold transition-all outline-none py-1",
+              "text-white/80 hover:text-white"
+            )}>
+              <div className="relative w-6 h-4 overflow-hidden rounded-sm shadow-sm">
+                <Image src={selectedLang.flag} alt={selectedLang.name} fill className="object-cover" />
+              </div>
+              <span>{selectedLang.name}</span>
+              <ChevronDown size={16} className="opacity-60 transition-transform duration-300 group-data-[state=open]:rotate-180" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-gray-800 border-white/10 text-white rounded-xl p-1.5 min-w-[140px] shadow-2xl z-[60]">
-              {languages.map((lang) => (
-                <DropdownMenuItem
-                  key={lang.name}
-                  className="focus:bg-white/10 p-2 rounded-lg outline-none cursor-pointer"
-                  onClick={() => handleLanguageChange(lang)}
-                >
-                  <div
-                    className={cn(
-                      "w-full px-2 py-1 text-sm font-medium transition-all flex items-center gap-3",
-                      selectedLang.name === lang.name ? "text-primary" : "text-white/70 hover:text-white"
-                    )}
+            <DropdownMenuContent
+              align="start"
+              sideOffset={15}
+              className="bg-[#EAEAEA] border-none text-neutral-1 rounded-[15px] p-1 min-w-[160px] shadow-2xl relative overflow-visible"
+            >
+              <div className="absolute -top-1.5 left-6 w-3 h-3 bg-[#EAEAEA] rotate-45" />
+              <div className="flex flex-col gap-1 relative z-10">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.name}
+                    className="focus:bg-transparent p-0"
+                    onClick={() => handleLanguageChange(lang)}
                   >
-                    <span className="text-base leading-none">{lang.flag}</span>
-                    <span>{lang.name}</span>
-                    {selectedLang.name === lang.name && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
-                  </div>
-                </DropdownMenuItem>
-              ))}
+                    <div
+                      className={cn(
+                        "w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center justify-between cursor-pointer group/sub",
+                        selectedLang.code === lang.code ? "bg-black/5 text-neutral-1" : "hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-6 h-4 overflow-hidden rounded-sm shrink-0">
+                          <Image src={lang.flag} alt={lang.fullName} fill className="object-cover" />
+                        </div>
+                        <span>{lang.fullName}</span>
+                      </div>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
 
+        {/* Right Side Actions */}
+        <div className="flex items-center gap-2 md:gap-5 ml-2">
+          {/* User Icon Button */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-colors"
+            className="w-9 h-9 md:w-12 md:h-12 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
           >
-            <User size={18} className="text-white/80 md:w-5 md:h-5" />
+            <Image src="/icons/user-lock.png" alt="User" width={28} height={28} className="w-6 h-6 md:w-7 md:h-7 object-contain" />
           </motion.div>
 
+          {/* Register Property Button */}
           <Button
-            className="hidden sm:flex bg-primary hover:bg-primary/90 text-white font-bold h-9 md:h-10 px-4 md:px-5 rounded-lg items-center gap-2 shadow-lg shadow-primary/20 transition-all border-none"
+            className="hidden sm:flex bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-black h-9 md:h-12 px-2 md:px-4 rounded-sm cursor-pointer items-center gap-2 md:gap-3 shadow-xl transition-all border-none text-[13px] md:text-sm group shrink-0"
           >
-            <Building2 size={18} />
-            <span>{t('navbar.sell_property')}</span>
+            <Image src="/icons/house.png" alt="Register" width={24} height={24} className="w-5 h-5 md:w-6 md:h-6 object-contain" />
+            <span className="hidden md:inline">Register Property</span>
+            <span className="md:hidden">Register</span>
           </Button>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="flex lg:hidden w-9 h-9 md:w-10 md:h-10 rounded-lg bg-white/10 border border-white/20 items-center justify-center text-white/80 hover:bg-white/20 transition-colors"
+            className="flex lg:hidden w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 items-center justify-center text-white/90 hover:bg-white/20 transition-all shadow-lg shrink-0"
             onClick={() => setIsOpen(!isOpen)}
           >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
+            {isOpen ? <X size={22} className="md:size-6" /> : <Menu size={22} className="md:size-6" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu Drawer */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="absolute top-full left-0 right-0 bg-[#1E2024]/95 backdrop-blur-xl border-t border-white/10 shadow-2xl lg:hidden p-4 flex flex-col max-h-[calc(100vh-80px)] overflow-y-auto z-40"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            className="absolute top-full left-4 right-4 mt-3 bg-[#1E2024]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] shadow-2xl lg:hidden p-5 flex flex-col max-h-[80vh] overflow-y-auto overflow-x-hidden z-40"
           >
-            <div className="flex flex-col gap-1 pb-4">
-              {/* Mobile Language Switcher */}
-              <div className="px-4 py-2 mb-2">
-                <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-3">Select Language</p>
-                <div className="grid grid-cols-3 gap-2 ">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.name}
-                      onClick={() => handleLanguageChange(lang)}
-                      className={cn(
-                        "flex flex-col items-center  justify-center gap-1.5 py-3 rounded-xl border transition-all",
-                        selectedLang.name === lang.name
-                          ? "bg-primary/20 border-primary/50 text-white"
-                          : "bg-white/5 border-white/10 text-white/60"
-                      )}
-                    >
-                      <span className="text-xl">{lang.flag}</span>
-                      <span className="text-[10px] font-bold">{lang.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
+            <div className="flex flex-col gap-3.5">
               {menuItems.map((item) => {
                 const isActive = pathname === item.href || (item.subItems?.some(sub => pathname === sub.href));
 
                 if (item.hasDropdown && item.subItems) {
                   const isDropdownOpen = openDropdown === item.name;
                   return (
-                    <div key={item.name} className="flex flex-col mb-2">
+                    <div key={item.name} className="flex flex-col">
                       <button
                         onClick={() => setOpenDropdown(isDropdownOpen ? null : item.name)}
-                        className="flex justify-between items-center text-white/50 hover:text-white transition-colors font-semibold py-2 px-4 uppercase text-[11px] tracking-wider w-full text-left"
+                        className="flex justify-between items-center text-white/90 font-black py-3 px-5 rounded-xl bg-white/5 transition-all text-sm tracking-wide"
                       >
                         {item.name}
-                        <ChevronDown size={14} className={cn("transition-transform duration-300", isDropdownOpen && "rotate-180")} />
+                        <ChevronDown size={18} className={cn("transition-transform duration-300 opacity-60", isDropdownOpen && "rotate-180")} />
                       </button>
                       <AnimatePresence>
                         {isDropdownOpen && (
@@ -281,9 +285,9 @@ export function Navbar() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden"
+                            className="overflow-hidden bg-white/5 rounded-xl mt-2"
                           >
-                            <div className="flex flex-col pl-4 border-l border-white/10 ml-4 space-y-1 mt-1">
+                            <div className="flex flex-col p-2 space-y-1">
                               {item.subItems.map((sub) => {
                                 const isSubActive = pathname === sub.href;
                                 return (
@@ -292,8 +296,8 @@ export function Navbar() {
                                     href={sub.href}
                                     onClick={() => { setIsOpen(false); setOpenDropdown(null); }}
                                     className={cn(
-                                      "py-2 px-4 text-sm font-medium transition-colors rounded-lg",
-                                      isSubActive ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
+                                      "py-3 px-5 text-[13px] font-bold transition-all rounded-lg",
+                                      isSubActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white"
                                     )}
                                   >
                                     {sub.name}
@@ -314,22 +318,45 @@ export function Navbar() {
                     href={item.href}
                     onClick={() => { setIsOpen(false); setOpenDropdown(null); }}
                     className={cn(
-                      "py-3 px-4 text-sm font-semibold rounded-lg transition-colors border border-transparent",
-                      isActive ? "bg-white/10 text-white border-white/5" : "text-white/70 hover:bg-white/5 hover:text-white"
+                      "py-3.5 px-6 text-sm font-black rounded-xl transition-all",
+                      isActive ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-white/60 hover:text-white"
                     )}
                   >
                     {item.name}
                   </Link>
                 );
               })}
-            </div>
 
-            <div className="mt-2 pt-4 border-t border-white/10 flex flex-col sm:hidden">
+              {/* Mobile Language Switcher */}
+              <div className="mt-2 pt-4 border-t border-white/10 px-1">
+                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4 ml-1">Language</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.name}
+                      onClick={() => handleLanguageChange(lang)}
+                      className={cn(
+                        "flex items-center gap-2.5 py-3 px-4 rounded-xl border transition-all",
+                        selectedLang.code === lang.code
+                          ? "bg-primary/20 border-primary/40 text-white shadow-lg"
+                          : "bg-white/5 border-white/5 text-white/60"
+                      )}
+                    >
+                      <div className="relative w-7 h-5 overflow-hidden rounded-sm  shrink-0">
+                        <Image src={lang.flag} alt={lang.name} fill className="object-cover" />
+                      </div>
+                      <span className="text-xs font-black">{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile CTA */}
               <Button
-                className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-11 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-primary/20 border-none"
+                className="mt-4 w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-black h-13 rounded-xl flex items-center justify-center gap-3 shadow-2xl border-none text-sm"
               >
-                <Building2 size={18} />
-                <span>Sell Property</span>
+                <Image src="/icons/house.png" alt="Register" width={22} height={22} className="w-5.5 h-5.5 object-contain" />
+                <span>Register Property</span>
               </Button>
             </div>
           </motion.div>

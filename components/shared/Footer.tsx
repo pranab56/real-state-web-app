@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslation } from "react-i18next";
 
 function Logo() {
   return (
@@ -40,6 +41,7 @@ function Logo() {
 }
 
 export default function Footer() {
+  const { t } = useTranslation('common');
   const pathname = usePathname();
 
   if (
@@ -59,44 +61,44 @@ export default function Footer() {
           <div className="md:col-span-4 flex flex-col items-center md:items-start gap-6 md:gap-10 text-center md:text-left">
             <Logo />
             <p className="text-[#A1A1A1] text-base md:text-lg leading-relaxed max-w-sm">
-              Premium real estate and travel solutions for the modern explorer. From villas to private jets, we handle it all.
+              {t('footer.tagline')}
             </p>
           </div>
 
           {/* Links Columns */}
           <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-bold">Company</h3>
+            <h3 className="text-lg md:text-xl font-bold">{t('footer.company')}</h3>
             <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
-              <Link href="/properties" className="hover:text-white transition-colors">Properties</Link>
-              <Link href="/hotels" className="hover:text-white transition-colors">Hotels</Link>
-              <Link href="/transportation" className="hover:text-white transition-colors">Transportation</Link>
-              <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
+              <Link href="/properties" className="hover:text-white transition-colors">{t('navbar.properties')}</Link>
+              <Link href="/hotels" className="hover:text-white transition-colors">{t('navbar.hotels')}</Link>
+              <Link href="/transportation" className="hover:text-white transition-colors">{t('navbar.transportation')}</Link>
+              <Link href="/about" className="hover:text-white transition-colors">{t('navbar.about')}</Link>
             </div>
           </div>
 
           <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-bold">Legal</h3>
+            <h3 className="text-lg md:text-xl font-bold">{t('footer.legal')}</h3>
             <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
-              <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">{t('terms.title')}</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors">{t('privacy.title')}</Link>
             </div>
           </div>
 
           {/* Newsletter Column */}
           <div className="md:col-span-4 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-bold">Newsletter</h3>
-            <p className="text-[#A1A1A1] text-sm md:text-base">Sign Up to receive the latest articles</p>
+            <h3 className="text-lg md:text-xl font-bold">{t('footer.newsletter')}</h3>
+            <p className="text-[#A1A1A1] text-sm md:text-base">{t('footer.newsletter_desc')}</p>
             <div className="flex flex-col gap-3 md:gap-4 w-full max-w-sm">
               <Input
                 type="email"
-                placeholder="Your email address here..."
+                placeholder={t('footer.newsletter_placeholder')}
                 className="h-12 md:h-14 bg-[#2C2E33] border border-white/60 placeholder:text-white/60 text-white rounded-xl px-4 text-sm md:text-base focus-visible:ring-1 focus-visible:ring-primary"
               />
               <Button
                 size="lg"
                 className="h-12 md:h-14 text-white font-bold text-base md:text-lg rounded-xl transition-all shadow-lg w-full"
               >
-                Subscribe
+                {t('footer.subscribe')}
               </Button>
             </div>
           </div>
@@ -105,9 +107,9 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="mt-12 md:mt-20 pt-8 md:pt-10 border-t border-white/10 text-center">
           <p className="text-[#A1A1A1] text-xs md:text-base flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5">
-            <span>© 2025 Zila Homes. All rights reserved.</span>
+            <span>{t('footer.rights')}</span>
             <span className="hidden md:inline">•</span>
-            <span>SOC2 Type II Certified.</span>
+            <span>{t('footer.certified')}</span>
           </p>
         </div>
       </div>

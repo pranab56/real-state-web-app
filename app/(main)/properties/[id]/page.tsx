@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import {
   Bath,
   BedDouble,
   Calendar,
   Car,
   Check,
+  ChevronLeft,
   ChevronRight,
   Clock,
   Heart,
@@ -99,6 +101,7 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 type ReplyFormValues = z.infer<typeof replySchema>;
 
 export default function PropertyDetailPage() {
+  const router = useRouter(); // Initialize router
   const contactForm = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: '', phone: '', email: '', message: '' }
@@ -121,7 +124,17 @@ export default function PropertyDetailPage() {
     <div className="min-h-screen bg-white pt-10">
       {/* Photo Gallery Header */}
       <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 h-auto md:h-[500px]">
+        <div className="flex flex-col gap-8 md:gap-12">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-neutral-1 font-bold hover:text-primary transition-colors cursor-pointer group w-fit"
+          >
+            <div className="w-8 h-8 rounded-full bg-[#F7F7F7] flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+              <ChevronLeft size={20} />
+            </div>
+            <span className="text-sm">Back to Listings</span>
+          </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 h-auto md:h-[500px]">
           <div className="lg:col-span-1 relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group">
             <Image
               src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200"
@@ -147,7 +160,8 @@ export default function PropertyDetailPage() {
             />
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* Property Basic Info */}
       <section className="container mx-auto px-4 md:px-6 py-8 md:py-12">
