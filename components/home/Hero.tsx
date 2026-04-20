@@ -31,22 +31,17 @@ export default function Hero() {
   const amenities = [t('hero.amenities'), t('hero.amenities')]; // Scalable later
   return (
     <section>
-      {/* Hero Section */}
-      <section className="relative min-h-[100vh] w-full pt-20 md:pt-32 pb-12 md:pb-20 flex items-center overflow-hidden bg-[#1E2024]">
-        {/* Video Background Layer */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/50 z-10" />
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover"
-          >
-            <source src="/video/hero.mp4" type="video/mp4" />
-          </video>
-        </div>
+      {/* Hero Section */} <section className="relative min-h-[100vh] w-full pt-20 md:pt-32 pb-12 md:pb-20 flex items-center overflow-hidden bg-[#1E2024]"> {/* Video Background Layer */} <div className="absolute inset-0 z-0"> <div className="absolute inset-0 bg-black/50 z-10" /> <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        className="w-full h-full object-cover"
+      >
+        <source src="/video/hero.mp4" type="video/mp4" />
+      </video>
+      </div>
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 w-full text-center relative z-20">
           {/* Main Content */}
@@ -85,7 +80,7 @@ export default function Hero() {
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm p-2.5 md:p-3 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                   <Image src="/icons/hero/email.png" alt="Email" width={32} height={32} className='w-full h-full object-contain' />
                 </div>
-                <span className="text-white font-bold text-xs sm:text-sm md:text-lg truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">support@zilahomes.com</span>
+                <span className="text-white font-bold text-xs sm:text-sm md:text-lg truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">Support@zillahomes.com</span>
               </div>
             </div>
           </motion.div>
