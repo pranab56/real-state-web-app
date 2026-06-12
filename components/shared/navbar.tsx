@@ -1,21 +1,29 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Menu, X } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { logout } from '@/features/auth/authSlice';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bell, ChevronDown, LogOut, Menu, User, UserCircle, X } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
+import { Button } from '../ui/button';
+
+const PROFILE_ROUTE: Record<string, string> = {
+  customer: '/profile',
+  host: '/hotels-partner-dashboard/profile',
+  driver: '/transport-Partner-dashboard/profile',
+};
 
 export function Navbar() {
   const { t, i18n } = useTranslation('common');
@@ -23,15 +31,25 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const token = useSelector((state: any) => state.auth?.token);
+  const user = useSelector((state: any) => state.auth?.user);
+  const isLoggedIn = !!token;
+
   const isHome = pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push('/login');
+  };
 
   const menuItems = [
     { name: t('navbar.home'), href: '/' },
@@ -82,9 +100,7 @@ export function Navbar() {
     pathname.startsWith('/transport-Partner-dashboard') ||
     pathname.startsWith('/transport-partner-dashboard');
 
-  if (isDashboardRoute) {
-    return null;
-  }
+  if (isDashboardRoute) return null;
 
   return (
     <nav
@@ -94,33 +110,20 @@ export function Navbar() {
       )}
     >
       <div className="max-w-[1440px] mx-auto flex items-center justify-between relative z-10 w-full overflow-hidden">
-        {/* Logo Container */}
+
+        {/* Logo */}
         <Link href="/" className="flex items-center shrink-0">
           <div className="relative h-7 md:h-12 w-28 sm:w-32 md:w-48">
-            {/* Desktop Logo */}
             <div className="hidden md:block relative w-full h-full">
-              <Image
-                src="/icons/logo.png"
-                alt="Zila Homes"
-                fill
-                className="object-contain"
-                priority
-              />
+              <Image src="/icons/logo.png" alt="Zila Homes" fill className="object-contain" priority />
             </div>
-            {/* Mobile Logo */}
             <div className="block md:hidden relative w-full h-full">
-              <Image
-                src="/icons/mobile-logo.png"
-                alt="Zila Homes"
-                fill
-                className="object-contain"
-                priority
-              />
+              <Image src="/icons/mobile-logo.png" alt="Zila Homes" fill className="object-contain" priority />
             </div>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
+        {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-5 xl:gap-10">
           {menuItems.map((item) => {
             const isActive = pathname === item.href || (item.subItems?.some(sub => pathname === sub.href));
@@ -140,9 +143,7 @@ export function Navbar() {
                     sideOffset={15}
                     className="bg-[#EAEAEA] border-none text-neutral-1 rounded-[15px] p-1 min-w-[200px] shadow-2xl relative overflow-visible"
                   >
-                    {/* Bubble Pointer */}
                     <div className="absolute -top-1.5 left-6 w-3 h-3 bg-[#EAEAEA] rotate-45" />
-
                     <div className="flex flex-col gap-1 relative z-10">
                       {item.subItems.map((sub) => {
                         const isSubActive = pathname === sub.href;
@@ -180,13 +181,10 @@ export function Navbar() {
             );
           })}
 
-          {/* Language Switcher in Primary Nav Row */}
+          {/* Language Switcher */}
           <DropdownMenu>
-            <DropdownMenuTrigger className={cn(
-              "group relative flex items-center cursor-pointer gap-2 text-[15px] font-bold transition-all outline-none py-1",
-              "text-white/80 hover:text-white"
-            )}>
-              <div className="relative w-6 h-4 overflow-hidden rounded-sm ">
+            <DropdownMenuTrigger className="group relative flex items-center cursor-pointer gap-2 text-[15px] font-bold transition-all outline-none py-1 text-white/80 hover:text-white">
+              <div className="relative w-6 h-4 overflow-hidden rounded-sm">
                 <Image src={selectedLang.flag} alt={selectedLang.name} fill className="object-cover" />
               </div>
               <span>{selectedLang.name}</span>
@@ -200,17 +198,11 @@ export function Navbar() {
               <div className="absolute -top-1.5 left-6 w-3 h-3 bg-[#EAEAEA] rotate-45" />
               <div className="flex flex-col gap-1 relative z-10">
                 {languages.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.name}
-                    className="focus:bg-transparent p-0"
-                    onClick={() => handleLanguageChange(lang)}
-                  >
-                    <div
-                      className={cn(
-                        "w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center justify-between cursor-pointer group/sub",
-                        selectedLang.code === lang.code ? "bg-black/5 text-neutral-1" : "hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
-                      )}
-                    >
+                  <DropdownMenuItem key={lang.name} className="focus:bg-transparent p-0" onClick={() => handleLanguageChange(lang)}>
+                    <div className={cn(
+                      "w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center justify-between cursor-pointer",
+                      selectedLang.code === lang.code ? "bg-black/5 text-neutral-1" : "hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
+                    )}>
                       <div className="flex items-center gap-3">
                         <div className="relative w-6 h-4 overflow-hidden rounded-sm shrink-0">
                           <Image src={lang.flag} alt={lang.fullName} fill className="object-cover" />
@@ -226,24 +218,80 @@ export function Navbar() {
         </div>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-2 md:gap-5 ml-2">
-          {/* User Icon Button */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-9 h-9 md:w-12 md:h-12 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
-          >
-            <Image src="/icons/user-lock.png" alt="User" width={28} height={28} className="w-6 h-6 md:w-7 md:h-7 object-contain" />
-          </motion.div>
+        <div className="flex items-center gap-2 md:gap-3 ml-2">
 
-          {/* Register Property Button */}
-          <Button
-            className="hidden sm:flex bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-black h-9 md:h-12 px-2 md:px-4 rounded-sm cursor-pointer items-center gap-2 md:gap-3 shadow-xl transition-all border-none text-[13px] md:text-sm group shrink-0"
-          >
-            <Image src="/icons/house.png" alt="Register" width={24} height={24} className="w-5 h-5 md:w-6 md:h-6 object-contain" />
-            <span className="hidden md:inline">Register Property</span>
-            <span className="md:hidden">Register</span>
-          </Button>
+          {isLoggedIn ? (
+            /* ── Logged-in state ── */
+            <>
+              {/* Notification Bell */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
+              >
+                <Bell size={18} className="text-white/80 md:w-5 md:h-5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-[#1E2024]" />
+              </motion.div>
+
+              {/* Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="w-9 h-9 md:w-10 md:h-10 rounded-sm bg-primary/80 backdrop-blur-md border border-primary/40 flex items-center justify-center cursor-pointer hover:bg-primary transition-all shadow-lg shrink-0 outline-none">
+                  <UserCircle size={20} className="text-white md:w-6 md:h-6" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  sideOffset={15}
+                  className="bg-[#EAEAEA] border-none text-neutral-1 rounded-[15px] p-1 min-w-[180px] shadow-2xl relative overflow-visible"
+                >
+                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#EAEAEA] rotate-45" />
+                  <div className="flex flex-col gap-1 relative z-10">
+                    <DropdownMenuItem className="focus:bg-transparent p-0">
+                      <Link
+                        href={PROFILE_ROUTE[user?.role] ?? '/profile'}
+                        className="w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center gap-2 hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
+                      >
+                        <User size={15} />
+                        My Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-black/10 my-0.5" />
+                    <DropdownMenuItem className="focus:bg-transparent p-0">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center gap-2 hover:bg-red-50 text-red-500 cursor-pointer"
+                      >
+                        <LogOut size={15} />
+                        Logout
+                      </button>
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            /* ── Guest state ── */
+            <>
+              {/* Login Button */}
+              <Link href="/login">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-9 h-9 md:w-12 md:h-12 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
+                >
+                  <Image src="/icons/user-lock.png" alt="Login" width={28} height={28} className="w-6 h-6 md:w-7 md:h-7 object-contain" />
+                </motion.div>
+              </Link>
+
+              {/* Register Property */}
+              <Link href="/register">
+                <Button className="hidden sm:flex bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-black h-9 md:h-12 px-2 md:px-4 rounded-sm cursor-pointer items-center gap-2 md:gap-3 shadow-xl transition-all border-none text-[13px] md:text-sm group shrink-0">
+                  <Image src="/icons/house.png" alt="Register" width={24} height={24} className="w-5 h-5 md:w-6 md:h-6 object-contain" />
+                  <span className="hidden md:inline">Register Property</span>
+                  <span className="md:hidden">Register</span>
+                </Button>
+              </Link>
+            </>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
@@ -302,7 +350,7 @@ export function Navbar() {
                                   >
                                     {sub.name}
                                   </Link>
-                                )
+                                );
                               })}
                             </div>
                           </motion.div>
@@ -327,6 +375,41 @@ export function Navbar() {
                 );
               })}
 
+              {/* Mobile Auth Section */}
+              {isLoggedIn ? (
+                <div className="mt-2 pt-4 border-t border-white/10 flex flex-col gap-3">
+                  <Link
+                    href={PROFILE_ROUTE[user?.role] ?? '/profile'}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 py-3 px-5 rounded-xl bg-white/5 text-white/80 font-bold text-sm hover:text-white transition-all"
+                  >
+                    <UserCircle size={18} />
+                    My Profile
+                  </Link>
+                  <button
+                    onClick={() => { handleLogout(); setIsOpen(false); }}
+                    className="flex items-center gap-3 py-3 px-5 rounded-xl bg-red-500/10 text-red-400 font-bold text-sm hover:bg-red-500/20 transition-all"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-2 pt-4 border-t border-white/10 flex flex-col gap-3">
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full bg-white/10 hover:bg-white/20 text-white font-black h-12 rounded-xl border border-white/10 text-sm">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-black h-12 rounded-xl flex items-center justify-center gap-3 shadow-2xl border-none text-sm">
+                      <Image src="/icons/house.png" alt="Register" width={22} height={22} className="w-5 h-5 object-contain" />
+                      Register Property
+                    </Button>
+                  </Link>
+                </div>
+              )}
+
               {/* Mobile Language Switcher */}
               <div className="mt-2 pt-4 border-t border-white/10 px-1">
                 <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4 ml-1">Language</p>
@@ -342,7 +425,7 @@ export function Navbar() {
                           : "bg-white/5 border-white/5 text-white/60"
                       )}
                     >
-                      <div className="relative w-7 h-5 overflow-hidden rounded-sm  shrink-0">
+                      <div className="relative w-7 h-5 overflow-hidden rounded-sm shrink-0">
                         <Image src={lang.flag} alt={lang.name} fill className="object-cover" />
                       </div>
                       <span className="text-xs font-black">{lang.name}</span>
@@ -350,14 +433,6 @@ export function Navbar() {
                   ))}
                 </div>
               </div>
-
-              {/* Mobile CTA */}
-              <Button
-                className="mt-4 w-full bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-black h-13 rounded-xl flex items-center justify-center gap-3 shadow-2xl border-none text-sm"
-              >
-                <Image src="/icons/house.png" alt="Register" width={22} height={22} className="w-5.5 h-5.5 object-contain" />
-                <span>Register Property</span>
-              </Button>
             </div>
           </motion.div>
         )}

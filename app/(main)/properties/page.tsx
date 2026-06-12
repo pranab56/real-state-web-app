@@ -1,388 +1,428 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
+import { Slider } from '@/components/ui/slider';
+import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
+import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import {
   Bath,
   BedDouble,
   ChevronLeft,
   ChevronRight,
-  Heart,
+  Loader2,
   MapPin,
   Maximize2,
   Repeat,
-  Search
+  Heart,
+  Search,
+  X,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const properties = [
-  {
-    id: 1,
-    title: 'Modern Villa Lakeview',
-    price: 'ETB165.00',
-    address: '14691 Stratford Dr, Woodbridge, VA 22193',
-    beds: 4,
-    baths: 3,
-    size: '900 m2',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop',
-    tags: ['Zila Verified', 'For Sale']
-  },
-  {
-    id: 2,
-    title: 'Luxury Apartment Skyline',
-    price: 'ETB165.00',
-    address: '14691 Stratford Dr, Woodbridge, VA 22193',
-    beds: 4,
-    baths: 3,
-    size: '900 m2',
-    image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=800&h=600&fit=crop',
-    tags: ['Zila Verified', 'For Sale']
-  },
-  {
-    id: 3,
-    title: 'Cozy Family House',
-    price: 'ETB165.00',
-    address: '14691 Stratford Dr, Woodbridge, VA 22193',
-    beds: 4,
-    baths: 3,
-    size: '900 m2',
-    image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=800&h=600&fit=crop',
-    tags: ['Zila Verified', 'For Sale']
-  },
-  {
-    id: 4,
-    title: 'Beach Front Paradise',
-    price: 'ETB165.00',
-    address: '14691 Stratford Dr, Woodbridge, VA 22193',
-    beds: 4,
-    baths: 3,
-    size: '900 m2',
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=800&h=600&fit=crop',
-    tags: ['Zila Verified', 'For Sale']
-  },
-  {
-    id: 5,
-    title: 'Urban Chic Loft',
-    price: 'ETB165.00',
-    address: '14691 Stratford Dr, Woodbridge, VA 22193',
-    beds: 4,
-    baths: 3,
-    size: '900 m2',
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=800&h=600&fit=crop',
-    tags: ['Zila Verified', 'For Sale']
-  },
-  {
-    id: 6,
-    title: 'The Grand Penthouse',
-    price: 'ETB165.00',
-    address: '14691 Stratford Dr, Woodbridge, VA 22193',
-    beds: 4,
-    baths: 3,
-    size: '900 m2',
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=800&h=600&fit=crop',
-    tags: ['Zila Verified', 'For Sale']
-  }
-];
+const LIMIT = 6;
+const MAX_PRICE = 500000;
+const MAX_AREA  = 10000;
 
-const featuredHomes = [
-  { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=100&h=100&fit=crop' },
-  { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=100&h=100&fit=crop' },
-  { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=100&h=100&fit=crop' },
-  { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=100&h=100&fit=crop' },
-  { title: 'House In Foxhall Ave', price: '$165,400', beds: 5, baths: 3, size: '1,652 SqFt', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=100&h=100&fit=crop' },
-];
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 
-const SidebarSelect = ({ label }: { label: string }) => {
-  const { t } = useTranslation('common');
-  return (
-    <Select>
-      <SelectTrigger className="w-full h-12 py-6 bg-[#F7F7F7] border-none rounded-sm text-neutral-2 shadow-none">
-        <SelectValue placeholder={label} />
-      </SelectTrigger>
-      <SelectContent className="rounded">
-        <SelectItem className='rounded-none py-1' value="all">{t('listing.sidebar.all', { placeholder: label })}</SelectItem>
-        <SelectItem className='rounded-none py-1' value="1">Option 1</SelectItem>
-        <SelectItem className='rounded-none py-1' value="2">Option 2</SelectItem>
-      </SelectContent>
-    </Select>
-  );
+const STRUCTURE_TYPES = ['house', 'apartment', 'villa', 'penthouse', 'office', 'shop', 'warehouse'];
+
+const getImg = (path?: string) => {
+  if (!path) return FALLBACK_IMG;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
 };
 
 export default function PropertiesPage() {
   const { t } = useTranslation('common');
+  const sp = useSearchParams();
 
+  // ── Pagination & search — initialise from URL params ──
+  const [page, setPage]               = useState(1);
+  const [searchInput, setSearchInput] = useState(() => sp.get('searchTerm') ?? '');
+  const [searchTerm, setSearchTerm]   = useState(() => sp.get('searchTerm') ?? '');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // ── Filters — initialise from URL params ──
+  const [priceRange, setPriceRange]       = useState<number[]>(() => [
+    Number(sp.get('minPrice') ?? 0),
+    Number(sp.get('maxPrice') ?? MAX_PRICE),
+  ]);
+  const [areaRange, setAreaRange]         = useState<number[]>(() => [
+    Number(sp.get('minArea') ?? 0),
+    Number(sp.get('maxArea') ?? MAX_AREA),
+  ]);
+  const [structureType, setStructureType] = useState(() => sp.get('structureType') ?? '');
+  const [bedrooms, setBedrooms]           = useState<number>(() => Number(sp.get('bedrooms') ?? 0));
+  const [bathrooms, setBathrooms]         = useState<number>(() => Number(sp.get('bathrooms') ?? 0));
+  const [city, setCity]                   = useState(() => sp.get('city') ?? '');
+
+  // debounce search
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => { setSearchTerm(searchInput); setPage(1); }, 500);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [searchInput]);
+
+  // reset page when any filter changes
+  useEffect(() => { setPage(1); }, [priceRange, areaRange, structureType, bedrooms, bathrooms, city]);
+
+  const queryArgs = {
+    category: 'listing',
+    page,
+    limit: LIMIT,
+    ...(searchTerm && { searchTerm }),
+    ...(priceRange[0] > 0           && { minPrice: priceRange[0] }),
+    ...(priceRange[1] < MAX_PRICE   && { maxPrice: priceRange[1] }),
+    ...(areaRange[0] > 0            && { minArea: areaRange[0] }),
+    ...(areaRange[1] < MAX_AREA     && { maxArea: areaRange[1] }),
+    ...(structureType               && { structureType }),
+    ...(bedrooms > 0                && { bedrooms }),
+    ...(bathrooms > 0               && { bathrooms }),
+    ...(city                        && { city }),
+  };
+
+  const { data, isLoading, isFetching } = useGetAllListingsQuery(queryArgs);
+  const { data: featuredData } = useGetAllListingsQuery({ category: 'listing', page: 1, limit: 5 });
+
+  const listings: any[] = data?.data ?? [];
+  const total: number = data?.pagination?.total ?? 0;
+  const totalPages = Math.max(1, data?.pagination?.totalPage ?? Math.ceil(total / LIMIT));
+  const showing = { start: (page - 1) * LIMIT + 1, end: Math.min(page * LIMIT, total) };
+  const featuredList: any[] = featuredData?.data ?? [];
+
+  const pageNumbers = () => {
+    const pages: (number | '...')[] = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (page > 3) pages.push('...');
+      for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) pages.push(i);
+      if (page < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  };
+
+  const clearAllFilters = () => {
+    setSearchInput('');
+    setPriceRange([0, MAX_PRICE]);
+    setAreaRange([0, MAX_AREA]);
+    setStructureType('');
+    setBedrooms(0);
+    setBathrooms(0);
+    setCity('');
+    setPage(1);
+  };
+
+  const hasActiveFilters =
+    searchInput || priceRange[0] > 0 || priceRange[1] < MAX_PRICE ||
+    areaRange[0] > 0 || areaRange[1] < MAX_AREA || structureType || bedrooms > 0 || bathrooms > 0 || city;
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Header */}
+      {/* Hero */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-[#1E2024] overflow-hidden">
-        {/* Background Image/Overlay */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"
-            alt="Properties Hero"
-            fill
-            className="object-cover opacity-40"
-            priority
-          />
+          <Image src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop" alt="Properties Hero" fill className="object-cover opacity-40" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1E2024] via-transparent to-transparent" />
         </div>
-
         <div className="container mx-auto px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-4 md:space-y-6"
-          >
-            {/* Breadcrumbs */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-4 md:space-y-6">
             <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-white/60">
               <Link href="/" className="hover:text-primary transition-colors">{t('listing.hero.home')}</Link>
               <ChevronRight size={10} />
               <span className="text-white">{t('listing.hero.properties')}</span>
             </div>
-
-            <h1
-              className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight"
-              dangerouslySetInnerHTML={{ __html: t('listing.hero.title') }}
-            />
-            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed">
-              {t('listing.hero.subtitle')}
-            </p>
+            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: t('listing.hero.title') }} />
+            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed">{t('listing.hero.subtitle')}</p>
           </motion.div>
         </div>
       </section>
 
       <div className="container mx-auto px-4 md:px-6 py-12 md:pb-24 lg:flex gap-12">
-        {/* Sidebar Filters */}
-        <aside className="lg:w-[320px] flex-shrink-0 space-y-10">
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-8 shadow-sm">
+        {/* ── Sidebar ── */}
+        <aside className="lg:w-[320px] flex-shrink-0 space-y-6 mb-10 lg:mb-0">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-8">
+
+            {/* Header */}
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-neutral-1">{t('listing.sidebar.search_title')}</h2>
-              <button className="text-sm text-neutral-2 hover:text-primary transition-colors">{t('listing.sidebar.clear_all')}</button>
+              {hasActiveFilters && (
+                <button onClick={clearAllFilters} className="text-sm text-primary hover:text-primary/80 font-bold flex items-center gap-1 transition-colors">
+                  <X size={14} /> Clear All
+                </button>
+              )}
             </div>
 
-            {/* Search Input */}
+            {/* Search */}
             <div className="relative">
-              <Input
+              <input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={t('listing.sidebar.search_placeholder')}
-                className="h-12 bg-[#F7F7F7] border-none rounded-sm pl-12 pr-4 text-neutral-1 font-medium"
+                className="w-full h-12 bg-[#F7F7F7] border-none rounded-sm pl-12 pr-4 text-neutral-1 font-medium text-sm outline-none focus:ring-2 focus:ring-primary/20"
               />
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-2" size={20} />
             </div>
 
-            {/* Basic Selects */}
-            <div className="space-y-4">
-              <SidebarSelect label={t('listing.sidebar.status')} />
-              <SidebarSelect label={t('listing.sidebar.type')} />
-              <SidebarSelect label={t('listing.sidebar.bath')} />
-              <SidebarSelect label={t('listing.sidebar.bed')} />
-            </div>
-
             {/* Price Range */}
-            <div className="space-y-6">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold text-neutral-1">
-                  {t('listing.sidebar.price_range')} <span className="text-primary truncate">ETB100</span> {t('listing.sidebar.to')} <span className="text-primary truncate">ETB650,000</span>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-neutral-1">{t('listing.sidebar.price_range')}</h3>
+                <span className="text-xs font-bold text-primary">
+                  {priceRange[0].toLocaleString()} – {priceRange[1].toLocaleString()} ETB
                 </span>
               </div>
-              <Slider defaultValue={[20, 80]} max={100} step={1} className="text-primary" />
-            </div>
-            {/* Size Range */}
-            <div className="space-y-6">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold text-neutral-1">
-                  {t('listing.sidebar.size_range')} <span className="text-primary truncate">500 SqFt</span> {t('listing.sidebar.to')} <span className="text-primary truncate">1,500 SqFt</span>
-                </span>
+              <Slider
+                value={priceRange}
+                onValueChange={(v) => setPriceRange(Array.isArray(v) ? [...(v as number[])] : [v as number])}
+                min={0}
+                max={MAX_PRICE}
+                step={5000}
+              />
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={priceRange[0]}
+                  onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                  placeholder="Min"
+                  className="w-1/2 h-9 bg-[#F7F7F7] border-none rounded-lg px-3 text-neutral-1 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <input
+                  type="number"
+                  value={priceRange[1]}
+                  onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                  placeholder="Max"
+                  className="w-1/2 h-9 bg-[#F7F7F7] border-none rounded-lg px-3 text-neutral-1 text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
+                />
               </div>
-              <Slider defaultValue={[30, 70]} max={100} step={1} />
             </div>
 
-            {/* Advanced Selects */}
-            <div className="space-y-4 pt-4 border-t border-gray-50">
-              <SidebarSelect label={t('listing.sidebar.province')} />
-              <SidebarSelect label={t('listing.sidebar.room')} />
-              <SidebarSelect label={t('listing.sidebar.garage')} />
-              <SidebarSelect label={t('listing.sidebar.label')} />
-            </div>
-
-            {/* Amenities Checklist */}
-            <div className="space-y-6 pt-6 border-t border-gray-50">
-              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">{t('listing.sidebar.amenities')}</h3>
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="flex items-center space-x-3 bg-[#F7F7F7] p-3 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors group/item">
-                    <Checkbox id={`amenity-${i}`} className="w-5 h-5 border-gray-300 data-[state=checked]:bg-primary" />
-                    <label htmlFor={`amenity-${i}`} className="text-[13px] font-bold text-neutral-2 group-hover/item:text-primary cursor-pointer transition-colors">Bed Linens</label>
-                  </div>
+            {/* Structure Type */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Property Type</h3>
+              <div className="flex flex-wrap gap-2">
+                {STRUCTURE_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setStructureType(structureType === type ? '' : type)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-all border ${
+                      structureType === type
+                        ? 'bg-primary text-white border-primary'
+                        : 'bg-[#F7F7F7] text-neutral-2 border-transparent hover:border-primary/30 hover:text-primary'
+                    }`}
+                  >
+                    {type}
+                  </button>
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Featured Properties (Mini) */}
-          <div className="space-y-6 border border-gray-100 bg-white p-6 rounded-2xl shadow-sm">
-            <h3 className="font-bold text-neutral-1 mb-4">{t('listing.sidebar.featured_homes')}</h3>
-            {featuredHomes.map((home, idx) => (
-              <div key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                  <Image src={home.image} alt={home.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{home.title}</h4>
-                  <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">
-                    {home.beds} {t('featured.property.beds')} | {home.baths} {t('featured.property.baths')}
-                  </p>
-                  <p className="text-sm font-black text-primary">{home.price}</p>
-                </div>
+            {/* Bedrooms */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Bedrooms</h3>
+              <div className="flex gap-2 flex-wrap">
+                {[0, 1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setBedrooms(n)}
+                    className={`w-10 h-10 rounded-lg text-sm font-bold transition-all border ${
+                      bedrooms === n
+                        ? 'bg-primary text-white border-primary'
+                        : 'bg-[#F7F7F7] text-neutral-2 border-transparent hover:border-primary/30'
+                    }`}
+                  >
+                    {n === 0 ? 'Any' : n}
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Bathrooms */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Bathrooms</h3>
+              <div className="flex gap-2 flex-wrap">
+                {[0, 1, 2, 3, 4].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setBathrooms(n)}
+                    className={`w-10 h-10 rounded-lg text-sm font-bold transition-all border ${
+                      bathrooms === n
+                        ? 'bg-primary text-white border-primary'
+                        : 'bg-[#F7F7F7] text-neutral-2 border-transparent hover:border-primary/30'
+                    }`}
+                  >
+                    {n === 0 ? 'Any' : n}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Area Range */}
+            <div className="space-y-4 pt-6 border-t border-gray-50">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-neutral-1">{t('listing.sidebar.size_range')}</h3>
+                <span className="text-xs font-bold text-primary">
+                  {areaRange[0].toLocaleString()} – {areaRange[1].toLocaleString()} SqFt
+                </span>
+              </div>
+              <Slider
+                value={areaRange}
+                onValueChange={(v) => setAreaRange(Array.isArray(v) ? [...(v as number[])] : [v as number])}
+                min={0}
+                max={MAX_AREA}
+                step={100}
+              />
+            </div>
+
           </div>
 
-          {/* CTA Card */}
-          <div className="relative rounded-2xl overflow-hidden min-h-[400px] flex flex-col justify-end shadow-xl">
-            <Image
-              src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?q=80&w=800&h=1200&fit=crop"
-              alt="Agent"
-              fill
-              className="object-cover"
-            />
+          {/* Featured mini list */}
+          <div className="space-y-6 border border-gray-100 bg-white p-6 rounded-2xl">
+            <h3 className="font-bold text-neutral-1">{t('listing.sidebar.featured_homes')}</h3>
+            {featuredList.length === 0 ? (
+              <p className="text-sm text-neutral-2 text-center py-4">No featured properties</p>
+            ) : (
+              featuredList.map((item: any, idx: number) => (
+                <Link href={`/properties/${item._id ?? item.id}`} key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
+                  <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                    <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{item.title ?? item.name}</h4>
+                    <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">
+                      {item.listing?.bedrooms ?? 0} {t('featured.property.beds')} | {item.listing?.bathrooms ?? 0} {t('featured.property.baths')}
+                    </p>
+                    <p className="text-sm font-black text-primary">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</p>
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+
+          {/* CTA */}
+          <div className="relative rounded-2xl overflow-hidden min-h-[400px] flex flex-col justify-end">
+            <Image src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?q=80&w=800&h=1200&fit=crop" alt="Agent" fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="relative p-8 space-y-6 text-white">
               <h3 className="text-2xl font-black leading-tight tracking-tight">{t('listing.sidebar.agent_title')}</h3>
               <p className="text-sm text-white/80 font-medium">{t('listing.sidebar.agent_desc')}</p>
-              <Button className="w-full bg-[#F1913D] hover:bg-white hover:text-primary text-white font-bold h-12 rounded-xl transition-all">
-                {t('listing.sidebar.agent_btn')}
-              </Button>
+              <Button className="w-full bg-[#F1913D] hover:bg-white hover:text-primary text-white font-bold h-12 rounded-xl transition-all border-none">{t('listing.sidebar.agent_btn')}</Button>
             </div>
           </div>
         </aside>
 
-        {/* Main Content */}
+        {/* ── Main ── */}
         <main className="flex-1 space-y-8 mt-10 md:mt-12 lg:mt-0">
-          {/* List Header */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-gray-100 gap-4 sm:gap-0">
-            <span
-              className="text-neutral-2 font-medium italic text-[13px] md:text-sm"
-              dangerouslySetInnerHTML={{ __html: t('listing.main.showing', { start: 1, end: 6, total: 24 }) }}
-            />
-            <div className="flex items-center gap-2 self-end sm:self-auto">
-              <span className="text-xs text-neutral-2 font-bold uppercase tracking-widest hidden sm:inline">{t('listing.main.sort_by')}</span>
-              <Select defaultValue="newest">
-                <SelectTrigger className="w-[140px] sm:w-40 h-10 border-none bg-transparent font-bold text-neutral-1 shadow-none">
-                  <SelectValue placeholder={t('listing.main.sort_placeholder')} />
-                </SelectTrigger>
-                <SelectContent className='rounded-xl'>
-                  <SelectItem className='py-2' value="newest">{t('listing.main.sort_newest')}</SelectItem>
-                  <SelectItem className='py-2' value="oldest">{t('listing.main.sort_oldest')}</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b border-gray-100 gap-4">
+            {isLoading || isFetching ? (
+              <span className="text-neutral-2 font-medium italic text-sm flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading...</span>
+            ) : (
+              <span className="text-neutral-2 font-medium italic text-[13px] md:text-sm" dangerouslySetInnerHTML={{ __html: t('listing.main.showing', { start: showing.start, end: showing.end, total }) }} />
+            )}
+            {hasActiveFilters && (
+              <button onClick={clearAllFilters} className="text-xs text-neutral-2 hover:text-primary font-bold flex items-center gap-1 transition-colors">
+                <X size={12} /> Reset filters
+              </button>
+            )}
+          </div>
+
+          {isLoading && (
+            <div className="flex items-center justify-center py-32">
+              <Loader2 size={40} className="animate-spin text-primary" />
             </div>
-          </div>
+          )}
 
-          {/* Property Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map((property, index) => (
-              <motion.div
-                key={property.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="group bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 relative">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={property.image}
-                      alt={property.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    {/* Badges */}
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">{t('featured.property.verified')}</span>
-                      <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">{t('featured.categories.sale')}</span>
-                    </div>
-                    {/* Quick Actions Overlay */}
-                    <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex gap-1.5 sm:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-12 md:group-hover:translate-y-0 transition-all duration-300">
-                      <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                        <Repeat className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" />
-                      </button>
-                      <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                        <Heart className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" />
-                      </button>
-                      <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer">
-                        <Maximize2 className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" />
-                      </button>
-                    </div>
-                  </div>
+          {!isLoading && listings.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-32 gap-4">
+              <p className="text-neutral-2 font-medium text-lg">No properties found.</p>
+              {hasActiveFilters && (
+                <button onClick={clearAllFilters} className="h-10 px-6 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary/90 transition-colors">
+                  Clear Filters
+                </button>
+              )}
+            </div>
+          )}
 
-                  <div className="p-4 sm:p-5 space-y-4 sm:space-y-6">
-                    <div className="space-y-2 sm:space-y-3">
-                      <h3 className="text-xl sm:text-2xl font-black text-neutral-1">{property.price}</h3>
-                      <Link
-                        href={`/properties/${property.id}`}
-                        className="text-base sm:text-lg font-bold text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight"
-                      >
-                        {property.title}
-                      </Link>
-                      <div className="flex items-start gap-1.5 text-neutral-2">
-                        <MapPin size={16} className="mt-1 flex-shrink-0 text-primary w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                        <p className="font-medium text-[13px] sm:text-sm italic">{property.address}</p>
+          {!isLoading && listings.length > 0 && (
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
+              {listings.map((item: any, index: number) => (
+                <motion.div key={item._id ?? item.id ?? index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }}>
+                  <div className="group bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 relative">
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        {item.isVerified && <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg">{t('featured.property.verified')}</span>}
+                        {item.listing?.purpose && <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg capitalize">{item.listing.purpose.replace('_', ' ')}</span>}
+                      </div>
+                      <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 translate-y-0 md:translate-y-12 md:group-hover:translate-y-0 transition-all duration-300">
+                        <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer"><Repeat className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" /></button>
+                        <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white shadow-xl flex items-center justify-center text-neutral-1 hover:bg-primary hover:text-white transition-all cursor-pointer"><Heart className="w-3.5 h-3.5 sm:w-[18px] sm:h-[18px]" /></button>
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between pt-4 sm:pt-6 border-t border-gray-50 text-neutral-2 gap-1 sm:gap-2">
-                      <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
-                        <BedDouble className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span className="whitespace-nowrap">{t('featured.property.beds')} <span className="text-neutral-1 font-black">{property.beds}</span></span>
+                    <div className="p-4 sm:p-5 space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="text-xl sm:text-2xl font-black text-neutral-1">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</h3>
+                        <Link href={`/properties/${item._id ?? item.id}`} className="text-base sm:text-lg font-bold text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight">
+                          {item.title ?? item.name}
+                        </Link>
+                        <div className="flex items-start gap-1.5 text-neutral-2">
+                          <MapPin size={16} className="mt-1 flex-shrink-0 text-primary w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <p className="font-medium text-[13px] sm:text-sm italic line-clamp-1">
+                            {[item.address?.street, item.address?.city, item.address?.country].filter(Boolean).join(', ')}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
-                        <Bath className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span className="whitespace-nowrap">{t('featured.property.baths')} <span className="text-neutral-1 font-black">{property.baths}</span></span>
-                      </div>
-                      <div className="flex items-center gap-1 sm:gap-1.5 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
-                        <Maximize2 className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span className="whitespace-nowrap">{t('featured.property.sqft')} <span className="text-neutral-1 font-black">{property.size.split(' ')[0]}</span></span>
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-50 text-neutral-2 gap-1">
+                        <div className="flex items-center gap-1 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
+                          <BedDouble className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                          <span>{t('featured.property.beds')} <span className="text-neutral-1 font-black">{item.listing?.bedrooms ?? 0}</span></span>
+                        </div>
+                        <div className="flex items-center gap-1 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
+                          <Bath className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                          <span>{t('featured.property.baths')} <span className="text-neutral-1 font-black">{item.listing?.bathrooms ?? 0}</span></span>
+                        </div>
+                        <div className="flex items-center gap-1 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider">
+                          <Maximize2 className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                          <span>{t('featured.property.sqft')} <span className="text-neutral-1 font-black">{item.listing?.totalArea ?? 0}</span></span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
           {/* Pagination */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-8 sm:pt-12">
-            <button className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm">
-              <ChevronLeft className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-              <span className="hidden sm:inline">{t('listing.main.previous')}</span>
-            </button>
-            <div className="flex items-center gap-1 sm:gap-2">
-              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center bg-primary text-white font-black shadow-lg shadow-primary/20 cursor-pointer text-xs sm:text-base">1</button>
-              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg hidden min-[360px]:flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">2</button>
-              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg hidden sm:flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">3</button>
-              <span className="px-1 sm:px-2 text-neutral-2">...</span>
-              <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-neutral-2 font-bold hover:bg-gray-50 cursor-pointer text-xs sm:text-base">12</button>
+          {!isLoading && totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-8 sm:pt-12">
+              <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                <ChevronLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('listing.main.previous')}</span>
+              </button>
+              <div className="flex items-center gap-1 sm:gap-2">
+                {pageNumbers().map((p, idx) =>
+                  p === '...' ? (
+                    <span key={idx} className="px-1 sm:px-2 text-neutral-2">...</span>
+                  ) : (
+                    <button key={p} onClick={() => setPage(p as number)} className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm cursor-pointer transition-all ${page === p ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-neutral-2 hover:bg-gray-50'}`}>{p}</button>
+                  )
+                )}
+              </div>
+              <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                <span className="hidden sm:inline">{t('listing.main.next')}</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
-            <button className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-bold text-xs sm:text-sm cursor-pointer shadow-sm">
-              <span className="hidden sm:inline">{t('listing.main.next')}</span>
-              <ChevronRight className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
-            </button>
-          </div>
+          )}
         </main>
       </div>
     </div>

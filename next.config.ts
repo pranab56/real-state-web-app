@@ -25,6 +25,15 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 't3.ftcdn.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.oriencorapiddelivery.com',
+      },
+
+      {
+        protocol: 'http',
+        hostname: '10.10.7.7',
+      },
     ],
   },
 };

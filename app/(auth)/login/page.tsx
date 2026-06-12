@@ -1,21 +1,24 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLoginMutation } from '@/features/auth/authApi';
+import { setCredentials } from '@/features/auth/authSlice';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
 
-// Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/pagination';
@@ -23,7 +26,7 @@ import 'swiper/css/pagination';
 const slides = [
   {
     title: 'Discover the Pinnacle of Luxury Living',
-    subtitle: 'Join an exclusive community of property enthusiasts and professionals navigating the world’s most prestigious estates.',
+    subtitle: "Join an exclusive community of property enthusiasts and professionals navigating the world's most prestigious estates.",
     image: '/images/auth/image1.png'
   },
   {
@@ -51,6 +54,12 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+const ROLE_REDIRECT: Record<string, string> = {
+  customer: '/',
+  host: '/hotels-partner-dashboard',
+  driver: '/transport-Partner-dashboard',
+};
+
 function Logo() {
   return (
     <div className="flex items-center gap-2">
@@ -61,10 +70,14 @@ function Logo() {
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -75,9 +88,19 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log('Login Form Data:', data);
-    // Handle login action here
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const result = await login({ email: data.email, password: data.password }).unwrap();
+      dispatch(setCredentials({
+        token: result.data.accessToken,
+        refreshToken: null,
+        user: { role: result.data.role },
+      }));
+      toast.success('Welcome back!');
+      router.push(ROLE_REDIRECT[result.data.role] ?? '/');
+    } catch (err: any) {
+      toast.error(err?.data?.message || 'Login failed. Please try again.');
+    }
   };
 
   return (
@@ -187,7 +210,7 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2 lg:space-y-3 relative">
-                <Label htmlFor="password" title="Forget Password?" className="text-neutral-1 font-bold text-sm lg:text-base flex justify-between w-full">
+                <Label htmlFor="password" className="text-neutral-1 font-bold text-sm lg:text-base flex justify-between w-full">
                   Password
                   <Link href="/forgot-password" className="text-xs text-neutral-2 hover:text-primary transition-colors">Forget Password?</Link>
                 </Label>
@@ -214,20 +237,20 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  className="border-neutral-2 data-[state=checked]:bg-primary data-[state=checked]:border-primary size-4 sm:size-5"
-                  onCheckedChange={() => {
-                    // Manually handle checkbox if needed or rely on register
-                  }}
-                />
-                <Label htmlFor="remember" className="text-xs sm:text-sm text-neutral-2 font-medium cursor-pointer">Remember Me</Label>
-              </div>
 
-              <Button type="submit" className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center justify-center gap-2 transition-all active:scale-95 group">
-                Login
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-11 lg:h-12 cursor-pointer bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center justify-center gap-2 transition-all active:scale-95 group disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <Loader2 size={20} className="animate-spin" />
+                ) : (
+                  <>
+                    Login
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </Button>
 
               <div className="flex items-center gap-4 py-1">
@@ -236,7 +259,7 @@ export default function LoginPage() {
                 <div className="h-px bg-gray-100 flex-1" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 ">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <Button type="button" variant="outline" className="h-12 lg:h-14 border-gray-100 rounded-lg font-bold flex items-center gap-3 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-2">
                   <Image src="https://www.svgrepo.com/show/475656/google-color.svg" width={20} height={20} alt="Google" className="size-5" />
                   Continue With Google

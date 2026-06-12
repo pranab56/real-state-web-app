@@ -1,0 +1,38 @@
+import { baseApi } from '../../utils/apiBaseQuery';
+
+export const listingsApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+
+    getAllListings: builder.query({
+      query: (params = {}) => {
+        const sp = new URLSearchParams();
+        if (params.category)     sp.set('category',     params.category);
+        if (params.searchTerm)   sp.set('searchTerm',   params.searchTerm);
+        if (params.page)         sp.set('page',         String(params.page));
+        if (params.limit)        sp.set('limit',        String(params.limit));
+        if (params.structureType) sp.set('structureType', params.structureType);
+        if (params.minPrice != null && params.minPrice > 0)  sp.set('minPrice', String(params.minPrice));
+        if (params.maxPrice != null && params.maxPrice > 0)  sp.set('maxPrice', String(params.maxPrice));
+        if (params.bedrooms  != null && params.bedrooms  > 0) sp.set('bedrooms',  String(params.bedrooms));
+        if (params.bathrooms != null && params.bathrooms > 0) sp.set('bathrooms', String(params.bathrooms));
+        if (params.minArea   != null && params.minArea   > 0) sp.set('inArea',    String(params.minArea));
+        if (params.maxArea   != null && params.maxArea   > 0) sp.set('maxArea',   String(params.maxArea));
+        if (params.city)             sp.set('address.city', params.city);
+        const qs = sp.toString();
+        return { url: `/properties${qs ? `?${qs}` : ''}`, method: 'GET' };
+      },
+      providesTags: ['Listing'],
+    }),
+
+    getSingleListing: builder.query({
+      query: (id) => ({ url: `/properties/${id}`, method: 'GET' }),
+      providesTags: ['Listing'],
+    }),
+
+  }),
+});
+
+export const {
+  useGetAllListingsQuery,
+  useGetSingleListingQuery,
+} = listingsApi;

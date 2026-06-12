@@ -4,25 +4,20 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useSignUpMutation } from '@/features/auth/authApi';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, ChevronLeft, Eye, EyeOff, Hotel, Plane, User } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Eye, EyeOff, Hotel, Loader2, Plane, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
 
-// Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/pagination';
@@ -50,8 +45,9 @@ const slides = [
   }
 ];
 
-const customerSchema = z.object({
-  fullName: z.string().min(2, 'Name must be at least 2 characters'),
+const registerSchema = z.object({
+  firstName: z.string().min(2, 'First name must be at least 2 characters'),
+  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
@@ -61,18 +57,15 @@ const customerSchema = z.object({
   path: ['confirmPassword'],
 });
 
-const partnerSchema = z.object({
-  businessName: z.string().min(2, 'Business name is required'),
-  industry: z.string().min(1, 'Please select an industry'),
-  brn: z.string().min(5, 'Invalid registration number'),
-  contactName: z.string().min(2, 'Contact person name is required'),
-  workEmail: z.string().min(1, 'Work email is required').email('Invalid email address'),
-  phone: z.string().min(8, 'Invalid phone number'),
-  terms: z.boolean().refine(val => val === true, 'You must agree to the terms'),
-});
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-type CustomerFormValues = z.infer<typeof customerSchema>;
-type PartnerFormValues = z.infer<typeof partnerSchema>;
+type AccountType = 'customer' | 'hotel' | 'transit' | null;
+
+const ACCOUNT_ROLE: Record<string, string> = {
+  customer: 'customer',
+  hotel: 'host',
+  transit: 'driver',
+};
 
 function Logo() {
   return (
@@ -82,18 +75,19 @@ function Logo() {
   );
 }
 
-type AccountType = 'customer' | 'hotel' | 'transit' | null;
-
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
   const [accountType, setAccountType] = useState<AccountType>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
+  const [signUp, { isLoading }] = useSignUpMutation();
 
-  const customerForm = useForm<CustomerFormValues>({
-    resolver: zodResolver(customerSchema),
+  const { register, handleSubmit, control, formState: { errors } } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
-      fullName: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -101,40 +95,25 @@ export default function RegisterPage() {
     },
   });
 
-  const partnerForm = useForm<PartnerFormValues>({
-    resolver: zodResolver(partnerSchema),
-    defaultValues: {
-      businessName: '',
-      industry: '',
-      brn: '',
-      contactName: '',
-      workEmail: '',
-      phone: '',
-      terms: false,
-    },
-  });
-
   const handleAccountTypeSelect = (type: AccountType) => {
     setAccountType(type);
-    if (type !== 'customer') {
-      partnerForm.setValue('industry', type === 'hotel' ? 'hotel' : 'transit');
-    }
     setStep(2);
   };
 
-  const handleBack = () => {
-    if (step === 2) {
-      setStep(1);
-      setAccountType(null);
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      await signUp({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: ACCOUNT_ROLE[accountType!],
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+      toast.success('Account created! Please verify your email.');
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+    } catch (err: any) {
+      toast.error(err?.data?.message || 'Registration failed. Please try again.');
     }
-  };
-
-  const onCustomerSubmit = (data: CustomerFormValues) => {
-    console.log('Customer Registration Data:', data);
-  };
-
-  const onPartnerSubmit = (data: PartnerFormValues) => {
-    console.log('Partner Registration Data:', data);
   };
 
   return (
@@ -159,7 +138,6 @@ export default function RegisterPage() {
                 priority={idx === 0}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
               <div className="absolute bottom-24 left-12 right-12 text-white space-y-6">
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
@@ -209,19 +187,18 @@ export default function RegisterPage() {
         `}</style>
       </div>
 
-      {/* Right Pan: Register Content */}
+      {/* Right Pan */}
       <div className="flex items-center justify-center p-4 sm:p-6 lg:p-12 min-h-screen overflow-y-auto bg-[#FAF9F6] lg:bg-white">
         <div className="w-full max-w-xl py-8">
 
-          {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <div className="w-48">
-              <Logo />
-            </div>
+            <div className="w-48"><Logo /></div>
           </div>
 
           <AnimatePresence mode="wait">
-            {step === 1 ? (
+
+            {/* Step 1: Choose account type */}
+            {step === 1 && (
               <motion.div
                 key="step1"
                 initial={{ opacity: 0, x: 20 }}
@@ -231,12 +208,12 @@ export default function RegisterPage() {
               >
                 <div className="text-center space-y-3 lg:space-y-4">
                   <div className="mx-auto w-16 h-16 sm:w-24 sm:h-24 relative mb-4 sm:mb-6">
-                    <div className="absolute inset-0  flex items-center justify-center p-2 sm:p-4">
+                    <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
                       <Image src="/icons/document.png" alt="Type" width={100} height={100} className="object-contain" />
                     </div>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-bold text-neutral-1">Choose Account Type</h2>
-                  <p className="text-sm sm:text-base text-neutral-2 font-medium px-4">How do you want to start your design journey?</p>
+                  <p className="text-sm sm:text-base text-neutral-2 font-medium px-4">How do you want to start your journey?</p>
                 </div>
 
                 <div className="space-y-3 sm:space-y-4">
@@ -272,7 +249,10 @@ export default function RegisterPage() {
                   </p>
                 </div>
               </motion.div>
-            ) : (
+            )}
+
+            {/* Step 2: Registration form (same for all roles) */}
+            {step === 2 && (
               <motion.div
                 key="step2"
                 initial={{ opacity: 0, x: 20 }}
@@ -280,216 +260,130 @@ export default function RegisterPage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-8 lg:space-y-10"
               >
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2 lg:space-y-4">
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1 text-center lg:text-left">
-                      {accountType === 'customer' ? 'Customer Registration' : 'Partner Registration'}
-                    </h2>
-                    <p className="text-sm sm:text-base text-neutral-2 font-medium text-center lg:text-left px-4 lg:px-0">
-                      {accountType === 'customer'
-                        ? 'Personalize your property search journey.'
-                        : 'Expand your reach by joining our global network of premium hospitality and service providers.'}
-                    </p>
-                  </div>
+                <div className="space-y-2 lg:space-y-4 text-center lg:text-left">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Create Account</h2>
+                  <p className="text-sm sm:text-base text-neutral-2 font-medium px-4 lg:px-0">
+                    Fill in your details to get started.
+                  </p>
                 </div>
 
                 <div className="bg-white border border-gray-100 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-xl shadow-black/[0.02]">
-                  {accountType === 'customer' ? (
-                    <form className="space-y-5 lg:space-y-7" onSubmit={customerForm.handleSubmit(onCustomerSubmit)}>
+                  <form className="space-y-5 lg:space-y-7" onSubmit={handleSubmit(onSubmit)}>
+
+                    {/* First Name + Last Name */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div className="space-y-2 lg:space-y-3">
-                        <Label className="text-neutral-1 font-bold text-sm lg:text-base">Full Name</Label>
+                        <Label className="text-neutral-1 font-bold text-sm lg:text-base">First Name</Label>
                         <Input
-                          placeholder="Enter your full name"
-                          {...customerForm.register('fullName')}
-                          className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${customerForm.formState.errors.fullName ? 'ring-2 ring-red-500' : ''}`}
+                          placeholder="Enter first name"
+                          {...register('firstName')}
+                          className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${errors.firstName ? 'ring-2 ring-red-500' : ''}`}
                         />
-                        {customerForm.formState.errors.fullName && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{customerForm.formState.errors.fullName.message}</p>
+                        {errors.firstName && (
+                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.firstName.message}</p>
                         )}
                       </div>
                       <div className="space-y-2 lg:space-y-3">
-                        <Label className="text-neutral-1 font-bold text-sm lg:text-base">Email Address</Label>
+                        <Label className="text-neutral-1 font-bold text-sm lg:text-base">Last Name</Label>
                         <Input
-                          placeholder="Enter your email"
-                          {...customerForm.register('email')}
-                          className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${customerForm.formState.errors.email ? 'ring-2 ring-red-500' : ''}`}
+                          placeholder="Enter last name"
+                          {...register('lastName')}
+                          className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${errors.lastName ? 'ring-2 ring-red-500' : ''}`}
                         />
-                        {customerForm.formState.errors.email && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{customerForm.formState.errors.email.message}</p>
+                        {errors.lastName && (
+                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.lastName.message}</p>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                        <div className="space-y-2 lg:space-y-3 relative">
-                          <Label className="text-neutral-1 font-bold text-sm">Password</Label>
-                          <div className="relative">
-                            <Input
-                              type={showPassword ? 'text' : 'password'}
-                              placeholder="Password"
-                              {...customerForm.register('password')}
-                              className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 pr-12 font-medium text-sm lg:text-base ${customerForm.formState.errors.password ? 'ring-2 ring-red-500' : ''}`}
+                    </div>
+
+                    {/* Email */}
+                    <div className="space-y-2 lg:space-y-3">
+                      <Label className="text-neutral-1 font-bold text-sm lg:text-base">Email Address</Label>
+                      <Input
+                        placeholder="Enter your email"
+                        {...register('email')}
+                        className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${errors.email ? 'ring-2 ring-red-500' : ''}`}
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.email.message}</p>
+                      )}
+                    </div>
+
+                    {/* Password + Confirm Password */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      <div className="space-y-2 lg:space-y-3 relative">
+                        <Label className="text-neutral-1 font-bold text-sm">Password</Label>
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Password"
+                            {...register('password')}
+                            className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 pr-12 font-medium text-sm lg:text-base ${errors.password ? 'ring-2 ring-red-500' : ''}`}
+                          />
+                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2">
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                        {errors.password && (
+                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.password.message}</p>
+                        )}
+                      </div>
+                      <div className="space-y-2 lg:space-y-3 relative">
+                        <Label className="text-neutral-1 font-bold text-sm">Confirm Password</Label>
+                        <div className="relative">
+                          <Input
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            placeholder="Confirm Password"
+                            {...register('confirmPassword')}
+                            className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 pr-12 font-medium text-sm lg:text-base ${errors.confirmPassword ? 'ring-2 ring-red-500' : ''}`}
+                          />
+                          <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2">
+                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                        {errors.confirmPassword && (
+                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.confirmPassword.message}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Terms */}
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Controller
+                          name="terms"
+                          control={control}
+                          render={({ field }) => (
+                            <Checkbox
+                              id="terms"
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              className="border-neutral-2 data-[state=checked]:bg-primary size-4 sm:size-5"
                             />
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2"
-                            >
-                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </button>
-                          </div>
-                          {customerForm.formState.errors.password && (
-                            <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{customerForm.formState.errors.password.message}</p>
                           )}
-                        </div>
-                        <div className="space-y-2 lg:space-y-3 relative">
-                          <Label className="text-neutral-1 font-bold text-sm">Confirm Password</Label>
-                          <div className="relative">
-                            <Input
-                              type={showConfirmPassword ? 'text' : 'password'}
-                              placeholder="Confirm Password"
-                              {...customerForm.register('confirmPassword')}
-                              className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 pr-12 font-medium text-sm lg:text-base ${customerForm.formState.errors.confirmPassword ? 'ring-2 ring-red-500' : ''}`}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2"
-                            >
-                              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </button>
-                          </div>
-                          {customerForm.formState.errors.confirmPassword && (
-                            <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{customerForm.formState.errors.confirmPassword.message}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="terms-customer"
-                            className="border-neutral-2 data-[state=checked]:bg-primary size-4 sm:size-5"
-                            onCheckedChange={(checked) => customerForm.setValue('terms', !!checked)}
-                          />
-                          <Label htmlFor="terms-customer" className="text-[10px] sm:text-xs text-neutral-2 font-medium leading-tight">
-                            I agree to the <Link href="#" className="text-primary hover:underline">Terms and Conditions</Link> and <Link href="#" className="text-primary hover:underline">Privacy Policy</Link>.
-                          </Label>
-                        </div>
-                        {customerForm.formState.errors.terms && (
-                          <p className="text-red-500 text-[10px] font-bold ml-1">{customerForm.formState.errors.terms.message}</p>
-                        )}
-                      </div>
-
-                      <Button type="submit" className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center justify-center gap-2 group">
-                        Create Account
-                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </form>
-                  ) : (
-                    <form className="space-y-5 lg:space-y-7" onSubmit={partnerForm.handleSubmit(onPartnerSubmit)}>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-                        <div className="space-y-2 lg:space-y-3">
-                          <Label className="text-neutral-1 font-bold text-xs sm:text-sm">Business Name</Label>
-                          <Input
-                            placeholder="Business name"
-                            {...partnerForm.register('businessName')}
-                            className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${partnerForm.formState.errors.businessName ? 'ring-2 ring-red-500' : ''}`}
-                          />
-                          {partnerForm.formState.errors.businessName && (
-                            <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{partnerForm.formState.errors.businessName.message}</p>
-                          )}
-                        </div>
-                        <div className="space-y-2 lg:space-y-3">
-                          <Label className="text-neutral-1 font-bold text-xs sm:text-sm">Industry / Service Type</Label>
-                          <Controller
-                            name="industry"
-                            control={partnerForm.control}
-                            render={({ field }) => (
-                              <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium shadow-none text-sm lg:text-base ${partnerForm.formState.errors.industry ? 'ring-2 ring-red-500' : ''}`}>
-                                  <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="hotel">Hospitality / Hotel</SelectItem>
-                                  <SelectItem value="transit">Luxury Transit</SelectItem>
-                                  <SelectItem value="concierge">Concierge</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            )}
-                          />
-                          {partnerForm.formState.errors.industry && (
-                            <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{partnerForm.formState.errors.industry.message}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="space-y-2 lg:space-y-3">
-                        <Label className="text-neutral-1 font-bold text-xs sm:text-sm">Business Registration Number</Label>
-                        <Input
-                          placeholder="BRN-000-000-000"
-                          {...partnerForm.register('brn')}
-                          className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${partnerForm.formState.errors.brn ? 'ring-2 ring-red-500' : ''}`}
                         />
-                        {partnerForm.formState.errors.brn && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{partnerForm.formState.errors.brn.message}</p>
-                        )}
+                        <Label htmlFor="terms" className="text-[10px] sm:text-xs text-neutral-2 font-medium leading-tight">
+                          I agree to the <Link href="#" className="text-primary hover:underline">Terms and Conditions</Link> and <Link href="#" className="text-primary hover:underline">Privacy Policy</Link>.
+                        </Label>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-                        <div className="space-y-2 lg:space-y-3">
-                          <Label className="text-neutral-1 font-bold text-xs sm:text-sm">Contact Person Name</Label>
-                          <Input
-                            placeholder="Full name"
-                            {...partnerForm.register('contactName')}
-                            className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${partnerForm.formState.errors.contactName ? 'ring-2 ring-red-500' : ''}`}
-                          />
-                          {partnerForm.formState.errors.contactName && (
-                            <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{partnerForm.formState.errors.contactName.message}</p>
-                          )}
-                        </div>
-                        <div className="space-y-2 lg:space-y-3">
-                          <Label className="text-neutral-1 font-bold text-xs sm:text-sm">Work Email Address</Label>
-                          <Input
-                            placeholder="Work email"
-                            {...partnerForm.register('workEmail')}
-                            className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${partnerForm.formState.errors.workEmail ? 'ring-2 ring-red-500' : ''}`}
-                          />
-                          {partnerForm.formState.errors.workEmail && (
-                            <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{partnerForm.formState.errors.workEmail.message}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="space-y-2 lg:space-y-3">
-                        <Label className="text-neutral-1 font-bold text-xs sm:text-sm">Phone Number</Label>
-                        <Input
-                          placeholder="Phone number"
-                          {...partnerForm.register('phone')}
-                          className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${partnerForm.formState.errors.phone ? 'ring-2 ring-red-500' : ''}`}
-                        />
-                        {partnerForm.formState.errors.phone && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{partnerForm.formState.errors.phone.message}</p>
-                        )}
-                      </div>
+                      {errors.terms && (
+                        <p className="text-red-500 text-[10px] font-bold ml-1">{errors.terms.message}</p>
+                      )}
+                    </div>
 
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="terms-partner"
-                            className="border-neutral-2 data-[state=checked]:bg-primary size-4 sm:size-5"
-                            onCheckedChange={(checked) => partnerForm.setValue('terms', !!checked)}
-                          />
-                          <Label htmlFor="terms-partner" className="text-[10px] sm:text-xs text-neutral-2 font-medium leading-tight">
-                            I agree to the <Link href="#" className="text-primary hover:underline">Terms and Conditions</Link> and <Link href="#" className="text-primary hover:underline">Privacy Policy</Link>.
-                          </Label>
-                        </div>
-                        {partnerForm.formState.errors.terms && (
-                          <p className="text-red-500 text-[10px] font-bold ml-1">{partnerForm.formState.errors.terms.message}</p>
-                        )}
-                      </div>
-
-                      <Button type="submit" className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center justify-center gap-2 group">
-                        Create Account
-                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </form>
-                  )}
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center cursor-pointer justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {isLoading ? <Loader2 size={20} className="animate-spin" /> : (
+                        <>
+                          Create Account
+                          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </Button>
+                  </form>
 
                   <div className="text-center pt-6 sm:pt-8 border-t border-gray-50 mt-6 sm:mt-8">
                     <p className="text-sm sm:text-base text-neutral-2 font-medium">
@@ -500,7 +394,8 @@ export default function RegisterPage() {
 
                 <div className="flex justify-start">
                   <Button
-                    onClick={handleBack}
+                    type="button"
+                    onClick={() => { setStep(1); setAccountType(null); }}
                     variant="ghost"
                     className="flex items-center gap-2 text-neutral-2 font-bold hover:text-primary hover:bg-primary/5 px-4 sm:px-6 h-10 sm:h-12 rounded-lg sm:rounded-xl bg-gray-100 border-none text-xs sm:text-sm"
                   >
@@ -511,6 +406,7 @@ export default function RegisterPage() {
                 </div>
               </motion.div>
             )}
+
           </AnimatePresence>
         </div>
       </div>

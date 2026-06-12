@@ -3,9 +3,10 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/listings/listingsApi';
+import { baseURL } from '@/utils/BaseURL';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
 import {
   Bath,
   BedDouble,
@@ -18,6 +19,7 @@ import {
   Heart,
   Home,
   Layers,
+  Loader2,
   MapPin,
   Maximize2,
   Play,
@@ -27,10 +29,20 @@ import {
   Zap
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-const OverviewItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string }) => (
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
+
+const getImg = (path?: string) => {
+  if (!path) return FALLBACK_IMG;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
+};
+
+const OverviewItem = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) => (
   <div className="flex items-center gap-3 sm:gap-4 bg-[#F7F7F7] p-3 sm:p-6 rounded-lg">
     <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
       <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -42,7 +54,7 @@ const OverviewItem = ({ icon: Icon, label, value }: { icon: React.ElementType, l
   </div>
 );
 
-const DetailRow = ({ label, value }: { label: string, value: string }) => (
+const DetailRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex items-center justify-between py-4 border-b border-gray-100 last:border-none">
     <span className="text-sm text-neutral-2 font-medium">{label}</span>
     <span className="text-sm font-bold text-neutral-1">{value}</span>
@@ -75,7 +87,7 @@ const ReviewItem = ({ name, date, rating, comment, avatar }: ReviewItemProps) =>
         </div>
         <div className="flex gap-1">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} size={14} className={i < rating ? "fill-primary text-primary" : "text-gray-200"} />
+            <Star key={i} size={14} className={i < rating ? 'fill-primary text-primary' : 'text-gray-200'} />
           ))}
         </div>
       </div>
@@ -84,16 +96,18 @@ const ReviewItem = ({ name, date, rating, comment, avatar }: ReviewItemProps) =>
   </div>
 );
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   phone: z.string().min(1, 'Phone number is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  email: z.string().min(1, 'Email is required').regex(EMAIL_RE, 'Invalid email address'),
   message: z.string().min(1, 'Message is required'),
 });
 
 const replySchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  email: z.string().min(1, 'Email is required').regex(EMAIL_RE, 'Invalid email address'),
   comment: z.string().min(1, 'Comment is required'),
 });
 
@@ -101,28 +115,54 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 type ReplyFormValues = z.infer<typeof replySchema>;
 
 export default function PropertyDetailPage() {
-  const router = useRouter(); // Initialize router
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
+
+  const { data: apiData, isLoading } = useGetSingleListingQuery(id, { skip: !id });
+  const { data: featuredApiData } = useGetAllListingsQuery({ category: 'listing', page: 1, limit: 3 });
+
+  const p = apiData?.data;
+  const featuredList: any[] = featuredApiData?.data ?? [];
+
   const contactForm = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: '', phone: '', email: '', message: '' }
+    defaultValues: { name: '', phone: '', email: '', message: '' },
   });
 
   const replyForm = useForm<ReplyFormValues>({
     resolver: zodResolver(replySchema),
-    defaultValues: { name: '', email: '', comment: '' }
+    defaultValues: { name: '', email: '', comment: '' },
   });
 
-  const onContactSubmit = (data: ContactFormValues) => {
-    console.log('Contact Form:', data);
-  };
+  const onContactSubmit = (data: ContactFormValues) => console.log('Contact:', data);
+  const onReplySubmit = (data: ReplyFormValues) => console.log('Reply:', data);
 
-  const onReplySubmit = (data: ReplyFormValues) => {
-    console.log('Reply Form:', data);
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 size={48} className="animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const images: string[] = p?.images ?? [];
+  const title: string = p?.title ?? p?.name ?? '';
+  const description: string = p?.description ?? '';
+  const price: number | undefined = p?.price;
+  const currency: string = p?.currency ?? 'ETB';
+  const address = p?.address;
+  const addressStr = [address?.street, address?.city, address?.country].filter(Boolean).join(', ');
+  const amenities: string[] = p?.amenities ?? [];
+  const status: string = p?.status ?? '';
+  const isVerified: boolean = p?.isVerified ?? false;
+  const ld = p?.listing ?? {};
+  const landmarks: { name: string; distanceInKm: number }[] = ld.landmarks ?? [];
+  const purpose: string = (ld.purpose ?? '').replace('_', ' ');
 
   return (
     <div className="min-h-screen bg-white pt-10">
-      {/* Photo Gallery Header */}
+      {/* Photo Gallery */}
       <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-12">
         <div className="flex flex-col gap-8 md:gap-12">
           <button
@@ -134,63 +174,66 @@ export default function PropertyDetailPage() {
             </div>
             <span className="text-sm">Back to Listings</span>
           </button>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 h-auto md:h-[500px]">
-          <div className="lg:col-span-1 relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200"
-              alt="Property"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-          </div>
-          <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=1200"
-              alt="Property"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-          </div>
-          <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
-            <Image
-              src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200"
-              alt="Property"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
+            <div className="lg:col-span-1 relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group">
+              <Image src={getImg(images[0])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+            </div>
+            <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
+              <Image src={getImg(images[1])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+            </div>
+            <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
+              <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-      {/* Property Basic Info */}
+      {/* Property Info */}
       <section className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 md:pb-12 border-b border-gray-100">
           <div className="space-y-3 md:space-y-4">
-            <span className="inline-block bg-[#2B9724] text-white text-[10px] font-bold px-4 py-1.5 rounded-full">For Rent</span>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-1 leading-tight">Lakeview Haven, Lake Tahoe</h1>
+            <div className="flex flex-wrap gap-2">
+              {isVerified && <span className="inline-block bg-[#2B9724] text-white text-[10px] font-bold px-4 py-1.5 rounded-full">Verified</span>}
+              {purpose && <span className="inline-block bg-primary text-white text-[10px] font-bold px-4 py-1.5 rounded-full capitalize">{purpose}</span>}
+              {status && <span className="inline-block bg-neutral-1 text-white text-[10px] font-bold px-4 py-1.5 rounded-full capitalize">{status}</span>}
+            </div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-1 leading-tight">{title}</h1>
             <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-              <div className="flex items-center gap-2">
-                <BedDouble size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="text-xs sm:text-sm font-bold text-neutral-2">3 Bedroom</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Bath size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="text-xs sm:text-sm font-bold text-neutral-2">2 Bedroom</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Car size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="text-xs sm:text-sm font-bold text-neutral-2">1 Bedroom</span>
-              </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                <MapPin size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
-                <span className="text-xs sm:text-sm font-bold text-neutral-2">St Shadalaly, Brooklyn, New York</span>
-              </div>
+              {ld.bedrooms != null && (
+                <div className="flex items-center gap-2">
+                  <BedDouble size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <span className="text-xs sm:text-sm font-bold text-neutral-2">{ld.bedrooms} Bedroom{ld.bedrooms !== 1 ? 's' : ''}</span>
+                </div>
+              )}
+              {ld.bathrooms != null && (
+                <div className="flex items-center gap-2">
+                  <Bath size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <span className="text-xs sm:text-sm font-bold text-neutral-2">{ld.bathrooms} Bathroom{ld.bathrooms !== 1 ? 's' : ''}</span>
+                </div>
+              )}
+              {ld.garage != null && (
+                <div className="flex items-center gap-2">
+                  <Car size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <span className="text-xs sm:text-sm font-bold text-neutral-2">{ld.garage} Garage</span>
+                </div>
+              )}
+              {addressStr && (
+                <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                  <MapPin size={20} className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
+                  <span className="text-xs sm:text-sm font-bold text-neutral-2">{addressStr}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex flex-row items-center justify-between lg:justify-end gap-6 lg:text-right w-full lg:w-auto pt-4 lg:pt-0 border-t lg:border-none border-gray-100">
             <div>
-              <h2 className="text-3xl md:text-4xl font-black text-primary uppercase">ETB250,00 <span className="text-xs md:text-sm text-neutral-2 font-bold lowercase">/month</span></h2>
+              {price != null && (
+                <h2 className="text-3xl md:text-4xl font-black text-primary uppercase">
+                  {currency} {price.toLocaleString()}
+                  {purpose === 'for rent' && <span className="text-xs md:text-sm text-neutral-2 font-bold lowercase"> /month</span>}
+                </h2>
+              )}
             </div>
             <div className="flex gap-2 sm:gap-3">
               <button className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer">
@@ -208,150 +251,131 @@ export default function PropertyDetailPage() {
           <div className="lg:col-span-2 space-y-16">
 
             {/* Description */}
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-neutral-1">Description</h3>
-              <p className="text-neutral-2 font-medium leading-relaxed">
-                Located around an hour away from Paris, between the Perche and the Iton valley, in a beautiful wooded park bordered by a charming stream, this country property immediately seduces with its bucolic and soothing environment. An ideal choice for sports and leisure enthusiasts who will be able to take advantage of its swimming pool (15m x 5m), tennis court, gym and sauna.
-              </p>
-              <button className="text-primary font-bold hover:underline flex items-center gap-1">
-                View More <ChevronRight size={16} />
-              </button>
-            </div>
+            {description && (
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-neutral-1">Description</h3>
+                <p className="text-neutral-2 font-medium leading-relaxed">{description}</p>
+              </div>
+            )}
 
             {/* Overview */}
             <div className="space-y-8">
               <h3 className="text-2xl font-bold text-neutral-1">Overview</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <OverviewItem icon={Layers} label="ID" value="2357" />
-                <OverviewItem icon={Home} label="Type" value="House" />
-                <OverviewItem icon={User} label="Bedrooms" value="3 Rooms" />
-                <OverviewItem icon={Bath} label="Bathrooms" value="3" />
-                <OverviewItem icon={Car} label="Garages" value="2" />
-                <OverviewItem icon={Maximize2} label="Size" value="900 SqFt" />
-                <OverviewItem icon={Maximize2} label="Land Size" value="2,000 SqFt" />
-                <OverviewItem icon={Calendar} label="Year Built" value="2025" />
+                <OverviewItem icon={Home} label="Type" value={p?.structureType ?? ''} />
+                {ld.bedrooms != null && <OverviewItem icon={User} label="Bedrooms" value={`${ld.bedrooms} Rooms`} />}
+                {ld.bathrooms != null && <OverviewItem icon={Bath} label="Bathrooms" value={String(ld.bathrooms)} />}
+                {ld.garage != null && <OverviewItem icon={Car} label="Garages" value={String(ld.garage)} />}
+                {ld.totalArea != null && <OverviewItem icon={Maximize2} label="Size" value={`${ld.totalArea} SqFt`} />}
+                {ld.landArea != null && <OverviewItem icon={Maximize2} label="Land Size" value={`${ld.landArea} SqFt`} />}
+                {ld.yearBuilt != null && <OverviewItem icon={Calendar} label="Year Built" value={String(ld.yearBuilt)} />}
+                {p?._id && <OverviewItem icon={Layers} label="ID" value={p._id.slice(-6).toUpperCase()} />}
               </div>
             </div>
 
-            {/* Video */}
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-neutral-1">Video</h3>
-              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-2xl">
-                <Image src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200" alt="Video" fill className="object-cover" />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/40 group-hover:scale-110 transition-transform duration-300">
-                    <Play size={32} fill="currentColor" />
+            {/* Video (only if URL exists) */}
+            {p?.videoUrl && (
+              <div className="space-y-8">
+                <h3 className="text-2xl font-bold text-neutral-1">Video</h3>
+                <div className="relative aspect-video rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-2xl">
+                  <Image src={getImg(images[0])} alt="Video" fill className="object-cover" />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/40 group-hover:scale-110 transition-transform duration-300">
+                      <Play size={32} fill="currentColor" />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Verified Badge */}
-            <div className="bg-[#F7F7F7] rounded-lg p-5 flex items-center gap-8 border border-gray-100">
-              <div className="w-16 h-16 rounded-full bg-neutral-1 flex items-center justify-center text-white flex-shrink-0">
-                <Image src="/icons/checkMark.png" alt="Zila" width={32} height={32} className="" />
+            {isVerified && (
+              <div className="bg-[#F7F7F7] rounded-lg p-5 flex items-center gap-8 border border-gray-100">
+                <div className="w-16 h-16 rounded-full bg-neutral-1 flex items-center justify-center text-white flex-shrink-0">
+                  <Image src="/icons/checkMark.png" alt="Zila" width={32} height={32} />
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-neutral-1">ZilaHomes Verified</h4>
+                  <p className="text-neutral-2 text-sm font-medium">This property has been personally verified by our team. Ownership, availability, and listing details have been confirmed.</p>
+                  {p?.verifiedAt && (
+                    <p className="text-xs text-neutral-2 mt-2 flex items-center gap-1 italic">
+                      <Clock size={12} /> Verified on: {new Date(p.verifiedAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div>
-                <h4 className="text-xl font-bold text-neutral-1">ZilaHomes Verified</h4>
-                <p className="text-neutral-2 text-sm font-medium">This property has been personally verified by our team. Ownership, availability, and listing details have been confirmed.</p>
-                <p className="text-xs text-neutral-2 mt-2 flex items-center gap-1 italic"><Clock size={12} /> Verified on: 12/12/2024</p>
-              </div>
-            </div>
+            )}
 
             {/* Property Details */}
             <div className="space-y-6 md:space-y-8">
               <h3 className="text-2xl font-bold text-neutral-1">Property Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
                 <div>
-                  <DetailRow label="Property ID:" value="AV7T1029" />
-                  <DetailRow label="Price:" value="ETB250,00/month" />
-                  <DetailRow label="Property Size:" value="1200 SqFt" />
-                  <DetailRow label="Year Built:" value="2025 - 12 - 11" />
-                  <DetailRow label="Property Type:" value="House, Apartment" />
-                  <DetailRow label="Garage Size:" value="AV7T1029" />
+                  {p?._id && <DetailRow label="Property ID:" value={p._id.slice(-8).toUpperCase()} />}
+                  {price != null && <DetailRow label="Price:" value={`${currency} ${price.toLocaleString()}`} />}
+                  {ld.totalArea != null && <DetailRow label="Property Size:" value={`${ld.totalArea} SqFt`} />}
+                  {ld.yearBuilt != null && <DetailRow label="Year Built:" value={String(ld.yearBuilt)} />}
+                  {p?.structureType && <DetailRow label="Property Type:" value={p.structureType} />}
+                  {ld.garage != null && <DetailRow label="Garage:" value={String(ld.garage)} />}
                 </div>
                 <div>
-                  <DetailRow label="Bathrooms:" value="4" />
-                  <DetailRow label="Bedrooms:" value="2" />
-                  <DetailRow label="Bathrooms:" value="4" />
-                  <DetailRow label="Garage:" value="2" />
-                  <DetailRow label="Property Status:" value="1200 SqFt" />
+                  {ld.bathrooms != null && <DetailRow label="Bathrooms:" value={String(ld.bathrooms)} />}
+                  {ld.bedrooms != null && <DetailRow label="Bedrooms:" value={String(ld.bedrooms)} />}
+                  {ld.landArea != null && <DetailRow label="Land Area:" value={`${ld.landArea} SqFt`} />}
+                  {status && <DetailRow label="Status:" value={status} />}
+                  {purpose && <DetailRow label="Purpose:" value={purpose} />}
+                  {address?.city && <DetailRow label="City:" value={address.city} />}
                 </div>
               </div>
             </div>
 
             {/* Amenities */}
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-neutral-1">Amenities and Features</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((i) => (
-                  <div key={i} className="flex items-center gap-3 bg-[#F7F7F7] p-4 rounded-xl">
-                    <Zap size={18} className="text-primary" />
-                    <span className="text-sm font-bold text-neutral-1">Fiber</span>
-                  </div>
-                ))}
+            {amenities.length > 0 && (
+              <div className="space-y-8">
+                <h3 className="text-2xl font-bold text-neutral-1">Amenities and Features</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {amenities.map((amenity, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-[#F7F7F7] p-4 rounded-xl">
+                      <Zap size={18} className="text-primary shrink-0" />
+                      <span className="text-sm font-bold text-neutral-1">{amenity}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Nearby */}
-            <div className="space-y-6 md:space-y-8">
-              <h3 className="text-2xl font-bold text-neutral-1">What&apos;s nearby?</h3>
-              <p className="text-sm text-neutral-2 font-medium">Explore nearby amenities to precisely locate your property and identify surrounding conveniences, promoting cost-effective and time-efficient visit of your property&apos;s convenience.</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2 sm:gap-y-4">
-                {[
-                  { label: 'School', dist: '0.7 km' },
-                  { label: 'Univeryity', dist: '1.3 km' },
-                  { label: 'Grocery center', dist: '0.8 km' },
-                  { label: 'Market', dist: '1.1 km' },
-                  { label: 'Hospital', dist: '1.5 km' },
-                  { label: 'Metro station', dist: '2.2 km' },
-                  { label: 'Gym, wellness', dist: '1.6 km' },
-                  { label: 'River', dist: '1.2 km' },
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-50">
-                    <span className="text-sm text-neutral-2 font-bold">{item.label}</span>
-                    <span className="text-sm font-bold text-neutral-1">{item.dist}</span>
-                  </div>
-                ))}
+            {/* Nearby / Landmarks */}
+            {landmarks.length > 0 && (
+              <div className="space-y-6 md:space-y-8">
+                <h3 className="text-2xl font-bold text-neutral-1">What&apos;s nearby?</h3>
+                <p className="text-sm text-neutral-2 font-medium">Explore nearby amenities to precisely locate your property and identify surrounding conveniences.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2 sm:gap-y-4">
+                  {landmarks.map((lm, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-50">
+                      <span className="text-sm text-neutral-2 font-bold">{lm.name}</span>
+                      <span className="text-sm font-bold text-neutral-1">{lm.distanceInKm} km</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Reviews */}
+            {/* Reviews (static placeholders) */}
             <div className="space-y-8">
               <div className="flex items-center justify-between pb-4 border-b border-gray-100">
                 <h3 className="text-2xl font-bold text-neutral-1">Guest Reviews</h3>
-                <button className="text-sm font-medium cursor-pointer text-neutral-1 bg-[#F7F7F7] px-4 py-2 rounded-lg hover:bg-gray-100">Show All Reviews</button>
+                {(p?.ratingCount ?? 0) > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => <Star key={i} size={14} className={i < Math.round(p?.averageRating ?? 0) ? 'fill-primary text-primary' : 'text-gray-200'} />)}
+                    </div>
+                    <span className="text-sm font-bold text-neutral-1">{p?.averageRating?.toFixed(1)} ({p?.ratingCount})</span>
+                  </div>
+                )}
               </div>
-              <div className="space-y-12 pt-8">
-                <ReviewItem
-                  name="What's nearby?"
-                  date="August 12, 2025"
-                  rating={5}
-                  comment="It's really easy to use and it is exactly what I am looking for. A lot of good looking templates. It's highly commendable. Give a support is helpful & solved my issues in no time."
-                  avatar="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=100&h=100&fit=crop"
-                />
-                <ReviewItem
-                  name="What's nearby?"
-                  date="August 12, 2025"
-                  rating={5}
-                  comment="It's really easy to use and it is exactly what I am looking for. A lot of good looking templates. It's highly commendable. Give a support is helpful & solved my issues in no time."
-                  avatar="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&h=100&fit=crop"
-                />
-                <ReviewItem
-                  name="What's nearby?"
-                  date="August 12, 2025"
-                  rating={5}
-                  comment="It's really easy to use and it is exactly what I am looking for. A lot of good looking templates. It's highly commendable. Give a support is helpful & solved my issues in no time."
-                  avatar="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=100&h=100&fit=crop"
-                />
-                <ReviewItem
-                  name="What's nearby?"
-                  date="August 12, 2025"
-                  rating={5}
-                  comment="It's really easy to use and it is exactly what I am looking for. A lot of good looking templates. It's highly commendable. Give a support is helpful & solved my issues in no time."
-                  avatar="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&h=100&fit=crop"
-                />
-              </div>
+              {(p?.ratingCount ?? 0) === 0 && (
+                <p className="text-neutral-2 font-medium text-sm">No reviews yet.</p>
+              )}
             </div>
 
             {/* Leave a Reply */}
@@ -398,7 +422,6 @@ export default function PropertyDetailPage() {
                 </Button>
               </form>
             </div>
-
           </div>
 
           {/* Sidebar */}
@@ -462,58 +485,51 @@ export default function PropertyDetailPage() {
         </div>
       </section>
 
-      {/* Featured Properties Section */}
-      <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-8 md:space-y-12">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-0">
-          <div className="space-y-3 md:space-y-4 text-left">
-            <h2 className="text-3xl md:text-5xl font-black text-neutral-1 tracking-tight">Featured Verified Properties</h2>
-            <p className="text-sm md:text-base text-neutral-2 font-medium italic">Explore all the different types of properties so you can choose the best option for you.</p>
+      {/* Featured Properties */}
+      {featuredList.length > 0 && (
+        <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-8 md:space-y-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 sm:gap-0">
+            <div className="space-y-3 md:space-y-4 text-left">
+              <h2 className="text-3xl md:text-5xl font-black text-neutral-1 tracking-tight">Featured Verified Properties</h2>
+              <p className="text-sm md:text-base text-neutral-2 font-medium italic">Explore all the different types of properties so you can choose the best option for you.</p>
+            </div>
+            <Link href="/properties">
+              <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-lg font-bold border-gray-200">View All</Button>
+            </Link>
           </div>
-          <Button variant="outline" className="h-12 w-full sm:w-auto px-8 rounded-lg font-bold border-gray-200">View All</Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {[1, 2, 3].map((i) => (
-            <motion.div
-              key={i}
-              className="group bg-white rounded-lg overflow-hidden shadow-xl shadow-black/5 hover:shadow-primary/5 transition-all duration-700"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <Image
-                  src={`https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop`}
-                  alt="Property"
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase">Zila Verified</span>
-                  <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase">For Sale</span>
-                </div>
-              </div>
-              <div className="p-6 space-y-4">
-                <h3 className="text-2xl font-black text-neutral-1">ETB165.00</h3>
-                <div className="flex items-center gap-2 text-neutral-2 text-sm font-medium italic">
-                  <MapPin size={16} className="text-primary flex-shrink-0" />
-                  <p>14691 Stratford Dr, Woodbridge, VA 22193</p>
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-neutral-2 font-bold text-xs uppercase italic opacity-60">
-                  <div className="flex items-center gap-1.5">
-                    <BedDouble size={16} />
-                    <span>Beds 4</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {featuredList.map((item: any, i: number) => (
+              <motion.div
+                key={item._id ?? i}
+                className="group bg-white rounded-lg overflow-hidden shadow-xl shadow-black/5 hover:shadow-primary/5 transition-all duration-700"
+              >
+                <Link href={`/properties/${item._id ?? item.id}`}>
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <Image src={getImg(item.images?.[0])} alt={item.title ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      {item.isVerified && <span className="bg-[#2B9724] text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase">Verified</span>}
+                      {item.listing?.purpose && <span className="bg-primary text-white text-[10px] font-bold px-3 py-1.5 rounded-full capitalize">{item.listing.purpose.replace('_', ' ')}</span>}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Bath size={16} />
-                    <span>Baths 3</span>
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-2xl font-black text-neutral-1">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</h3>
+                    <p className="text-base font-bold text-neutral-1 line-clamp-1">{item.title ?? item.name}</p>
+                    <div className="flex items-center gap-2 text-neutral-2 text-sm font-medium italic">
+                      <MapPin size={16} className="text-primary flex-shrink-0" />
+                      <p className="line-clamp-1">{[item.address?.street, item.address?.city].filter(Boolean).join(', ')}</p>
+                    </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-neutral-2 font-bold text-xs uppercase italic opacity-60">
+                      <div className="flex items-center gap-1.5"><BedDouble size={16} /><span>Beds {item.listing?.bedrooms ?? 0}</span></div>
+                      <div className="flex items-center gap-1.5"><Bath size={16} /><span>Baths {item.listing?.bathrooms ?? 0}</span></div>
+                      <div className="flex items-center gap-1.5"><Maximize2 size={16} /><span>m² {item.listing?.totalArea ?? 0}</span></div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Maximize2 size={16} />
-                    <span>m2 900</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
