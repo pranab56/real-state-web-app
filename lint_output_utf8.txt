@@ -1,0 +1,233 @@
+﻿
+> real-state-webapp@0.1.0 lint
+> eslint
+
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\blog\[id]\page.tsx
+  3:10  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+  8:70  warning  'User' is defined but never used    @typescript-eslint/no-unused-vars
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\blog\page.tsx
+   55:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   59:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  194:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  310:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels-partner-dashboard\manage-hotels\list\page.tsx
+  23:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  85:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels-partner-dashboard\payments\page.tsx
+   35:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   42:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  123:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels-partner-dashboard\profile\page.tsx
+  49:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels-partner-dashboard\profile\page.tsx:49:7
+  47 |   useEffect(() => {
+  48 |     if (profile) {
+> 49 |       setFormData({
+     |       ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  50 |         firstName: profile.firstName ?? '',
+  51 |         lastName: profile.lastName ?? '',
+  52 |         phone: profile.phone ?? '',  react-hooks/set-state-in-effect
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels-partner-dashboard\reviews\page.tsx
+  29:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  96:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels-partner-dashboard\wishlist\page.tsx
+   20:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   30:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   38:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   75:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels\[id]\page.tsx
+   41:35  warning  'RootState' is defined but never used     @typescript-eslint/no-unused-vars
+  164:37  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels\[id]\reviews\page.tsx
+   40:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   48:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels\page.tsx
+  138:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\hotels\page.tsx:138:5
+  136 |         .filter((id: string) => id !== '')
+  137 |     );
+> 138 |     setWishlisted(initialWishlisted);
+      |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  139 |   }, [data]);
+  140 |   const hotels = rawHotels.filter((h) => {
+  141 |     if (ratingFilter.length === 0) return true;  react-hooks/set-state-in-effect
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\partner-dashboard\bookings\page.tsx
+   60:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   64:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   66:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  292:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\partner-dashboard\payments\page.tsx
+   35:23  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   41:60  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   42:60  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   43:9   warning  'paidCount' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   43:49  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  124:52  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\partner-dashboard\profile\page.tsx
+  48:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\partner-dashboard\profile\page.tsx:48:7
+  46 |   useEffect(() => {
+  47 |     if (profile) {
+> 48 |       setFormData({
+     |       ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  49 |         firstName: profile.firstName ?? '',
+  50 |         lastName: profile.lastName ?? '',
+  51 |         phone: profile.phone ?? '',  react-hooks/set-state-in-effect
+  80:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+  97:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\partner-dashboard\reviews\page.tsx
+  29:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  96:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\partner-dashboard\wishlist\page.tsx
+   20:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   30:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   38:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   75:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   87:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\poa\page.tsx
+   93:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  121:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\properties\[id]\page.tsx
+  115:34  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\properties\[id]\page.tsx:115:34
+  113 |
+  114 |   useEffect(() => {
+> 115 |     if (p?.isWishlisted != null) setIsWishlisted(p.isWishlisted);
+      |                                  ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  116 |   }, [p?.isWishlisted]);
+  117 |
+  118 |   const handleWishlist = async () => {  react-hooks/set-state-in-effect
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\properties\[id]\reviews\page.tsx
+   40:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   48:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\properties\page.tsx
+   54:10  warning  'wishlisted' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   57:9   warning  'handleWishlist' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   59:54  warning  Expected an assignment or function call and instead saw an expression                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-expressions
+   64:56  warning  Expected an assignment or function call and instead saw an expression                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-expressions
+  155:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\properties\page.tsx:155:5
+  153 |         .filter((id: string) => id !== '')
+  154 |     );
+> 155 |     setWishlisted(initialWishlisted);
+      |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  156 |   }, [data]);
+  157 |   const total: number = data?.pagination?.total ?? 0;
+  158 |   const totalPages = Math.max(1, data?.pagination?.totalPage ?? Math.ceil(total / LIMIT));  react-hooks/set-state-in-effect
+
+D:\pronab\real-state-project\real-state-web-app\app\(main)\transportation\page.tsx
+  114:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  168:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\home\FeaturedVerifiedProperties.tsx
+  33:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\home\HelpSection.tsx
+  3:10  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\pronab\real-state-project\real-state-web-app\components\home\InsightOpinionSection.tsx
+  21:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\home\TopDistention.tsx
+   6:37  warning  'Heart' is defined but never used         @typescript-eslint/no-unused-vars
+  26:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\home\summerTrips.tsx
+  3:10  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\pronab\real-state-project\real-state-web-app\components\hotels-partner-dashboard\HotelSidebar.tsx
+  115:74   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  115:120  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\partner-dashboard\overview\overview.tsx
+   69:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   81:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   82:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  165:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  223:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  269:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\providers\i18n-provider.tsx
+  3:28  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\pronab\real-state-project\real-state-web-app\components\shared\Footer.tsx
+  59:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\components\shared\navbar.tsx
+  36:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\pronab\real-state-project\real-state-web-app\utils\storage.js
+  47:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 89 problems (76 errors, 13 warnings)
+

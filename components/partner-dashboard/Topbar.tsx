@@ -14,11 +14,11 @@ export function Topbar() {
       {/* Left side */}
       <div className="flex items-center gap-3 md:gap-4">
         {/* Mobile menu toggle */}
-        <button onClick={toggleSidebar} className="bg-[#FFF4ED] p-2 md:p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
+        <button onClick={toggleSidebar} className="bg-[#FFF4ED] p-2 cursor-pointer md:p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
           <Menu className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
         </button>
         <div>
-          <h1 className="text-lg md:text-[22px] font-bold text-[#2C2E33] leading-tight truncate max-w-[150px] sm:max-w-none">
+          <h1 className="text-lg md:text-[22px] font-medium text-[#2C2E33] leading-tight truncate max-w-[150px] sm:max-w-none">
             Partner Dashboard
           </h1>
         </div>
@@ -27,7 +27,7 @@ export function Topbar() {
       {/* Right side - Profile */}
       <div onClick={() => router.push('/partner-dashboard/profile')} className="flex items-center gap-3 cursor-pointer">
         <div className="text-right hidden sm:flex flex-col items-end">
-          <span className="text-[15px] font-bold text-[#2C2E33] leading-none">Rasel Parvez</span>
+          <span className="text-[15px] font-medium text-[#2C2E33] leading-none">Rasel Parvez</span>
           <span className="text-[13px] text-[#6C757D] font-medium leading-[1.2]">Hotel Partner</span>
         </div>
         <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm ring-1 ring-[#F2F2F2] shrink-0">

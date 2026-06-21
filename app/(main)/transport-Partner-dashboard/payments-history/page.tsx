@@ -57,14 +57,14 @@ export default function PaymentsHistoryPage() {
               <CalendarCheck size={24} strokeWidth={1.5} />
             </div>
             <p className="text-[#6C757D] text-[15px] font-medium">{stat.label}</p>
-            <h3 className="text-[32px] font-bold text-[#2C2E33] leading-none">{stat.value}</h3>
+            <h3 className="text-[32px] font-medium text-[#2C2E33] leading-none">{stat.value}</h3>
           </div>
         ))}
       </div>
 
       {/* Main Table Area */}
       <div className="bg-white rounded-[20px] p-7 border border-[#F2F2F2] shadow-sm">
-        <h2 className="text-[20px] font-bold text-[#2C2E33] mb-6">Transaction History</h2>
+        <h2 className="text-[20px] font-medium text-[#2C2E33] mb-6">Transaction History</h2>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left font-medium whitespace-nowrap border-collapse">
@@ -94,16 +94,16 @@ export default function PaymentsHistoryPage() {
                       className="rounded border-gray-300 data-[state=checked]:bg-[#F1913D] data-[state=checked]:border-[#F1913D]"
                     />
                   </td>
-                  <td className="py-5 px-4 text-[14px] font-bold text-[#2C2E33]">{item.id}</td>
+                  <td className="py-5 px-4 text-[14px] font-medium text-[#2C2E33]">{item.id}</td>
                   <td className="py-5 px-4 text-[14px] font-semibold text-[#2C2E33]">{item.method}</td>
                   <td className="py-5 px-4 text-[14px] font-semibold text-[#2C2E33]">{item.date}</td>
                   <td className="py-5 px-4">
-                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${item.status === 'Completed' ? 'bg-[#2B9724]/10 text-[#2B9724]' : 'bg-[#FFF4ED] text-[#F1913D]'
+                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-medium ${item.status === 'Completed' ? 'bg-[#2B9724]/10 text-[#2B9724]' : 'bg-[#FFF4ED] text-[#F1913D]'
                       }`}>
                       {item.status}
                     </span>
                   </td>
-                  <td className="py-5 px-4 text-[14px] font-bold text-[#2C2E33]">{item.amount}</td>
+                  <td className="py-5 px-4 text-[14px] font-medium text-[#2C2E33]">{item.amount}</td>
                 </tr>
               ))}
             </tbody>
@@ -112,7 +112,7 @@ export default function PaymentsHistoryPage() {
           {/* Pagination */}
           <div className="flex flex-col md:flex-row items-center justify-between mt-8 pt-4">
             <div className="text-[14px] text-[#6C757D] font-medium mb-4 md:mb-0">
-              Showing <span className="font-bold text-[#2C2E33]">1-9</span> of <span className="font-bold text-[#2C2E33]">240</span> enteries
+              Showing <span className="font-medium text-[#2C2E33]">1-9</span> of <span className="font-medium text-[#2C2E33]">240</span> enteries
             </div>
 
             <div className="flex items-center space-x-2">

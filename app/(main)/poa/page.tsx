@@ -13,9 +13,13 @@ import {
   UserCheck,
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import { ApiError, RootState } from '@/types';
 
 // ── Shared field height ──
 const FIELD_H = 'h-12';
@@ -71,7 +75,7 @@ const FeatureCard = ({ icon: Icon, title, description, light = false }: FeatureC
     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
       <Icon size={32} />
     </div>
-    <h3 className="text-xl font-bold text-neutral-1">{title}</h3>
+    <h3 className="text-xl font-medium text-neutral-1">{title}</h3>
     <p className="text-sm text-neutral-2 leading-relaxed">{description}</p>
   </motion.div>
 );
@@ -79,7 +83,7 @@ const FeatureCard = ({ icon: Icon, title, description, light = false }: FeatureC
 // ── Process step ──
 const ProcessStep = ({ title, description }: { title: string; description: string }) => (
   <div className="p-6 md:p-8 rounded-xl border border-white/10 hover:border-primary/30 transition-colors space-y-3 md:space-y-4">
-    <h3 className="text-base md:text-lg font-bold text-white">{title}</h3>
+    <h3 className="text-base md:text-lg font-medium text-white">{title}</h3>
     <p className="text-xs md:text-sm text-white/50 leading-relaxed font-medium">{description}</p>
   </div>
 );
@@ -87,6 +91,8 @@ const ProcessStep = ({ title, description }: { title: string; description: strin
 export default function POAPage() {
   const { t } = useTranslation('common');
   const [createPoa, { isLoading }] = useCreatePoaMutation();
+  const token = useSelector((state: RootState) => state.auth?.token);
+  const router = useRouter();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -99,6 +105,7 @@ export default function POAPage() {
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+    if (!token) { router.push('/login'); return; }
     const errs = runValidation({ name, email, phone, message });
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
@@ -112,8 +119,10 @@ export default function POAPage() {
       toast.success('Consultation request submitted! We will contact you shortly.');
       setName(''); setEmail(''); setPhone(''); setMessage('');
       setErrors({});
-    } catch (err: any) {
-      toast.error(err?.data?.message ?? 'Submission failed. Please try again.');
+      setErrors({});
+    } catch (err) {
+      const error = err as ApiError;
+      toast.error(error?.data?.message ?? 'Submission failed. Please try again.');
     }
   };
 
@@ -139,7 +148,7 @@ export default function POAPage() {
               onClick={() =>
                 document.getElementById('consultation-form')?.scrollIntoView({ behavior: 'smooth' })
               }
-              className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-all cursor-pointer text-sm md:text-base"
+              className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-all cursor-pointer text-sm md:text-base"
             >
               {t('poa.request_assistance')}
             </Button>
@@ -163,7 +172,7 @@ export default function POAPage() {
       {/* ── Why Use ZilaHomes POA? ── */}
       <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
         <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-          <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">{t('poa.why_title')}</h2>
+          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">{t('poa.why_title')}</h2>
           <p className="text-neutral-2">{t('poa.why_subtitle')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -176,7 +185,7 @@ export default function POAPage() {
       {/* ── 4-Step Process ── */}
       <section className="bg-[#1E2024] py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
-          <div className="text-center font-bold">
+          <div className="text-center font-medium">
             <h2 className="text-2xl md:text-4xl text-white tracking-tight">{t('poa.process.title')}</h2>
           </div>
           <motion.div
@@ -211,11 +220,23 @@ export default function POAPage() {
           {/* Form panel */}
           <div className="lg:w-1/2 p-8 md:p-10 lg:p-16 space-y-8 bg-white">
             <div className="space-y-3">
-              <h2 className="text-2xl md:text-3xl font-bold text-neutral-1">{t('poa.consultation.title')}</h2>
+              <h2 className="text-2xl md:text-3xl font-medium text-neutral-1">{t('poa.consultation.title')}</h2>
               <p className="text-sm text-neutral-2 font-medium leading-relaxed">{t('poa.consultation.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
+
+              {!token && (
+                <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+                  <span className="text-amber-600 text-sm font-medium">
+                    Please{' '}
+                    <Link href="/login" className="underline underline-offset-2 hover:text-amber-700 font-semibold">
+                      login
+                    </Link>
+                    {' '}to request a consultation.
+                  </span>
+                </div>
+              )}
 
               {/* Name */}
               <div>
@@ -226,7 +247,8 @@ export default function POAPage() {
                   value={name}
                   onChange={(e) => { setName(e.target.value); clearErr('name'); }}
                   placeholder={t('poa.consultation.name_placeholder')}
-                  className={inputCls(errors.name)}
+                  disabled={!token}
+                  className={cn(inputCls(errors.name), !token && 'opacity-50 cursor-not-allowed')}
                 />
                 <FieldError msg={errors.name} />
               </div>
@@ -241,7 +263,8 @@ export default function POAPage() {
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); clearErr('email'); }}
                   placeholder={t('poa.consultation.email_placeholder')}
-                  className={inputCls(errors.email)}
+                  disabled={!token}
+                  className={cn(inputCls(errors.email), !token && 'opacity-50 cursor-not-allowed')}
                 />
                 <FieldError msg={errors.email} />
               </div>
@@ -255,7 +278,8 @@ export default function POAPage() {
                   value={phone}
                   onChange={(e) => { setPhone(e.target.value); clearErr('phone'); }}
                   placeholder={t('poa.consultation.phone_placeholder')}
-                  className={inputCls(errors.phone)}
+                  disabled={!token}
+                  className={cn(inputCls(errors.phone), !token && 'opacity-50 cursor-not-allowed')}
                 />
                 <FieldError msg={errors.phone} />
               </div>
@@ -270,11 +294,13 @@ export default function POAPage() {
                   onChange={(e) => { setMessage(e.target.value); clearErr('message'); }}
                   placeholder={t('poa.consultation.message_placeholder')}
                   rows={4}
+                  disabled={!token}
                   className={cn(
                     'w-full rounded-lg px-5 py-3 text-neutral-1 font-medium text-sm outline-none transition-all resize-none border',
                     errors.message
                       ? 'bg-red-50/20 border-red-400 focus:ring-2 focus:ring-red-200'
-                      : 'bg-[#F6F6F6] border-transparent focus:ring-2 focus:ring-primary/20'
+                      : 'bg-[#F6F6F6] border-transparent focus:ring-2 focus:ring-primary/20',
+                    !token && 'opacity-50 cursor-not-allowed'
                   )}
                 />
                 <FieldError msg={errors.message} />
@@ -285,7 +311,7 @@ export default function POAPage() {
                 disabled={isLoading}
                 className={cn(
                   FIELD_H,
-                  'w-full bg-primary cursor-pointer hover:bg-primary/90 text-white font-bold rounded-lg transition-transform active:scale-[0.98] disabled:opacity-70 border-none text-sm'
+                  'w-full bg-primary cursor-pointer hover:bg-primary/90 text-white font-medium rounded-lg transition-transform active:scale-[0.98] disabled:opacity-70 border-none text-sm'
                 )}
               >
                 {isLoading ? 'Submitting...' : t('poa.consultation.submit')}
@@ -299,7 +325,7 @@ export default function POAPage() {
       <section className="bg-orange-50/20 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
           <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-            <h2 className="text-2xl md:text-4xl font-bold text-neutral-1 tracking-tight">{t('why.title')}</h2>
+            <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">{t('why.title')}</h2>
             <p className="text-neutral-2">{t('why.subtitle')}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

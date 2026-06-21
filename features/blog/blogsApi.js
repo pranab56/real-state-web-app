@@ -21,6 +21,13 @@ export const blogApi = baseApi.injectEndpoints({
       }),
     }),
 
+    getAllCategory: builder.query({
+      query: () => ({
+        url: `/blogs/categories`,
+        method: "GET",
+      }),
+    }),
+
   }),
 });
 
@@ -28,4 +35,5 @@ export const blogApi = baseApi.injectEndpoints({
 export const {
   useGetAllBlogsQuery,
   useGetSingleBlogQuery,
+  useGetAllCategoryQuery,
 } = blogApi;

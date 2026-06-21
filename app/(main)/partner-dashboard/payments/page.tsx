@@ -1,287 +1,242 @@
 'use client';
 
-import { Checkbox } from '@/components/ui/checkbox';
-import { CalendarCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useGetAllTransectionQuery } from '@/features/peyment/payementApi';
+import { baseURL } from '@/utils/BaseURL';
+import { format } from 'date-fns';
+import { ChevronLeft, ChevronRight, CreditCard, DollarSign, Loader2, ReceiptText } from 'lucide-react';
+import { Transaction } from '@/types';
+import Image from 'next/image';
 import { useState } from 'react';
 
-const stats = [
-  { label: 'Current Balance', value: 'ETB250,00' },
-  { label: 'Last Payment', value: 'ETB350,00' },
-];
+const getImg = (path?: string) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
+};
 
-const transactions = [
-  {
-    id: '#EE-99021',
-    propertyTitle: 'Monthly Rent - Skyview Terrace',
-    propertySubtitle: 'Unit 14B • Maintenance Incl.',
-    date: 'Oct 12, 2025',
-    status: 'Paid',
-    amount: 'ETB250,00',
-    type: 'Hotels',
-  },
-  {
-    id: '#EE-99022',
-    propertyTitle: 'Transportation Fee - Airport Transfer',
-    propertySubtitle: 'Ride #4502',
-    date: 'Oct 11, 2025',
-    status: 'Pending',
-    amount: 'ETB120,00',
-    type: 'Transportation',
-  },
-  {
-    id: '#EE-99023',
-    propertyTitle: 'Booking - The Plaza',
-    propertySubtitle: 'Room 302',
-    date: 'Oct 10, 2025',
-    status: 'Failed',
-    amount: 'ETB300,00',
-    type: 'Hotels',
-  },
-  {
-    id: '#EE-99024',
-    propertyTitle: 'Shuttle Service - City Center',
-    propertySubtitle: 'Ride #4510',
-    date: 'Oct 09, 2025',
-    status: 'Paid',
-    amount: 'ETB80,00',
-    type: 'Transportation',
-  },
-  {
-    id: '#EE-99025',
-    propertyTitle: 'Monthly Rent - Oceanview',
-    propertySubtitle: 'Unit 2A',
-    date: 'Oct 08, 2025',
-    status: 'Paid',
-    amount: 'ETB400,00',
-    type: 'Hotels',
-  },
-  {
-    id: '#EE-99026',
-    propertyTitle: 'Luxury Transport - Resort',
-    propertySubtitle: 'Ride #4600',
-    date: 'Oct 07, 2025',
-    status: 'Paid',
-    amount: 'ETB150,00',
-    type: 'Transportation',
-  },
-  {
-    id: '#EE-99027',
-    propertyTitle: 'Booking - Mountain Lodge',
-    propertySubtitle: 'Cabin 5',
-    date: 'Oct 06, 2025',
-    status: 'Pending',
-    amount: 'ETB200,00',
-    type: 'Hotels',
-  },
-  {
-    id: '#EE-99028',
-    propertyTitle: 'Airport Shuttle - North',
-    propertySubtitle: 'Ride #4611',
-    date: 'Oct 05, 2025',
-    status: 'Failed',
-    amount: 'ETB90,00',
-    type: 'Transportation',
-  },
-];
+const getInitials = (firstName?: string, lastName?: string) =>
+  `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
 
 const getStatusStyle = (status: string) => {
   switch (status) {
-    case 'Paid':
-      return 'bg-[#2B9724]/10 text-[#2B9724]';
-    case 'Pending':
-      return 'bg-[#F1913D]/10 text-[#F1913D]';
-    case 'Failed':
-      return 'bg-[#DC3545]/10 text-[#DC3545]';
-    default:
-      return 'bg-gray-100 text-gray-700';
+    case 'completed': return 'bg-[#2B9724]/10 text-[#2B9724]';
+    case 'pending':   return 'bg-[#F1913D]/10 text-[#F1913D]';
+    case 'failed':    return 'bg-[#DC3545]/10 text-[#DC3545]';
+    case 'refunded':  return 'bg-blue-50 text-blue-600';
+    default:          return 'bg-gray-100 text-gray-600';
   }
 };
 
+const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+
 export default function PartnerDashboardPayments() {
-  const [activeTab, setActiveTab] = useState('All');
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useGetAllTransectionQuery({ page });
 
-  const filteredTransactions = activeTab === 'All'
-    ? transactions
-    : transactions.filter(tx => tx.type === activeTab);
+  const transactions: Transaction[] = data?.data ?? [];
+  const pagination = data?.pagination;
+  const totalPage: number  = pagination?.totalPage ?? 1;
+  const total: number      = pagination?.total ?? 0;
+  const limit: number      = pagination?.limit ?? 10;
 
-  const toggleRow = (id: string) => {
-    setSelectedRows(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
-  };
+  const totalAmount  = transactions.reduce((s: number, tx: Transaction) => s + (tx.amount ?? 0), 0);
+  const totalNet     = transactions.reduce((s: number, tx: Transaction) => s + (tx.netAmount ?? 0), 0);
+  const paidCount    = transactions.filter((tx: Transaction & { isPaid?: boolean }) => tx.isPaid).length;
 
-  const toggleAllRows = () => {
-    if (selectedRows.length === filteredTransactions.length && filteredTransactions.length > 0) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(filteredTransactions.map(tx => tx.id));
-    }
-  };
+  const showingFrom = total === 0 ? 0 : (page - 1) * limit + 1;
+  const showingTo   = Math.min(page * limit, total);
 
   return (
     <div className="space-y-6">
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, idx) => (
-          <div
-            key={idx}
-            className="bg-white p-6 rounded-lg flex flex-col justify-center border border-[#F2F2F2] shadow-sm relative overflow-hidden"
-          >
-            <div className="w-12 h-12 rounded-lg border border-[#2B9724]/20 bg-[#2B9724]/10 flex items-center justify-center mb-6">
-              <CalendarCheck className="text-[#2B9724]" size={24} strokeWidth={1.5} />
-            </div>
-            <p className="text-[#6C757D] text-[15px] font-medium mb-1">
-              {stat.label}
-            </p>
-            <h3 className="text-[28px] font-bold text-[#2C2E33] leading-none">
-              {stat.value}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-[#F1913D]/10 flex items-center justify-center flex-shrink-0">
+            <ReceiptText size={22} className="text-[#F1913D]" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Total Transactions</p>
+            <h3 className="text-[26px] font-semibold text-[#2C2E33] leading-tight">{total}</h3>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+            <DollarSign size={22} className="text-green-600" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Total Amount</p>
+            <h3 className="text-[26px] font-semibold text-[#2C2E33] leading-tight">
+              {transactions[0]?.currency ?? 'USD'} {totalAmount.toFixed(2)}
             </h3>
           </div>
-        ))}
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <CreditCard size={22} className="text-blue-600" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Net Amount</p>
+            <h3 className="text-[26px] font-semibold text-[#2C2E33] leading-tight">
+              {transactions[0]?.currency ?? 'USD'} {totalNet.toFixed(2)}
+            </h3>
+          </div>
+        </div>
       </div>
 
-      {/* Main Container - Transaction History */}
+      {/* Transaction Table */}
       <div className="bg-white rounded-lg p-4 md:p-6 lg:p-8 border border-gray-100 shadow-sm">
+        <h1 className="text-[22px] font-medium text-[#2C2E33] mb-6">Transaction History</h1>
 
-        {/* Header Section */}
-        <div className="mb-6">
-          <h1 className="text-[24px] font-bold text-[#2C2E33]">Transaction History</h1>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex items-center gap-4 md:gap-8 mb-6 border-b border-[#F2F2F2] overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {['All', 'Hotels', 'Transportation'].map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`font-semibold text-[15px] pb-4 relative transition-colors cursor-pointer ${isActive ? 'text-[#2C2E33]' : 'text-[#6C757D] hover:text-[#2C2E33]'
-                  }`}
-              >
-                {tab}
-                {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#F1913D] rounded-t-full pointer-events-none" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Table block */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap border-collapse">
             <thead>
               <tr className="bg-[#F9F9F9]">
-                <th className="px-6 py-4 w-12 text-center rounded-l-xl font-medium text-[#6C757D]">
-                  <Checkbox
-                    checked={selectedRows.length === filteredTransactions.length && filteredTransactions.length > 0}
-                    onCheckedChange={toggleAllRows}
-                    className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:text-white rounded-[4px]"
-                  />
-                </th>
-                <th className="px-6 py-4 font-medium text-[#6C757D]">Transaction ID</th>
-                <th className="px-6 py-4 font-medium text-[#6C757D]">Property / Description</th>
+                <th className="px-6 py-4 font-medium text-[#6C757D] rounded-l-xl">Transaction</th>
+                <th className="px-6 py-4 font-medium text-[#6C757D]">Reservation</th>
+                <th className="px-6 py-4 font-medium text-[#6C757D]">User</th>
                 <th className="px-6 py-4 font-medium text-[#6C757D]">Date</th>
+                <th className="px-6 py-4 font-medium text-[#6C757D]">Method</th>
                 <th className="px-6 py-4 font-medium text-[#6C757D]">Status</th>
                 <th className="px-6 py-4 font-medium text-[#6C757D] rounded-r-xl">Amount</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="h-4"></tr>
-              {filteredTransactions.length === 0 && (
+              <tr className="h-4" />
+
+              {isLoading && (
                 <tr>
-                  <td colSpan={6} className="text-center py-8 text-[#6C757D]">No transactions found.</td>
+                  <td colSpan={7} className="text-center py-12">
+                    <Loader2 size={28} className="animate-spin text-[#F1913D] mx-auto" />
+                  </td>
                 </tr>
               )}
-              {filteredTransactions.map((tx) => (
-                <tr
-                  key={tx.id}
-                  className="hover:bg-gray-50/50 transition-colors border-b border-[#F2F2F2] last:border-0"
-                >
-                  <td className="px-6 py-5 text-center">
-                    <Checkbox
-                      checked={selectedRows.includes(tx.id)}
-                      onCheckedChange={() => toggleRow(tx.id)}
-                      className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:text-white rounded-[4px]"
-                    />
-                  </td>
 
-                  {/* Transaction ID */}
-                  <td className="px-6 py-5 text-[#2C2E33] font-bold text-[15px]">
-                    {tx.id}
-                  </td>
-
-                  {/* Property / Description */}
-                  <td className="px-6 py-5">
-                    <div className="flex flex-col justify-center">
-                      <span className="font-bold text-[#2C2E33] text-[15px]">{tx.propertyTitle}</span>
-                      <span className="text-[#A1A1A1] text-[13px] font-medium leading-tight mt-0.5">{tx.propertySubtitle}</span>
-                    </div>
-                  </td>
-
-                  {/* Date */}
-                  <td className="px-6 py-5 text-[#2C2E33] font-semibold text-[14px]">
-                    {tx.date}
-                  </td>
-
-                  {/* Status Pill */}
-                  <td className="px-6 py-5">
-                    <span
-                      className={`px-4 py-1.5 rounded-full text-[13px] font-bold ${getStatusStyle(
-                        tx.status
-                      )}`}
-                    >
-                      {tx.status}
-                    </span>
-                  </td>
-
-                  {/* Amount */}
-                  <td className="px-6 py-5 font-bold text-[#2C2E33] text-[15px]">
-                    {tx.amount}
+              {!isLoading && transactions.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="text-center py-10 text-[#6C757D] font-medium">
+                    No transactions found.
                   </td>
                 </tr>
-              ))}
+              )}
+
+              {!isLoading && transactions.map((tx: Transaction) => {
+                const reservation = tx.reference?.id;
+                const user        = tx.user ?? {};
+                const avatarUrl   = getImg(user.image);
+                const initials    = getInitials(user.firstName, user.lastName);
+                const dateStr     = tx.createdAt ? format(new Date(tx.createdAt), 'MMM dd, yyyy') : '—';
+                const txId        = tx._id?.slice(-8).toUpperCase();
+
+                return (
+                  <tr key={tx._id} className="hover:bg-gray-50/50 transition-colors border-b border-[#F2F2F2] last:border-0">
+
+                    {/* Transaction ID */}
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-[#2C2E33] text-[14px]">#{txId}</span>
+                        <span className="text-[12px] text-[#6C757D] font-medium capitalize">{tx.gateway}</span>
+                      </div>
+                    </td>
+
+                    {/* Reservation */}
+                    <td className="px-6 py-4">
+                      {reservation ? (
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-[#2C2E33] text-[14px]">{reservation.uid}</span>
+                          <span className="text-[12px] text-[#6C757D] font-medium capitalize">{reservation.roomClass?.replace('_', ' ')}</span>
+                        </div>
+                      ) : (
+                        <span className="text-[#6C757D] text-[13px]">—</span>
+                      )}
+                    </td>
+
+                    {/* User */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        {avatarUrl ? (
+                          <div className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-gray-100">
+                            <Image src={avatarUrl} alt={user.firstName ?? ''} fill className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-[#F1913D]/15 flex items-center justify-center flex-shrink-0">
+                            <span className="text-[#F1913D] font-bold text-[12px]">{initials}</span>
+                          </div>
+                        )}
+                        <div className="flex flex-col">
+                          <span className="font-medium text-[#2C2E33] text-[14px]">{user.firstName} {user.lastName}</span>
+                          <span className="text-[12px] text-[#6C757D]">{user.email}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Date */}
+                    <td className="px-6 py-4 text-[#2C2E33] font-semibold text-[14px]">{dateStr}</td>
+
+                    {/* Method */}
+                    <td className="px-6 py-4">
+                      <span className="text-[13px] font-medium text-[#2C2E33] capitalize">{tx.paymentMethod}</span>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1.5 rounded-full text-[12px] font-semibold ${getStatusStyle(tx.status)}`}>
+                        {capitalize(tx.status)}
+                      </span>
+                    </td>
+
+                    {/* Amount */}
+                    <td className="px-6 py-4 font-semibold text-[#2C2E33] text-[15px]">
+                      {tx.currency} {tx.amount?.toFixed(2)}
+                    </td>
+
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
 
-        {/* Footer Area: Pagination & Showing Info */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-10 pb-2">
+        {/* Footer */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 pb-2">
           <p className="text-[#6C757D] text-[15px] text-center md:text-left">
-            Showing <span className="font-bold text-[#2C2E33]">1-9 of 240</span> entries
+            Showing <span className="font-medium text-[#2C2E33]">{showingFrom}–{showingTo} of {total}</span> entries
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <button className="flex items-center gap-2 cursor-pointer px-3 sm:px-4 py-2 border border-gray-100 bg-white text-[#6C757D] font-semibold text-[13px] sm:text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              <ChevronLeft size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">Previous</span>
-            </button>
+          {totalPage > 1 && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="flex items-center gap-1.5 px-4 py-2 border border-gray-100 bg-white text-[#6C757D] font-semibold text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <ChevronLeft size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">Previous</span>
+              </button>
 
-            <button className="w-10 h-10 flex items-center cursor-pointer justify-center bg-[#F1913D] text-white font-bold rounded-sm shadow-sm">
-              1
-            </button>
-            <button className="w-10 h-10 flex items-center cursor-pointer justify-center bg-white border border-gray-100 text-[#2C2E33] font-bold rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              2
-            </button>
-            <button className="w-10 h-10 flex items-center cursor-pointer justify-center bg-white border border-gray-100 text-[#2C2E33] font-bold rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              3
-            </button>
+              {Array.from({ length: totalPage }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={`w-10 h-10 flex items-center justify-center font-medium rounded-sm shadow-sm transition-colors cursor-pointer ${page === i + 1 ? 'bg-[#F1913D] text-white' : 'bg-white border border-gray-100 text-[#2C2E33] hover:bg-gray-50'}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
 
-            <div className="w-10 h-10 flex items-center cursor-pointer justify-center bg-white border border-gray-100 text-[#6C757D] font-bold rounded-sm shadow-sm">
-              ...
+              <button
+                onClick={() => setPage(p => Math.min(totalPage, p + 1))}
+                disabled={page === totalPage}
+                className="flex items-center gap-1.5 px-4 py-2 border border-gray-100 bg-white text-[#2C2E33] font-semibold text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <span className="hidden sm:inline">Next</span> <ChevronRight size={16} strokeWidth={2.5} />
+              </button>
             </div>
-
-            <button className="w-10 h-10 flex items-center cursor-pointer justify-center bg-white border border-gray-100 text-[#2C2E33] font-bold rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              12
-            </button>
-
-            <button className="flex items-center gap-2 cursor-pointer px-3 sm:px-4 py-2 border border-gray-100 bg-white text-[#2C2E33] font-semibold text-[13px] sm:text-[14px] rounded-sm hover:bg-gray-50 transition-colors shadow-sm">
-              <span className="hidden sm:inline">Next</span> <ChevronRight size={16} strokeWidth={2.5} />
-            </button>
-          </div>
+          )}
         </div>
-
       </div>
+
     </div>
   );
 }

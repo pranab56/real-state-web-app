@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Building2, CheckCircle2, Search, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 export default function TravelPlanSection() {
@@ -60,7 +60,7 @@ export default function TravelPlanSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-2xl md:text-4xl font-bold px-4"
+              className="text-2xl md:text-4xl font-medium px-4"
             >
               {t('travel.plan_title')}
             </motion.h2>
@@ -83,15 +83,15 @@ export default function TravelPlanSection() {
                   <Image src={card.image} alt={card.title} fill className="object-cover" />
                 </div>
                 <div className="p-6 md:p-8 space-y-3 md:space-y-4 flex flex-col items-center">
-                  <h3 className="text-lg md:text-xl font-bold line-clamp-2 min-h-0 md:min-h-[3.5rem] flex items-center">
+                  <h3 className="text-lg md:text-xl font-medium line-clamp-2 min-h-0 md:min-h-[3.5rem] flex items-center">
                     {card.title}
                   </h3>
                   <p className="text-neutral-2 text-xs md:text-sm leading-relaxed mb-2 md:mb-4">
                     {card.description}
                   </p>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-xl transition-all w-full text-sm">
+                  {/* <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-11 md:h-12 px-8 md:px-10 rounded-xl transition-all w-full text-sm">
                     {t('help.services.learn_more')}
-                  </Button>
+                  </Button> */}
                 </div>
               </motion.div>
             ))}
@@ -109,13 +109,13 @@ export default function TravelPlanSection() {
             className="bg-[#FFF9F2] rounded-3xl md:rounded-[1.5rem] overflow-hidden flex flex-col lg:flex-row relative min-h-0 md:min-h-[450px]"
           >
             <div className="lg:w-2/3 p-8 md:p-12 lg:p-20 space-y-6 md:space-y-8 z-10 text-center lg:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl w-10/12 font-bold text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('travel.ready_title') }} />
+              <h2 className="text-3xl md:text-5xl lg:text-6xl w-10/12 font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('travel.ready_title') }} />
               <p className="text-neutral-2 text-sm md:text-lg max-w-lg mx-auto lg:mx-0 font-medium">
                 {t('travel.ready_subtitle')}
               </p>
-              <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-12 md:h-14 px-10 md:px-12 rounded-sm cursor-pointer text-base md:text-lg shadow-xl shadow-primary/20 w-full md:w-auto">
+              <Link href={"/properties"} className="bg-[#F1913D] py-3.5 hover:bg-[#F1913D]/90 text-white font-medium h-12 md:h-14 px-10 md:px-12 rounded-sm cursor-pointer text-base md:text-lg shadow-xl shadow-primary/20 w-full md:w-auto">
                 {t('travel.ready_btn')}
-              </Button>
+              </Link>
             </div>
 
             <div className="relative w-full lg:w-1/3 h-[250px] md:h-[350px] lg:h-auto">
@@ -138,7 +138,7 @@ export default function TravelPlanSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-2xl md:text-4xl font-bold text-neutral-1"
+              className="text-2xl md:text-4xl font-medium text-neutral-1"
             >
               {t('travel.how_title')}
             </motion.h2>
@@ -163,7 +163,7 @@ export default function TravelPlanSection() {
                     {item.icon}
                   </div>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-neutral-1">
+                <h3 className="text-xl md:text-2xl font-medium text-neutral-1">
                   {item.title}
                 </h3>
                 <p className="text-neutral-2 text-xs md:text-sm leading-relaxed font-semibold">

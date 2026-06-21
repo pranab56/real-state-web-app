@@ -36,7 +36,7 @@ export default function BuyingProperty() {
             className="space-y-6 md:space-y-8 text-center lg:text-left"
           >
             <div className="space-y-3 md:space-y-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('buying.title') }} />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('buying.title') }} />
               <p className="text-sm md:text-base text-neutral-2 font-medium max-w-lg mx-auto lg:mx-0">
                 {t('buying.subtitle')}
               </p>
@@ -49,7 +49,7 @@ export default function BuyingProperty() {
                     <Check className="text-white" size={14} strokeWidth={4} />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-neutral-1">{feature.title}</h3>
+                    <h3 className="text-base sm:text-lg md:text-xl font-medium text-neutral-1">{feature.title}</h3>
                     <p className="text-neutral-2 text-xs md:text-sm leading-relaxed">
                       {feature.description}
                     </p>
@@ -89,8 +89,8 @@ export default function BuyingProperty() {
                   <ShieldCheck size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[8px] md:text-[10px] font-bold text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.status')}</p>
-                  <p className="text-[10px] sm:text-[12px] md:text-sm font-bold text-neutral-1 leading-tight">{t('buying.verified')}</p>
+                  <p className="text-[8px] md:text-[10px] font-medium text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.status')}</p>
+                  <p className="text-[10px] sm:text-[12px] md:text-sm font-medium text-neutral-1 leading-tight">{t('buying.verified')}</p>
                 </div>
               </motion.div>
 
@@ -105,8 +105,8 @@ export default function BuyingProperty() {
                   <FileText size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[8px] md:text-[10px] font-bold text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.doc')}</p>
-                  <p className="text-[10px] sm:text-[12px] md:text-sm font-bold text-neutral-1 leading-tight">{t('buying.poa_certified')}</p>
+                  <p className="text-[8px] md:text-[10px] font-medium text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.doc')}</p>
+                  <p className="text-[10px] sm:text-[12px] md:text-sm font-medium text-neutral-1 leading-tight">{t('buying.poa_certified')}</p>
                 </div>
               </motion.div>
             </div>

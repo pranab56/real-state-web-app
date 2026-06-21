@@ -2,9 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useCreateNewsletterMutation } from "@/features/newsletter/newsletterApi";
+import { Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 function Logo() {
   return (
@@ -23,8 +27,8 @@ function Logo() {
         </div>
         <div className="flex flex-col">
           <div className="flex items-baseline">
-            <span className="text-2xl font-bold text-white tracking-tight">Zila</span>
-            <span className="text-2xl font-bold text-white tracking-tight">Homes</span>
+            <span className="text-2xl font-medium text-white tracking-tight">Zila</span>
+            <span className="text-2xl font-medium text-white tracking-tight">Homes</span>
             <span className="text-[10px] text-white/80 font-medium ml-0.5">™</span>
           </div>
           <div className="flex items-center gap-1 -mt-1 text-[7px] text-neutral-2 font-semibold tracking-widest uppercase">
@@ -43,6 +47,20 @@ function Logo() {
 export default function Footer() {
   const { t } = useTranslation('common');
   const pathname = usePathname();
+  const [email, setEmail] = useState('');
+  const [createNewsletter, { isLoading }] = useCreateNewsletterMutation();
+
+  const handleSubscribe = async () => {
+    if (!email.trim()) { toast.error('Please enter your email'); return; }
+    try {
+      const res = await createNewsletter({ email: email.trim(), source: 'website' }).unwrap();
+      toast.success(res.message ?? 'Subscribed successfully!');
+      setEmail('');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message ?? 'Failed to subscribe');
+    }
+  };
 
   if (
     pathname.startsWith('/partner-dashboard') ||
@@ -67,7 +85,7 @@ export default function Footer() {
 
           {/* Links Columns */}
           <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-bold">{t('footer.company')}</h3>
+            <h3 className="text-lg md:text-xl font-medium">{t('footer.company')}</h3>
             <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
               <Link href="/properties" className="hover:text-white transition-colors">{t('navbar.properties')}</Link>
               <Link href="/hotels" className="hover:text-white transition-colors">{t('navbar.hotels')}</Link>
@@ -77,7 +95,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-bold">{t('footer.legal')}</h3>
+            <h3 className="text-lg md:text-xl font-medium">{t('footer.legal')}</h3>
             <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
               <Link href="/terms" className="hover:text-white transition-colors">{t('terms.title')}</Link>
               <Link href="/privacy" className="hover:text-white transition-colors">{t('privacy.title')}</Link>
@@ -86,19 +104,24 @@ export default function Footer() {
 
           {/* Newsletter Column */}
           <div className="md:col-span-4 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-bold">{t('footer.newsletter')}</h3>
+            <h3 className="text-lg md:text-xl font-medium">{t('footer.newsletter')}</h3>
             <p className="text-[#A1A1A1] text-sm md:text-base">{t('footer.newsletter_desc')}</p>
             <div className="flex flex-col gap-3 md:gap-4 w-full max-w-sm">
               <Input
                 type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSubscribe()}
                 placeholder={t('footer.newsletter_placeholder')}
                 className="h-12 md:h-14 bg-[#2C2E33] border border-white/60 placeholder:text-white/60 text-white rounded-xl px-4 text-sm md:text-base focus-visible:ring-1 focus-visible:ring-primary"
               />
               <Button
                 size="lg"
-                className="h-12 md:h-14 text-white font-bold text-base md:text-lg rounded-xl transition-all shadow-lg w-full"
+                onClick={handleSubscribe}
+                disabled={isLoading}
+                className="h-12 md:h-14 text-white font-medium cursor-pointer text-base md:text-lg rounded-xl transition-all shadow-lg w-full disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {t('footer.subscribe')}
+                {isLoading ? <><Loader2 size={18} className="animate-spin" /> Subscribing...</> : t('footer.subscribe')}
               </Button>
             </div>
           </div>

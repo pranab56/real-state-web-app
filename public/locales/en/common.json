@@ -183,7 +183,7 @@
       "agent_btn": "Connect With An Agent"
     },
     "main": {
-      "showing": "Showing <span class=\"text-neutral-1 font-bold not-italic\">{{start}}-{{end}}</span> of <span class=\"text-neutral-1 font-bold not-italic\">{{total}}</span> properties",
+      "showing": "Showing <span class=\"text-neutral-1 font-medium not-italic\">{{start}}-{{end}}</span> of <span class=\"text-neutral-1 font-medium not-italic\">{{total}}</span> properties",
       "sort_by": "Sort by:",
       "sort_newest": "Newest first",
       "sort_oldest": "Oldest first",
@@ -205,7 +205,7 @@
       "available": "Available Only"
     },
     "main": {
-      "showing": "Showing <span class=\"text-neutral-1 font-bold\">{{start}}-{{end}}</span> of <span class=\"text-neutral-1 font-bold\">{{total}} Hotels</span>",
+      "showing": "Showing <span class=\"text-neutral-1 font-medium\">{{start}}-{{end}}</span> of <span class=\"text-neutral-1 font-medium\">{{total}} Hotels</span>",
       "book_now": "Book Now",
       "per_night": "/ night"
     }

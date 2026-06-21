@@ -59,7 +59,7 @@ export function PropertyCard({
           <MapPin size={14} className="text-zinc-400" />
           {location}
         </div>
-        <h3 className="mb-3 text-lg font-bold text-zinc-900 group-hover:text-black transition-colors line-clamp-1">
+        <h3 className="mb-3 text-lg font-medium text-zinc-900 group-hover:text-black transition-colors line-clamp-1">
           {title}
         </h3>
 
@@ -90,7 +90,7 @@ export function PropertyCard({
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-sm text-zinc-400">Price</span>
-            <span className="text-xl font-bold text-black">{price}</span>
+            <span className="text-xl font-medium text-black">{price}</span>
           </div>
           <Button variant="outline" size="sm">
             Details

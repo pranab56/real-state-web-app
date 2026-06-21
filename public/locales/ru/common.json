@@ -183,7 +183,7 @@
       "agent_btn": "Связаться с агентом"
     },
     "main": {
-      "showing": "Показано <span class=\"text-neutral-1 font-bold not-italic\">{{start}}-{{end}}</span> из <span class=\"text-neutral-1 font-bold not-italic\">{{total}}</span> объектов",
+      "showing": "Показано <span class=\"text-neutral-1 font-medium not-italic\">{{start}}-{{end}}</span> из <span class=\"text-neutral-1 font-medium not-italic\">{{total}}</span> объектов",
       "sort_by": "Сортировать:",
       "sort_newest": "Сначала новые",
       "sort_oldest": "Сначала старые",
@@ -205,7 +205,7 @@
       "available": "Только свободные"
     },
     "main": {
-      "showing": "Показано <span class=\"text-neutral-1 font-bold\">{{start}}-{{end}}</span> из <span class=\"text-neutral-1 font-bold\">{{total}} отелей</span>",
+      "showing": "Показано <span class=\"text-neutral-1 font-medium\">{{start}}-{{end}}</span> из <span class=\"text-neutral-1 font-medium\">{{total}} отелей</span>",
       "book_now": "Забронировать",
       "per_night": "/ ночь"
     }

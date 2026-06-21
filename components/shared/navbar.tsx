@@ -15,14 +15,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../ui/button';
+import { RootState } from '@/types';
 
 const PROFILE_ROUTE: Record<string, string> = {
-  customer: '/profile',
-  host: '/hotels-partner-dashboard/profile',
-  driver: '/transport-Partner-dashboard/profile',
+  customer: '/partner-dashboard',
+  host: '/hotels-partner-dashboard',
 };
 
 export function Navbar() {
@@ -34,8 +34,8 @@ export function Navbar() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const token = useSelector((state: any) => state.auth?.token);
-  const user = useSelector((state: any) => state.auth?.user);
+  const token = useSelector((state: RootState) => state.auth?.token);
+  const user = useSelector((state: RootState) => state.auth?.user);
   const isLoggedIn = !!token;
 
   const isHome = pathname === '/';
@@ -79,9 +79,9 @@ export function Navbar() {
 
   const languages = [
     { name: 'EN', fullName: 'English', flag: '/icons/flags/en.png', code: 'en' },
+    { name: 'AM', fullName: 'አማርኛ', flag: '/icons/flags/am.png', code: 'am' },
     { name: 'AR', fullName: 'العربية', flag: '/icons/flags/ar.png', code: 'ar' },
     { name: 'RU', fullName: 'Русский', flag: '/icons/flags/ru.png', code: 'ru' },
-    { name: 'AM', fullName: 'አማርኛ', flag: '/icons/flags/am.png', code: 'am' },
   ];
 
   const selectedLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -96,9 +96,7 @@ export function Navbar() {
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/admin') ||
     pathname.startsWith('/partner-dashboard') ||
-    pathname.startsWith('/hotels-partner-dashboard') ||
-    pathname.startsWith('/transport-Partner-dashboard') ||
-    pathname.startsWith('/transport-partner-dashboard');
+    pathname.startsWith('/hotels-partner-dashboard');
 
   if (isDashboardRoute) return null;
 
@@ -132,7 +130,7 @@ export function Navbar() {
               return (
                 <DropdownMenu key={item.name}>
                   <DropdownMenuTrigger className={cn(
-                    "group relative flex items-center cursor-pointer gap-1.5 text-[15px] font-bold transition-all outline-none py-1",
+                    "group relative flex items-center cursor-pointer gap-1.5 text-[15px] font-medium transition-all outline-none py-1",
                     isActive ? "text-white" : "text-white/80 hover:text-white"
                   )}>
                     {item.name}
@@ -152,7 +150,7 @@ export function Navbar() {
                             <Link
                               href={sub.href}
                               className={cn(
-                                "w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center justify-between group/sub",
+                                "w-full px-4 py-2.5 text-sm font-medium rounded-sm transition-all flex items-center justify-between group/sub",
                                 isSubActive ? "bg-black/5 text-neutral-1" : "hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
                               )}
                             >
@@ -172,7 +170,7 @@ export function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "relative flex items-center gap-1 text-[15px] font-bold transition-all py-1",
+                  "relative flex items-center gap-1 text-[15px] font-medium transition-all py-1",
                   isActive ? "text-white" : "text-white/80 hover:text-white"
                 )}
               >
@@ -183,7 +181,7 @@ export function Navbar() {
 
           {/* Language Switcher */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="group relative flex items-center cursor-pointer gap-2 text-[15px] font-bold transition-all outline-none py-1 text-white/80 hover:text-white">
+            <DropdownMenuTrigger className="group relative flex items-center cursor-pointer gap-2 text-[15px] font-medium transition-all outline-none py-1 text-white/80 hover:text-white">
               <div className="relative w-6 h-4 overflow-hidden rounded-sm">
                 <Image src={selectedLang.flag} alt={selectedLang.name} fill className="object-cover" />
               </div>
@@ -200,7 +198,7 @@ export function Navbar() {
                 {languages.map((lang) => (
                   <DropdownMenuItem key={lang.name} className="focus:bg-transparent p-0" onClick={() => handleLanguageChange(lang)}>
                     <div className={cn(
-                      "w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center justify-between cursor-pointer",
+                      "w-full px-4 py-2.5 text-sm font-medium rounded-sm transition-all flex items-center justify-between cursor-pointer",
                       selectedLang.code === lang.code ? "bg-black/5 text-neutral-1" : "hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
                     )}>
                       <div className="flex items-center gap-3">
@@ -219,9 +217,7 @@ export function Navbar() {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2 md:gap-3 ml-2">
-
           {isLoggedIn ? (
-            /* ── Logged-in state ── */
             <>
               {/* Notification Bell */}
               <motion.div
@@ -247,8 +243,8 @@ export function Navbar() {
                   <div className="flex flex-col gap-1 relative z-10">
                     <DropdownMenuItem className="focus:bg-transparent p-0">
                       <Link
-                        href={PROFILE_ROUTE[user?.role] ?? '/profile'}
-                        className="w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center gap-2 hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
+                        href={(user?.role && PROFILE_ROUTE[user.role]) || '/profile'}
+                        className="w-full px-4 py-2.5 text-sm font-medium rounded-sm transition-all flex items-center gap-2 hover:bg-black/5 text-neutral-2 hover:text-neutral-1"
                       >
                         <User size={15} />
                         My Profile
@@ -258,7 +254,7 @@ export function Navbar() {
                     <DropdownMenuItem className="focus:bg-transparent p-0">
                       <button
                         onClick={handleLogout}
-                        className="w-full px-4 py-2.5 text-sm font-bold rounded-sm transition-all flex items-center gap-2 hover:bg-red-50 text-red-500 cursor-pointer"
+                        className="w-full px-4 py-2.5 text-sm font-medium rounded-sm transition-all flex items-center gap-2 hover:bg-red-50 text-red-500 cursor-pointer"
                       >
                         <LogOut size={15} />
                         Logout
@@ -295,7 +291,7 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="flex lg:hidden w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 items-center justify-center text-white/90 hover:bg-white/20 transition-all shadow-lg shrink-0"
+            className="flex lg:hidden w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 items-center cursor-pointer justify-center text-white/90 hover:bg-white/20 transition-all shadow-lg shrink-0"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={22} className="md:size-6" /> : <Menu size={22} className="md:size-6" />}
@@ -344,7 +340,7 @@ export function Navbar() {
                                     href={sub.href}
                                     onClick={() => { setIsOpen(false); setOpenDropdown(null); }}
                                     className={cn(
-                                      "py-3 px-5 text-[13px] font-bold transition-all rounded-lg",
+                                      "py-3 px-5 text-[13px] font-medium transition-all rounded-lg",
                                       isSubActive ? "bg-white/10 text-white" : "text-white/60 hover:text-white"
                                     )}
                                   >
@@ -379,16 +375,16 @@ export function Navbar() {
               {isLoggedIn ? (
                 <div className="mt-2 pt-4 border-t border-white/10 flex flex-col gap-3">
                   <Link
-                    href={PROFILE_ROUTE[user?.role] ?? '/profile'}
+                    href={(user?.role && PROFILE_ROUTE[user.role]) || '/profile'}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 py-3 px-5 rounded-xl bg-white/5 text-white/80 font-bold text-sm hover:text-white transition-all"
+                    className="flex items-center gap-3 py-3 px-5 rounded-xl bg-white/5 text-white/80 font-medium text-sm hover:text-white transition-all"
                   >
                     <UserCircle size={18} />
                     My Profile
                   </Link>
                   <button
                     onClick={() => { handleLogout(); setIsOpen(false); }}
-                    className="flex items-center gap-3 py-3 px-5 rounded-xl bg-red-500/10 text-red-400 font-bold text-sm hover:bg-red-500/20 transition-all"
+                    className="flex items-center gap-3 py-3 px-5 rounded-xl bg-red-500/10 text-red-400 font-medium text-sm hover:bg-red-500/20 transition-all"
                   >
                     <LogOut size={18} />
                     Logout

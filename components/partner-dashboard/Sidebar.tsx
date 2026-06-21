@@ -1,40 +1,57 @@
 'use client';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { logout } from '@/features/auth/authSlice';
 import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import {
-  Bed,
   CalendarCheck,
   FileText,
+  Heart,
   LayoutDashboard,
   LogOut,
-  MessageSquare,
   Star,
   User
 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 const sidebarItems = [
   { name: 'Overview', href: '/partner-dashboard', icon: LayoutDashboard },
-  { name: 'Manage Hotels', href: '/partner-dashboard/hotels', icon: Bed },
   { name: 'Bookings', href: '/partner-dashboard/bookings', icon: CalendarCheck },
-  { name: 'Message', href: '/partner-dashboard/messages', icon: MessageSquare },
   { name: 'Payment History', href: '/partner-dashboard/payments', icon: FileText },
-  { name: 'Guest Reviews', href: '/partner-dashboard/reviews', icon: Star },
+  { name: 'Wishlist', href: '/partner-dashboard/wishlist', icon: Heart },
+  { name: 'My Reviews', href: '/partner-dashboard/reviews', icon: Star },
   { name: 'Profile', href: '/partner-dashboard/profile', icon: User },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { isCollapsed, setCollapsed } = useSidebar();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLinkClick = () => {
     if (window.innerWidth < 1024) {
       setCollapsed(true);
     }
+  };
+
+  const handleLogoutConfirm = () => {
+    dispatch(logout());
+    router.push('/login');
   };
 
   return (
@@ -115,7 +132,7 @@ export function Sidebar() {
                     </Link>
                   } />
                   {isCollapsed && (
-                    <TooltipContent side="right" sideOffset={20} className="hidden lg:block bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
+                    <TooltipContent side="right" sideOffset={20} className="bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
                       {item.name}
                     </TooltipContent>
                   )}
@@ -130,21 +147,52 @@ export function Sidebar() {
       <div className={cn("p-6 mt-auto", isCollapsed ? "flex justify-center px-4" : "")}>
         <Tooltip>
           <TooltipTrigger render={
-            <button className={cn(
-              "flex items-center gap-2 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white py-2.5 rounded-lg transition-colors text-sm font-semibold justify-center cursor-pointer",
-              isCollapsed ? "px-0 w-12 h-12 rounded-xl" : "px-4 w-full"
-            )}>
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className={cn(
+                "flex items-center gap-2 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white py-2.5 rounded-lg transition-colors text-sm font-semibold justify-center cursor-pointer",
+                isCollapsed ? "px-0 w-12 h-12 rounded-xl" : "px-4 w-full"
+              )}>
               <LogOut size={18} strokeWidth={2.5} className="flex-shrink-0" />
               {!isCollapsed && <span>Logout</span>}
             </button>
           } />
           {isCollapsed && (
-            <TooltipContent side="right" sideOffset={20} className="hidden lg:block bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
+            <TooltipContent side="right" sideOffset={20} className="bg-[#2C2E33] border border-white/10 text-white font-medium px-3 py-1.5 rounded-md text-xs shadow-xl">
               Logout
             </TooltipContent>
           )}
         </Tooltip>
       </div>
+
+      {/* Logout Confirm Modal */}
+      <Dialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+        <DialogContent className="max-w-sm rounded-2xl p-8">
+          <DialogHeader className="items-center text-center space-y-3">
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto">
+              <LogOut size={28} className="text-[#DC3545]" />
+            </div>
+            <DialogTitle className="text-xl font-black text-neutral-1">Confirm Logout</DialogTitle>
+            <DialogDescription className="text-sm text-neutral-2 font-medium">
+              Are you sure you want to logout? You will need to sign in again to access your dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-row gap-3 mt-2">
+            <button
+              onClick={() => setShowLogoutModal(false)}
+              className="flex-1 h-11 rounded-xl border border-gray-200 text-neutral-2 font-semibold text-sm hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleLogoutConfirm}
+              className="flex-1 h-11 rounded-xl bg-[#DC3545] hover:bg-[#DC3545]/90 text-white font-semibold text-sm transition-colors cursor-pointer"
+            >
+              Yes, Logout
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 }

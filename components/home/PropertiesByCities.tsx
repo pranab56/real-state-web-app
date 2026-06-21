@@ -1,32 +1,25 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Tag } from 'lucide-react';
-import Image from 'next/image';
+import { Building2, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useTranslation } from 'react-i18next';
+import { useGetTopCitisQuery } from '../../features/listings/listingsApi';
 
-const cities = [
-  { name: 'Bahir Dar', count: 2, image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=400&h=400&fit=crop' },
-  { name: 'Addis Ababa', count: 2, image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=400&h=400&fit=crop' },
-  { name: 'Bishoftu', count: 2, image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=400&h=400&fit=crop' },
-  { name: 'Adama', count: 2, image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=400&h=400&fit=crop' },
-  { name: 'Hawassa', count: 2, image: 'https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?q=80&w=400&h=400&fit=crop' },
-  { name: 'Bahir Dar', count: 2, image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=400&h=400&fit=crop' },
-  { name: 'Dire Dawa', count: 2, image: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=400&h=400&fit=crop' },
-  { name: 'Dire Dawa', count: 2, image: 'https://images.unsplash.com/photo-1444723121867-7a241cacace9?q=80&w=400&h=400&fit=crop' },
-  { name: 'Dire Dawa', count: 2, image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=400&h=400&fit=crop' },
-];
 
 export default function PropertiesByCities() {
   const { t } = useTranslation('common');
 
+  const { data } = useGetTopCitisQuery({});
+  const cities: { city: string; count: number }[] = data?.data ?? [];
+  
+
   return (
-    <section className="bg-white pb-20 overflow-hidden">
+    <section className="bg-white pb-2 overflow-hidden">
       {/* Promo Banner Slider */}
       <Swiper
         modules={[Autoplay]}
@@ -44,9 +37,9 @@ export default function PropertiesByCities() {
                 <Tag className="text-white fill-white size-5 md:size-6" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">{t('cities.promo1_title')}</h4>
+                <h4 className="text-base md:text-2xl font-medium text-neutral-1 leading-tight">{t('cities.promo1_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  {t('cities.promo1_desc')} <span className="font-bold underline cursor-pointer">{t('cities.promo1_link')}</span>
+                  {t('cities.promo1_desc')} <span className="font-medium underline cursor-pointer">{t('cities.promo1_link')}</span>
                 </p>
               </div>
             </div>
@@ -60,9 +53,9 @@ export default function PropertiesByCities() {
                 <Tag className="text-white fill-white size-5 md:size-6" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">{t('cities.promo2_title')}</h4>
+                <h4 className="text-base md:text-2xl font-medium text-neutral-1 leading-tight">{t('cities.promo2_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  {t('cities.promo2_desc')} <span className="font-bold underline cursor-pointer">{t('cities.promo2_link')}</span>
+                  {t('cities.promo2_desc')} <span className="font-medium underline cursor-pointer">{t('cities.promo2_link')}</span>
                 </p>
               </div>
             </div>
@@ -76,9 +69,9 @@ export default function PropertiesByCities() {
                 <Tag className="text-white fill-white size-5 md:size-6" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-base md:text-2xl font-bold text-neutral-1 leading-tight">{t('cities.promo3_title')}</h4>
+                <h4 className="text-base md:text-2xl font-medium text-neutral-1 leading-tight">{t('cities.promo3_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  {t('cities.promo3_desc')} <span className="font-bold underline cursor-pointer">{t('cities.promo3_link')}</span>
+                  {t('cities.promo3_desc')} <span className="font-medium underline cursor-pointer">{t('cities.promo3_link')}</span>
                 </p>
               </div>
             </div>
@@ -89,13 +82,13 @@ export default function PropertiesByCities() {
       <div className="container mx-auto px-4 md:px-0 py-12 md:py-32 text-center">
         {/* Section Header */}
         <motion.div
-           initial={{ opacity: 0, y: 30 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           transition={{ duration: 0.8 }}
-           className="mb-8 md:mb-16 space-y-2 md:space-y-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-8 md:mb-16 space-y-2 md:space-y-4"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-neutral-1 tracking-tight">{t('cities.title')}</h2>
+          <h2 className="text-3xl md:text-5xl font-medium text-neutral-1 tracking-tight">{t('cities.title')}</h2>
           <p className="text-sm md:text-lg text-neutral-2 font-medium">{t('cities.subtitle')}</p>
         </motion.div>
 
@@ -126,17 +119,12 @@ export default function PropertiesByCities() {
                   transition={{ delay: index * 0.1 }}
                   className="flex flex-col items-center gap-2 md:gap-2 group/card cursor-pointer"
                 >
-                  <div className="relative w-24 h-24 md:w-40 md:h-40 rounded-full overflow-hidden border-2 md:border-4 border-transparent group-hover/card:border-primary transition-all duration-500 shadow-lg md:shadow-xl">
-                    <Image
-                      src={city.image}
-                      alt={city.name}
-                      fill
-                      className="object-cover group-hover/card:scale-110 transition-transform duration-700"
-                    />
+                  <div className="w-24 h-24 md:w-40 md:h-40 rounded-full border-2 md:border-4 border-transparent group-hover/card:border-primary transition-all duration-500 shadow-lg md:shadow-xl bg-primary/10 flex items-center justify-center">
+                    <Building2 className="w-10 h-10 md:w-16 md:h-16 text-primary" />
                   </div>
                   <div className="text-center">
-                    <h5 className="text-sm md:text-xl font-bold text-neutral-1 group-hover/card:text-primary transition-colors whitespace-nowrap">
-                      {city.name}
+                    <h5 className="text-sm md:text-xl font-medium text-neutral-1 group-hover/card:text-primary transition-colors whitespace-nowrap">
+                      {city.city}
                     </h5>
                     <p className="text-[10px] md:text-sm text-neutral-2 font-medium mt-0.5 md:mt-1">
                       {t('cities.properties_count', { count: city.count })}

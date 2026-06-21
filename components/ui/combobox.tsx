@@ -51,7 +51,7 @@ export function Combobox({
           className
         )}
       >
-        <span className="truncate">{selected ? selected.label : placeholder}</span>
+        <span>{selected ? selected.label : placeholder}</span>
         <ChevronDown
           size={15}
           className={cn('shrink-0 text-neutral-2/60 transition-transform duration-200', open && 'rotate-180')}
@@ -67,11 +67,11 @@ export function Combobox({
           <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100 bg-gray-50/50">
             <Search size={13} className="text-neutral-2/60 shrink-0" />
             <input
+              ref={(el) => { if (el) el.focus({ preventScroll: true }); }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={searchPlaceholder}
               className="flex-1 text-sm outline-none bg-transparent text-neutral-1 font-medium placeholder:text-neutral-2/50"
-              autoFocus
             />
           </div>
         )}

@@ -88,27 +88,27 @@ export default function TransportListPage() {
             <CalendarDays className="w-6 h-6 stroke-[1.5]" />
           </div>
           <div className="text-[#6C757D] text-[15px] font-medium">Active</div>
-          <div className="text-[32px] font-bold text-[#2C2E33] leading-none">42</div>
+          <div className="text-[32px] font-medium text-[#2C2E33] leading-none">42</div>
         </div>
         <div className="bg-white rounded-[20px] p-6 border border-[#F2F2F2] shadow-sm flex flex-col justify-center space-y-3">
           <div className="w-12 h-12 rounded-xl bg-[#F0FDF4] flex items-center justify-center text-[#22C55E]">
             <CalendarDays className="w-6 h-6 stroke-[1.5]" />
           </div>
           <div className="text-[#6C757D] text-[15px] font-medium">In Trip</div>
-          <div className="text-[32px] font-bold text-[#2C2E33] leading-none">12</div>
+          <div className="text-[32px] font-medium text-[#2C2E33] leading-none">12</div>
         </div>
         <div className="bg-white rounded-[20px] p-6 border border-[#F2F2F2] shadow-sm flex flex-col justify-center space-y-3">
           <div className="w-12 h-12 rounded-xl bg-[#F0FDF4] flex items-center justify-center text-[#22C55E]">
             <CalendarDays className="w-6 h-6 stroke-[1.5]" />
           </div>
           <div className="text-[#6C757D] text-[15px] font-medium">Total Vehicles</div>
-          <div className="text-[32px] font-bold text-[#2C2E33] leading-none">48</div>
+          <div className="text-[32px] font-medium text-[#2C2E33] leading-none">48</div>
         </div>
       </div>
 
       <div className="bg-white rounded-[20px] p-6 border border-[#F2F2F2] shadow-sm">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h2 className="text-[20px] font-bold text-[#2C2E33]">Vehicles List</h2>
+          <h2 className="text-[20px] font-medium text-[#2C2E33]">Vehicles List</h2>
           <div className="flex items-center space-x-3 w-full md:w-auto">
             <Button variant="outline" className="border-[#E5E7EB] text-[#4B5563] font-medium h-10 px-4 rounded-lg flex-1 md:flex-none cursor-pointer">
               <FileText className="w-4 h-4 mr-2" />
@@ -127,7 +127,7 @@ export default function TransportListPage() {
                   <DialogHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <DialogTitle className="text-[20px] font-bold text-[#2C2E33]">Add New Vehicle</DialogTitle>
+                        <DialogTitle className="text-[20px] font-medium text-[#2C2E33]">Add New Vehicle</DialogTitle>
                         <p className="text-sm text-[#6C757D] mt-1.5 font-medium">Enter vehicle details and features.</p>
                       </div>
                       <DialogClose className="rounded-full w-8 h-8 flex items-center justify-center bg-[#F9FAFB] hover:bg-gray-100 text-[#6C757D] transition-colors flex-shrink-0 cursor-pointer">
@@ -258,13 +258,13 @@ export default function TransportListPage() {
           <TabsList className="bg-transparent border-b border-[#F2F2F2] w-3/12 justify-start rounded-none h-auto p-0 mb-6 gap-6">
             <TabsTrigger
               value="all"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] cursor-pointer data-[state=active]:text-[#f97316] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-bold text-[15px]"
+              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] cursor-pointer data-[state=active]:text-[#f97316] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-medium text-[15px]"
             >
               All Vehicles
             </TabsTrigger>
             <TabsTrigger
               value="active"
-              className="data-[state=active]:bg-transparent cursor-pointer data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] data-[state=active]:text-[#f97316] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-bold text-[15px]"
+              className="data-[state=active]:bg-transparent cursor-pointer data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] data-[state=active]:text-[#f97316] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-medium text-[15px]"
             >
               Active
             </TabsTrigger>
@@ -325,7 +325,7 @@ export default function TransportListPage() {
 
             <div className="flex flex-col md:flex-row items-center justify-between mt-6 pt-2">
               <div className="text-[14px] text-[#6C757D] font-medium mb-4 md:mb-0">
-                Showing <span className="font-bold text-[#2C2E33]">1-9</span> of <span className="font-bold text-[#2C2E33]">240</span> enteries
+                Showing <span className="font-medium text-[#2C2E33]">1-9</span> of <span className="font-medium text-[#2C2E33]">240</span> enteries
               </div>
 
               <div className="flex items-center space-x-2">

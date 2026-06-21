@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
 
       {
         protocol: 'http',
-        hostname: '10.10.7.7',
+        hostname: '10.10.26.206',
       },
     ],
   },

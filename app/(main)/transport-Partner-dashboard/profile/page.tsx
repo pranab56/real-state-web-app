@@ -58,14 +58,14 @@ export default function TransportProfilePage() {
             </div>
           </div>
           <div className="flex flex-col items-center sm:items-start pt-2 space-y-1.5">
-            <h2 className="text-[20px] font-bold text-[#2C2E33]">Personal Information</h2>
+            <h2 className="text-[20px] font-medium text-[#2C2E33]">Personal Information</h2>
             <p className="text-[#6C757D] font-medium text-[14px]">
               Customer ID: #MT-8821 . Joined Jan 2023
             </p>
             <Button
               onClick={handleImageClick}
               variant="outline"
-              className="mt-[18px] h-[38px] px-5 border-[#F2F2F2] rounded-lg text-[14px] font-bold text-[#2C2E33] shadow-none hover:bg-gray-50 cursor-pointer"
+              className="mt-[18px] h-[38px] px-5 border-[#F2F2F2] rounded-lg text-[14px] font-medium text-[#2C2E33] shadow-none hover:bg-gray-50 cursor-pointer"
             >
               Update Profile Photo
             </Button>
@@ -74,27 +74,27 @@ export default function TransportProfilePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 pt-2">
           <div className="space-y-3">
-            <Label className="text-[14px] font-bold text-[#2C2E33]">First Name</Label>
+            <Label className="text-[14px] font-medium text-[#2C2E33]">First Name</Label>
             <Input defaultValue="Rasel" className={inputStyle} />
           </div>
           <div className="space-y-3">
-            <Label className="text-[14px] font-bold text-[#2C2E33]">Last Name</Label>
+            <Label className="text-[14px] font-medium text-[#2C2E33]">Last Name</Label>
             <Input defaultValue="Parvez" className={inputStyle} />
           </div>
         </div>
 
         <div className="space-y-3 mt-6">
-          <Label className="text-[14px] font-bold text-[#2C2E33]">Email Address</Label>
+          <Label className="text-[14px] font-medium text-[#2C2E33]">Email Address</Label>
           <Input defaultValue="rasel@example.com" className={inputStyle} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 mt-6">
           <div className="space-y-3">
-            <Label className="text-[14px] font-bold text-[#2C2E33]">Phone Number</Label>
+            <Label className="text-[14px] font-medium text-[#2C2E33]">Phone Number</Label>
             <Input defaultValue="01721879586" className={inputStyle} />
           </div>
           <div className="space-y-3">
-            <Label className="text-[14px] font-bold text-[#2C2E33]">Designation</Label>
+            <Label className="text-[14px] font-medium text-[#2C2E33]">Designation</Label>
             <Input defaultValue="General Manager" className={inputStyle} />
           </div>
         </div>
@@ -103,28 +103,28 @@ export default function TransportProfilePage() {
       {/* Box 2: Company Details */}
       <div className="bg-white rounded-[20px] p-7 md:p-8 border border-[#F2F2F2] shadow-sm">
         <div className="border-b border-[#F2F2F2] pb-5 mb-7">
-          <h2 className="text-[20px] font-bold text-[#2C2E33]">Company Details</h2>
+          <h2 className="text-[20px] font-medium text-[#2C2E33]">Company Details</h2>
         </div>
 
         <div className="space-y-7">
           <div className="space-y-3">
-            <Label className="text-[14px] font-bold text-[#2C2E33]">Registered Business Name</Label>
+            <Label className="text-[14px] font-medium text-[#2C2E33]">Registered Business Name</Label>
             <Input defaultValue="Thompson Freight & Logistics LLC" className={inputStyle} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-7">
             <div className="space-y-3">
-              <Label className="text-[14px] font-bold text-[#2C2E33]">Business Registration Number</Label>
+              <Label className="text-[14px] font-medium text-[#2C2E33]">Business Registration Number</Label>
               <Input defaultValue="REG-4455667788" className={inputStyle} />
             </div>
             <div className="space-y-3">
-              <Label className="text-[14px] font-bold text-[#2C2E33]">Tax Identification Number (TIN)</Label>
+              <Label className="text-[14px] font-medium text-[#2C2E33]">Tax Identification Number (TIN)</Label>
               <Input defaultValue="TAX-TX-8877" className={inputStyle} />
             </div>
           </div>
 
           <div className="space-y-3">
-            <Label className="text-[14px] font-bold text-[#2C2E33]">Business Address</Label>
+            <Label className="text-[14px] font-medium text-[#2C2E33]">Business Address</Label>
             <Textarea
               defaultValue="1200 Commerce St, Suite 400, Austin, TX 78701, USA"
               className="h-[120px] resize-none bg-[#F4F5F7] border-0 rounded-[8px] text-[#2C2E33] text-[15px] p-4 focus-visible:ring-1 focus-visible:ring-[#F1913D] shadow-none font-medium transition-all"
@@ -135,10 +135,10 @@ export default function TransportProfilePage() {
 
       {/* Box 3: Action Buttons */}
       <div className="bg-white rounded-[20px] p-6 border border-[#F2F2F2] flex justify-center sm:justify-end gap-4 shadow-sm">
-        <Button variant="outline" className="h-[50px] px-10 bg-[#F4F5F7] hover:bg-gray-200 border-0 text-[#2C2E33] font-bold text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer">
+        <Button variant="outline" className="h-[50px] px-10 bg-[#F4F5F7] hover:bg-gray-200 border-0 text-[#2C2E33] font-medium text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer">
           Cancel
         </Button>
-        <Button className="h-[50px] px-10 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer transition-transform active:scale-95">
+        <Button className="h-[50px] px-10 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer transition-transform active:scale-95">
           Save Changes
         </Button>
       </div>

@@ -3,12 +3,12 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useTranslation } from 'react-i18next';
 
 export default function SummerTrips() {
   const { t } = useTranslation('common');
@@ -55,18 +55,18 @@ export default function SummerTrips() {
                   transition={{ delay: 0.3, duration: 0.8 }}
                   className="max-w-xl md:ml-12 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
                 >
-                  <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
+                  <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-medium rounded-full uppercase tracking-wider">
                     {t('summer.featured')}
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
+                  <h2 className="text-3xl md:text-4xl font-medium text-white leading-[1.2] md:leading-[1.1]">
                     {t('summer.slide1_title')}
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
                     {t('summer.slide1_desc')}
                   </p>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
+                  {/* <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
                     {t('summer.slide1_btn')}
-                  </Button>
+                  </Button> */}
                 </motion.div>
               </div>
             </motion.div>
@@ -98,18 +98,18 @@ export default function SummerTrips() {
                   transition={{ delay: 0.3, duration: 0.8 }}
                   className="max-w-xl md:ml-12 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
                 >
-                  <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
+                  <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-medium rounded-full uppercase tracking-wider">
                     {t('summer.exclusive')}
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
+                  <h2 className="text-3xl md:text-4xl font-medium text-white leading-[1.2] md:leading-[1.1]">
                     {t('summer.slide2_title')}
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
                     {t('summer.slide2_desc')}
                   </p>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
+                  {/* <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
                     {t('summer.slide2_btn')}
-                  </Button>
+                  </Button> */}
                 </motion.div>
               </div>
             </motion.div>
@@ -141,18 +141,18 @@ export default function SummerTrips() {
                   transition={{ delay: 0.3, duration: 0.8 }}
                   className="max-w-xl md:ml-12 p-6 md:p-12 rounded-[1.5rem] md:rounded-[2rem] bg-black/30 backdrop-blur-md border border-white/10 space-y-4 md:space-y-6 shadow-2xl w-full"
                 >
-                  <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-bold rounded-full uppercase tracking-wider">
+                  <div className="inline-block px-4 py-1.5 bg-white text-neutral-1 text-[10px] md:text-xs font-medium rounded-full uppercase tracking-wider">
                     {t('summer.urban')}
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white leading-[1.2] md:leading-[1.1]">
+                  <h2 className="text-3xl md:text-4xl font-medium text-white leading-[1.2] md:leading-[1.1]">
                     {t('summer.slide3_title')}
                   </h2>
                   <p className="text-sm md:text-base text-white/90 font-medium line-clamp-2 md:line-clamp-none">
                     {t('summer.slide3_desc')}
                   </p>
-                  <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
+                  {/* <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-11 md:h-12 px-8 md:px-10 rounded-lg transition-all shadow-xl shadow-primary/20 text-sm md:text-base w-full md:w-auto">
                     {t('summer.slide3_btn')}
-                  </Button>
+                  </Button> */}
                 </motion.div>
               </div>
             </motion.div>

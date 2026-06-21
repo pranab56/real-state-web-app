@@ -1,4 +1,3 @@
-import CTABanner from "@/components/shared/CTABanner";
 import Footer from "@/components/shared/Footer";
 import { Navbar } from "@/components/shared/navbar";
 
@@ -11,7 +10,7 @@ export default function MainLayout({
     <>
       <Navbar />
       {children}
-      <CTABanner />
+      {/* <CTABanner /> */}
       <Footer />
     </>
   );

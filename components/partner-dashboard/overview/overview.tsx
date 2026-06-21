@@ -1,316 +1,342 @@
 'use client';
 
-import { Checkbox } from '@/components/ui/checkbox';
+import { useGetAllTransectionQuery } from '@/features/peyment/payementApi';
+import { useGetMyReviewsQuery } from '@/features/review/reviewApi';
+import { useGetMyReservationQuery } from '@/features/reservation/page';
+import { baseURL } from '@/utils/BaseURL';
+import { format } from 'date-fns';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { CalendarCheck } from 'lucide-react';
+  CalendarCheck,
+  CreditCard,
+  MapPin,
+  MessageSquare,
+  Star,
+} from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { Hotel, Reservation, RootState, Review, Transaction } from '@/types';
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=150&auto=format&fit=crop';
+
+const getImg = (path?: string) => {
+  if (!path) return FALLBACK_IMG;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
+};
+
+const getInitials = (firstName?: string, lastName?: string) =>
+  `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
+
+const getBookingStatusStyle = (status: string) => {
+  switch (status) {
+    case 'confirmed':  return 'bg-green-50 text-green-600';
+    case 'pending':    return 'bg-orange-50 text-orange-500';
+    case 'completed':  return 'bg-gray-100 text-gray-500';
+    case 'cancelled':  return 'bg-red-50 text-red-500';
+    default:           return 'bg-gray-100 text-gray-600';
+  }
+};
+
+const getTxStatusStyle = (status: string) => {
+  switch (status) {
+    case 'completed': return 'bg-green-50 text-green-600';
+    case 'pending':   return 'bg-orange-50 text-orange-500';
+    case 'failed':    return 'bg-red-50 text-red-500';
+    default:          return 'bg-gray-100 text-gray-600';
+  }
+};
+
+const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 
 const chartData = [
-  { name: 'JAN', value: 100 },
-  { name: 'FEB', value: 300 },
-  { name: 'MAR', value: 200 },
-  { name: 'APR', value: 120 },
-  { name: 'MAY', value: 80 },
-  { name: 'JUN', value: 450 },
-  { name: 'JUL', value: 380 },
-  { name: 'AUG', value: 360 },
-  { name: 'SEP', value: 650 },
-  { name: 'OCT', value: 50 },
-  { name: 'NOV', value: 450 },
-  { name: 'DEC', value: 80 },
+  { name: 'JAN', value: 100 }, { name: 'FEB', value: 300 },
+  { name: 'MAR', value: 200 }, { name: 'APR', value: 120 },
+  { name: 'MAY', value: 80 },  { name: 'JUN', value: 450 },
+  { name: 'JUL', value: 380 }, { name: 'AUG', value: 360 },
+  { name: 'SEP', value: 650 }, { name: 'OCT', value: 50 },
+  { name: 'NOV', value: 450 }, { name: 'DEC', value: 80 },
 ];
 
 export function Overview() {
-  const stats = [
-    { label: 'Total Bookings', value: '12' },
-    { label: 'Saved Properties', value: '48' },
-    { label: 'Active Offers', value: '3' },
-  ];
+  const userId = useSelector((state: RootState) => state.auth?.user?._id);
 
-  const recentActivity = [
-    {
-      id: 1,
-      property: 'Oceanfront Villa',
-      date: 'Oct 12, 2025',
-      status: 'Confirmed',
-      amount: 'ETB250,00',
-      type: 'Properties',
-      image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=150&auto=format&fit=crop',
-    },
-    {
-      id: 2,
-      property: 'Mountain Retreat',
-      date: 'Oct 12, 2025',
-      status: 'Pending',
-      amount: 'ETB250,00',
-      type: 'Hotels',
-      image: 'https://images.unsplash.com/photo-1542314831-c6a4d14d837e?q=80&w=150&auto=format&fit=crop',
-    },
-    {
-      id: 3,
-      property: 'Urban Penthouse',
-      date: 'Oct 12, 2025',
-      status: 'Completed',
-      amount: 'ETB250,00',
-      type: 'Transportation',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=150&auto=format&fit=crop',
-    },
-    {
-      id: 4,
-      property: 'Oceanfront Villa II',
-      date: 'Oct 12, 2025',
-      status: 'Confirmed',
-      amount: 'ETB250,00',
-      type: 'Properties',
-      image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=150&auto=format&fit=crop',
-    },
-    {
-      id: 5,
-      property: 'Urban Penthouse II',
-      date: 'Oct 12, 2025',
-      status: 'Completed',
-      amount: 'ETB250,00',
-      type: 'Hotels',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=150&auto=format&fit=crop',
-    },
-  ];
+  const { data: bookingData, isLoading: bookingLoading } =
+    useGetMyReservationQuery({ page: 1, userId }, { skip: !userId });
 
-  const [activeTab, setActiveTab] = useState('All');
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [growthFilter, setGrowthFilter] = useState('Monthly');
+  const { data: txData, isLoading: txLoading } =
+    useGetAllTransectionQuery({ page: 1 });
 
-  const filteredActivity = activeTab === 'All'
-    ? recentActivity
-    : recentActivity.filter(activity => activity.type === activeTab);
+  const { data: reviewData, isLoading: reviewLoading } =
+    useGetMyReviewsQuery({});
 
-  const toggleRow = (id: number) => {
-    setSelectedRows(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
-  };
+  const bookings: Reservation[] = bookingData?.data ?? [];
+  const transactions: Transaction[] = txData?.data ?? [];
+  const reviews: Review[] = reviewData?.data ?? [];
 
-  const toggleAllRows = () => {
-    if (selectedRows.length === filteredActivity.length && filteredActivity.length > 0) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(filteredActivity.map(a => a.id));
-    }
-  };
+  const totalBookings      = bookingData?.pagination?.total ?? 0;
+  const totalTransactions  = txData?.pagination?.total ?? 0;
+  const totalReviews       = reviewData?.pagination?.total ?? 0;
 
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case 'Confirmed':
-        return 'bg-[#2B9724]/10 text-[#2B9724]';
-      case 'Pending':
-        return 'bg-[#F1913D]/10 text-[#F1913D]';
-      case 'Completed':
-        return 'bg-[#2C2E33]/10 text-[#2C2E33]';
-      default:
-        return 'bg-gray-100 text-gray-700';
-    }
-  };
+  const recentBookings     = bookings.slice(0, 5);
+  const recentTransactions = transactions.slice(0, 4);
+  const recentReviews      = reviews.slice(0, 3);
 
   return (
     <div className="space-y-6">
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat, idx) => (
-          <div
-            key={idx}
-            className="bg-white p-6 rounded-lg flex flex-col justify-center border border-[#F2F2F2] shadow relative overflow-hidden"
-          >
-            <div className="w-12 h-12 rounded-lg border border-[#2B9724]/20 bg-[#2B9724]/10 flex items-center justify-center mb-6">
-              <CalendarCheck className="text-[#2B9724]" size={24} strokeWidth={1.5} />
-            </div>
-            <p className="text-[#6C757D] text-[15px] font-medium mb-1">
-              {stat.label}
-            </p>
-            <h3 className="text-[28px] font-bold text-[#2C2E33] leading-none">
-              {stat.value}
+
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+        <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-[#F1913D]/10 flex items-center justify-center flex-shrink-0">
+            <CalendarCheck size={22} className="text-[#F1913D]" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Total Bookings</p>
+            <h3 className="text-[28px] font-semibold text-[#2C2E33] leading-tight">
+              {bookingLoading ? '—' : totalBookings}
             </h3>
           </div>
-        ))}
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <CreditCard size={22} className="text-blue-600" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Total Transactions</p>
+            <h3 className="text-[28px] font-semibold text-[#2C2E33] leading-tight">
+              {txLoading ? '—' : totalTransactions}
+            </h3>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
+            <MessageSquare size={22} className="text-yellow-500" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Total Reviews</p>
+            <h3 className="text-[28px] font-semibold text-[#2C2E33] leading-tight">
+              {reviewLoading ? '—' : totalReviews}
+            </h3>
+          </div>
+        </div>
+
       </div>
 
-      {/* Recent Activity */}
+      {/* ── Recent Bookings ── */}
       <div className="bg-white rounded-lg p-6 border border-[#F2F2F2] shadow-sm">
-        <h2 className="text-[22px] font-bold text-[#2C2E33] mb-6">
-          Recent Activity
-        </h2>
-
-        {/* Tabs */}
-        <div className="flex items-center gap-4 md:gap-8 border-b-2 border-transparent mb-6 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {['All', 'Properties', 'Hotels', 'Transportation'].map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-3 text-[15px] font-semibold cursor-pointer transition-colors relative ${isActive
-                  ? 'text-[#2C2E33]'
-                  : 'text-[#6C757D] hover:text-[#2C2E33]'
-                  }`}
-              >
-                {tab}
-                {isActive && (
-                  <div className="absolute -bottom-0.5 left-0 right-0 h-[2.5px] bg-[#2C2E33] rounded-full" />
-                )}
-              </button>
-            );
-          })}
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-[18px] font-semibold text-[#2C2E33]">Recent Bookings</h2>
+          <Link href="/partner-dashboard/bookings" className="text-[13px] font-semibold text-[#F1913D] hover:underline">
+            View All
+          </Link>
         </div>
 
-        {/* Table container */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm whitespace-nowrap border-collapse pb-4">
-            <thead>
-              <tr className="bg-[#F9F9F9] rounded-lg">
-                <th className="px-6 py-4 w-12 text-center rounded-l-lg font-medium text-[#6C757D]">
-                  <Checkbox
-                    checked={selectedRows.length === filteredActivity.length && filteredActivity.length > 0}
-                    onCheckedChange={toggleAllRows}
-                    className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:text-white rounded-[4px]"
-                  />
-                </th>
-                <th className="px-6 py-4 font-medium text-[#6C757D]">Property</th>
-                <th className="px-6 py-4 font-medium text-[#6C757D]">Date</th>
-                <th className="px-6 py-4 font-medium text-[#6C757D]">Status</th>
-                <th className="px-6 py-4 font-medium text-[#6C757D] rounded-r-lg">Amount</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-transparent before:content-[''] before:block before:h-4">
-              {filteredActivity.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="text-center py-8 text-[#6C757D]">No activities match your filters.</td>
+        {bookingLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="w-6 h-6 border-2 border-[#F1913D] border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : recentBookings.length === 0 ? (
+          <p className="text-center text-[#6C757D] text-[14px] py-8">No bookings yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap border-collapse">
+              <thead>
+                <tr className="bg-[#F9F9F9]">
+                  <th className="px-5 py-3 font-medium text-[#6C757D] rounded-l-lg">Property</th>
+                  <th className="px-5 py-3 font-medium text-[#6C757D]">Check-In</th>
+                  <th className="px-5 py-3 font-medium text-[#6C757D]">Check-Out</th>
+                  <th className="px-5 py-3 font-medium text-[#6C757D]">Status</th>
+                  <th className="px-5 py-3 font-medium text-[#6C757D] rounded-r-lg">Amount</th>
                 </tr>
-              )}
-              {filteredActivity.map((activity) => (
-                <tr
-                  key={activity.id}
-                  className="hover:bg-gray-50/50 transition-colors border-b border-[#F2F2F2] last:border-0"
-                >
-                  <td className="px-6 py-5 text-center">
-                    <Checkbox
-                      checked={selectedRows.includes(activity.id)}
-                      onCheckedChange={() => toggleRow(activity.id)}
-                      className="border-[#D1D1D1] data-[state=checked]:bg-[#F1913D] data-[state=checked]:text-white rounded-[4px]"
-                    />
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-200 overflow-hidden relative">
-                        <Image
-                          src={activity.image}
-                          alt={activity.property}
-                          fill
-                          className="object-cover"
-                        />
+              </thead>
+              <tbody>
+                <tr className="h-3" />
+                {recentBookings.map((b: Reservation) => {
+                  const address = [b.property?.address?.city, b.property?.address?.country].filter(Boolean).join(', ');
+                  return (
+                    <tr key={b._id} className="border-b border-[#F2F2F2] last:border-0 hover:bg-gray-50/50 transition-colors">
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden relative flex-shrink-0">
+                            <Image src={getImg(b.property?.images?.[0])} alt={b.property?.title ?? ''} fill className="object-cover" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-[#2C2E33] text-[13px] line-clamp-1">{b.property?.title ?? '—'}</p>
+                            {address && <p className="text-[11px] text-[#6C757D]">{address}</p>}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-[13px] font-medium text-[#2C2E33]">
+                        {b.checkIn ? format(new Date(b.checkIn), 'MMM dd, yyyy') : '—'}
+                      </td>
+                      <td className="px-5 py-3 text-[13px] font-medium text-[#2C2E33]">
+                        {b.checkOut ? format(new Date(b.checkOut), 'MMM dd, yyyy') : '—'}
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className={`px-3 py-1 rounded-full text-[11px] font-semibold ${getBookingStatusStyle(b.status)}`}>
+                          {capitalize(b.status)}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-[13px] font-semibold text-[#2C2E33]">
+                        {b.pricing?.currency} {b.pricing?.total?.toFixed(2) ?? '—'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* ── Transactions + Reviews ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        {/* Recent Transactions */}
+        <div className="bg-white rounded-lg p-6 border border-[#F2F2F2] shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-[18px] font-semibold text-[#2C2E33]">Recent Transactions</h2>
+            <Link href="/partner-dashboard/payments" className="text-[13px] font-semibold text-[#F1913D] hover:underline">
+              View All
+            </Link>
+          </div>
+
+          {txLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="w-6 h-6 border-2 border-[#F1913D] border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : recentTransactions.length === 0 ? (
+            <p className="text-center text-[#6C757D] text-[14px] py-8">No transactions yet.</p>
+          ) : (
+            <div className="divide-y divide-[#F2F2F2]">
+              {recentTransactions.map((tx: Transaction) => {
+                const reservation = tx.reference?.id;
+                const dateStr = tx.createdAt ? format(new Date(tx.createdAt), 'MMM dd, yyyy') : '—';
+                return (
+                  <div key={tx._id} className="flex items-center justify-between py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-[#F1913D]/10 flex items-center justify-center flex-shrink-0">
+                        <CreditCard size={15} className="text-[#F1913D]" />
                       </div>
-                      <span className="font-bold text-[#2C2E33]">
-                        {activity.property}
+                      <div>
+                        <p className="text-[13px] font-semibold text-[#2C2E33]">
+                          {reservation?.uid ?? `#${tx._id?.slice(-6).toUpperCase()}`}
+                        </p>
+                        <p className="text-[11px] text-[#6C757D] font-medium capitalize">{tx.paymentMethod} · {dateStr}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-[13px] font-bold text-[#2C2E33]">{tx.currency} {tx.amount?.toFixed(2)}</span>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${getTxStatusStyle(tx.status)}`}>
+                        {capitalize(tx.status)}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-5 text-[#6C757D] font-medium">
-                    {activity.date}
-                  </td>
-                  <td className="px-6 py-5">
-                    <span
-                      className={`px-4 py-1.5 rounded-full text-[13px] font-bold ${getStatusStyle(
-                        activity.status
-                      )}`}
-                    >
-                      {activity.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 font-bold text-[#2C2E33]">
-                    {activity.amount}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div >
-
-      {/* Portfolio Growth */}
-      < div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm relative overflow-hidden" >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 z-10 relative">
-          <div>
-            <h2 className="text-[22px] font-bold text-[#2C2E33]">
-              Portfolio Growth
-            </h2>
-            <p className="text-[15px] text-[#6C757D] mt-1 font-medium">
-              Asset value appreciation over the last 12 months
-            </p>
-          </div>
-          <div>
-            <Select value={growthFilter} onValueChange={(v) => { if (v) setGrowthFilter(v) }}>
-              <SelectTrigger className="w-[124px] h-[40px] bg-[#F9F9F9] border-[#F2F2F2] text-[#6C757D] font-semibold text-sm rounded-sm focus:ring-0 shadow-none hover:bg-gray-100 transition-colors gap-2">
-                <SelectValue placeholder="Select period" />
-              </SelectTrigger>
-              <SelectContent align="end" className="bg-white border-[#F2F2F2] shadow-sm rounded">
-                <SelectItem value="Weekly" className="text-sm rounded-none font-medium cursor-pointer">Weekly</SelectItem>
-                <SelectItem value="Monthly" className="text-sm rounded-none font-medium cursor-pointer">Monthly</SelectItem>
-                <SelectItem value="Yearly" className="text-sm rounded-none font-medium cursor-pointer">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Area Chart Using Recharts */}
-        <div className="h-[300px] w-full mt-4 z-0 relative">
+        {/* Recent Reviews */}
+        <div className="bg-white rounded-lg p-6 border border-[#F2F2F2] shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-[18px] font-semibold text-[#2C2E33]">Recent Reviews</h2>
+            <Link href="/partner-dashboard/reviews" className="text-[13px] font-semibold text-[#F1913D] hover:underline">
+              View All
+            </Link>
+          </div>
+
+          {reviewLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="w-6 h-6 border-2 border-[#F1913D] border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : recentReviews.length === 0 ? (
+            <p className="text-center text-[#6C757D] text-[14px] py-8">No reviews yet.</p>
+          ) : (
+            <div className="divide-y divide-[#F2F2F2]">
+              {recentReviews.map((review: Review) => {
+                const customer  = review.customer ?? {};
+                const property  = (review.property as Hotel) ?? {};
+                const avatarUrl = getImg(customer.image);
+                const initials  = getInitials(customer.firstName, customer.lastName);
+                const location  = [property.address?.city, property.address?.country].filter(Boolean).join(', ');
+                const dateStr   = review.createdAt ? format(new Date(review.createdAt), 'MMM dd, yyyy') : '';
+
+                return (
+                  <div key={review._id} className="py-4 flex gap-3">
+                    {avatarUrl ? (
+                      <div className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-gray-100">
+                        <Image src={avatarUrl} alt={customer.firstName ?? ''} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-[#F1913D]/15 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#F1913D] font-bold text-[11px]">{initials}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                        <span className="text-[13px] font-semibold text-[#2C2E33]">{customer.firstName} {customer.lastName}</span>
+                        <span className="text-[11px] text-[#6C757D] font-medium whitespace-nowrap">{dateStr}</span>
+                      </div>
+                      <div className="flex items-center gap-0.5 mb-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={11} className={i < (review.rating ?? 0) ? 'fill-[#F1913D] text-[#F1913D]' : 'fill-gray-200 text-gray-200'} />
+                        ))}
+                      </div>
+                      <p className="text-[12px] text-[#6C757D] font-medium line-clamp-2">{review.comment}</p>
+                      {property.title && (
+                        <div className="flex items-center gap-1 mt-1.5">
+                          <MapPin size={10} className="text-[#F1913D] shrink-0" />
+                          <span className="text-[11px] text-[#6C757D] font-medium line-clamp-1">{property.title}{location ? ` · ${location}` : ''}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* ── Chart ── */}
+      <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm">
+        <div className="mb-6">
+          <h2 className="text-[18px] font-semibold text-[#2C2E33]">Booking Trend</h2>
+          <p className="text-[13px] text-[#6C757D] mt-0.5 font-medium">Overview for the past 12 months</p>
+        </div>
+        <div className="h-[260px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={chartData}
-              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-            >
+            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#F1913D" stopOpacity={0.6} />
+                  <stop offset="5%" stopColor="#F1913D" stopOpacity={0.5} />
                   <stop offset="95%" stopColor="#F1913D" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: '#A1A1A1', fontSize: 12, fontWeight: 600 }}
-                dy={10}
-              />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#A1A1A1', fontSize: 12, fontWeight: 600 }} dy={10} />
               <YAxis hide />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: '12px',
-                  border: 'none',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                  fontWeight: 'bold',
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#F1913D"
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#colorValue)"
-                activeDot={{
-                  r: 6,
-                  fill: '#FFFFFF',
-                  stroke: '#F1913D',
-                  strokeWidth: 3,
-                }}
-              />
+              <Tooltip contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', fontWeight: 600 }} />
+              <Area type="monotone" dataKey="value" stroke="#F1913D" strokeWidth={2.5} fillOpacity={1} fill="url(#colorValue)" activeDot={{ r: 5, fill: '#fff', stroke: '#F1913D', strokeWidth: 2.5 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div >
-    </div >
+      </div>
+
+    </div>
   );
 }

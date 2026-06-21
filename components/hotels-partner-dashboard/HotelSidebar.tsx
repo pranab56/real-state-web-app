@@ -1,45 +1,54 @@
 'use client';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { logout } from '@/features/auth/authSlice';
 import { useSidebar } from '@/hooks/use-sidebar';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  CalendarCheck,
   FileText,
+  Heart,
   Hotel,
   LayoutDashboard,
+  Loader2,
   LogOut,
-  MessageSquare,
   Star,
   User
 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-const sidebarItems = [
+interface SidebarItem {
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  basePath?: string;
+  children?: { name: string; href: string }[];
+}
+
+const sidebarItems: SidebarItem[] = [
   { name: 'Overview', href: '/hotels-partner-dashboard', icon: LayoutDashboard },
   {
     name: 'Manage Hotels',
-    href: '/hotels-partner-dashboard/manage-hotels',
+    href: '/hotels-partner-dashboard/manage-hotels/list',
+    basePath: '/hotels-partner-dashboard/manage-hotels',
     icon: Hotel,
     children: [
       { name: 'Hotels List', href: '/hotels-partner-dashboard/manage-hotels/list' },
       { name: 'Add Hotel', href: '/hotels-partner-dashboard/manage-hotels/add' },
-      { name: 'Room Type', href: '/hotels-partner-dashboard/manage-hotels/room-type' },
-      { name: 'Add Room', href: '/hotels-partner-dashboard/manage-hotels/add-room' },
     ],
   },
-  {
-    name: 'Bookings',
-    href: '/hotels-partner-dashboard/bookings',
-    icon: CalendarCheck,
-    children: [
-      { name: 'Booking History', href: '/hotels-partner-dashboard/bookings' },
-      { name: 'Booking Calendar', href: '/hotels-partner-dashboard/bookings/calendar' },
-    ],
-  },
-  { name: 'Message', href: '/hotels-partner-dashboard/messages', icon: MessageSquare },
+  { name: 'Wishlist', href: '/hotels-partner-dashboard/wishlist', icon: Heart },
   { name: 'Payment History', href: '/hotels-partner-dashboard/payments', icon: FileText },
   { name: 'Guest Reviews', href: '/hotels-partner-dashboard/reviews', icon: Star },
   { name: 'Profile', href: '/hotels-partner-dashboard/profile', icon: User },
@@ -48,11 +57,22 @@ const sidebarItems = [
 export function HotelSidebar() {
   const pathname = usePathname();
   const { isCollapsed, setCollapsed } = useSidebar();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLinkClick = () => {
     if (window.innerWidth < 1024) {
       setCollapsed(true);
     }
+  };
+
+  const handleLogoutConfirm = async () => {
+    setIsLoggingOut(true);
+    await new Promise(r => setTimeout(r, 800));
+    dispatch(logout());
+    router.push('/login');
   };
 
   return (
@@ -99,8 +119,8 @@ export function HotelSidebar() {
       {/* Navigation */}
       <nav className="flex-1 mt-6">
         <ul className="flex flex-col gap-1 relative">
-          {sidebarItems.map((item) => {
-            const isParentActive = pathname === item.href || (item.children && pathname.startsWith(item.href));
+          {sidebarItems.map((item: SidebarItem) => {
+            const isParentActive = pathname === item.href || !!(item.basePath && pathname.startsWith(item.basePath));
             const Icon = item.icon;
 
             return (
@@ -188,10 +208,12 @@ export function HotelSidebar() {
       <div className={cn("p-6 mt-auto", isCollapsed ? "flex justify-center px-4" : "")}>
         <Tooltip>
           <TooltipTrigger render={
-            <button className={cn(
-              "flex items-center gap-2 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white py-2.5 rounded-lg transition-colors text-sm font-semibold justify-center cursor-pointer",
-              isCollapsed ? "px-0 w-12 h-12 rounded-xl" : "px-4 w-full"
-            )}>
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className={cn(
+                "flex items-center gap-2 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white py-2.5 rounded-lg transition-colors text-sm font-semibold justify-center cursor-pointer",
+                isCollapsed ? "px-0 w-12 h-12 rounded-xl" : "px-4 w-full"
+              )}>
               <LogOut size={18} strokeWidth={2.5} className="flex-shrink-0" />
               {!isCollapsed && <span>Logout</span>}
             </button>
@@ -203,6 +225,41 @@ export function HotelSidebar() {
           )}
         </Tooltip>
       </div>
+
+      {/* Logout Confirm Modal */}
+      <Dialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+        <DialogContent className="max-w-sm rounded-2xl p-8">
+          <DialogHeader className="items-center text-center space-y-3">
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto">
+              <LogOut size={28} className="text-[#DC3545]" />
+            </div>
+            <DialogTitle className="text-xl font-black text-neutral-1">Confirm Logout</DialogTitle>
+            <DialogDescription className="text-sm text-neutral-2 font-medium">
+              Are you sure you want to logout? You will need to sign in again to access your dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-row gap-3 mt-2">
+            <button
+              onClick={() => setShowLogoutModal(false)}
+              disabled={isLoggingOut}
+              className="flex-1 h-11 rounded-xl border border-gray-200 text-neutral-2 font-semibold text-sm hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleLogoutConfirm}
+              disabled={isLoggingOut}
+              className="flex-1 h-11 rounded-xl bg-[#DC3545] hover:bg-[#DC3545]/90 text-white font-semibold text-sm transition-colors cursor-pointer disabled:opacity-80 flex items-center justify-center gap-2"
+            >
+              {isLoggingOut ? (
+                <><Loader2 size={16} className="animate-spin" /> Logging out...</>
+              ) : (
+                'Yes, Logout'
+              )}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 }

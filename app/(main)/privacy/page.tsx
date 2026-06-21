@@ -26,7 +26,7 @@ export default function PrivacyPage() {
             <ChevronRight size={14} className="text-neutral-2" />
             <span className="text-neutral-2">{t('privacy.breadcrumb_privacy')}</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-neutral-1">{t('privacy.title')}</h1>
+          <h1 className="text-3xl md:text-5xl font-medium text-neutral-1">{t('privacy.title')}</h1>
           <p className="text-neutral-2 text-sm md:text-base font-medium max-w-lg mx-auto opacity-70">
             {t('privacy.subtitle')}
           </p>

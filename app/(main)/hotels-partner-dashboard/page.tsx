@@ -110,7 +110,7 @@ export default function HotelPartnerDashboardPage() {
                 <Icon className="text-[#2B9724]" size={24} strokeWidth={1.5} />
               </div>
               <p className="text-[#6C757D] text-[14px] font-medium mb-1">{stat.label}</p>
-              <h3 className="text-[28px] font-bold text-[#2C2E33] leading-none">{stat.value}</h3>
+              <h3 className="text-[28px] font-medium text-[#2C2E33] leading-none">{stat.value}</h3>
             </div>
           );
         })}
@@ -118,7 +118,7 @@ export default function HotelPartnerDashboardPage() {
 
       {/* Recent Bookings Table */}
       <div className="bg-white rounded-lg p-7 border border-[#F2F2F2] shadow-sm">
-        <h2 className="text-[20px] font-bold text-[#2C2E33] mb-6">Recent Bookings</h2>
+        <h2 className="text-[20px] font-medium text-[#2C2E33] mb-6">Recent Bookings</h2>
 
         {/* Tabs */}
         <div className="flex items-center gap-8 border-b border-[#F2F2F2] mb-6">
@@ -178,17 +178,17 @@ export default function HotelPartnerDashboardPage() {
                       <div className="w-[44px] h-[44px] rounded-xl overflow-hidden relative flex-shrink-0">
                         <Image src={b.image} alt={b.name} fill className="object-cover" />
                       </div>
-                      <span className="font-bold text-[#2C2E33] text-[15px]">{b.name}</span>
+                      <span className="font-medium text-[#2C2E33] text-[15px]">{b.name}</span>
                     </div>
                   </td>
                   <td className="px-5 py-4 text-[#2C2E33] font-semibold text-[14px]">{b.roomType}</td>
                   <td className="px-5 py-4 text-[#2C2E33] font-semibold text-[14px]">{b.date}</td>
                   <td className="px-5 py-4">
-                    <span className={`px-4 py-1.5 rounded-full text-[13px] font-bold ${getStatusStyle(b.status)}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[13px] font-medium ${getStatusStyle(b.status)}`}>
                       {b.status}
                     </span>
                   </td>
-                  <td className="px-5 py-4 font-bold text-[#2C2E33] text-[15px]">{b.amount}</td>
+                  <td className="px-5 py-4 font-medium text-[#2C2E33] text-[15px]">{b.amount}</td>
                 </tr>
               ))}
             </tbody>
@@ -200,7 +200,7 @@ export default function HotelPartnerDashboardPage() {
       <div className="bg-white rounded-lg p-7 border border-[#F2F2F2] shadow-sm">
         <div className="flex items-start justify-between mb-1">
           <div>
-            <h2 className="text-[20px] font-bold text-[#2C2E33]">Revenue Trend</h2>
+            <h2 className="text-[20px] font-medium text-[#2C2E33]">Revenue Trend</h2>
             <p className="text-[#6C757D] text-[13px] font-medium mt-0.5">
               Asset value appreciation over the last 12 months
             </p>
@@ -219,7 +219,7 @@ export default function HotelPartnerDashboardPage() {
 
         <div className="mb-6">
           <p className="text-[13px] text-[#6C757D] font-medium">Revenue Balance</p>
-          <p className="text-[22px] font-bold text-[#F1913D]">ETB250,00</p>
+          <p className="text-[22px] font-medium text-[#F1913D]">ETB250,00</p>
         </div>
 
         <ResponsiveContainer width="100%" height={260}>

@@ -11,11 +11,11 @@ export function TransportTopbar() {
     <header className="bg-white px-8 py-5 flex items-center justify-between border-b border-[#F2F2F2]">
       {/* Left side */}
       <div className="flex items-center gap-4">
-        <button onClick={toggleSidebar} className="bg-[#FFF4ED] p-2.5 rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
+        <button onClick={toggleSidebar} className="bg-[#FFF4ED] p-2.5 cursor-pointer rounded-lg text-[#F1913D] hover:bg-[#FFECD9] transition-colors">
           <Menu size={24} strokeWidth={2.5} />
         </button>
         <div>
-          <h1 className="text-[22px] font-bold text-[#2C2E33] leading-tight">
+          <h1 className="text-[22px] font-medium text-[#2C2E33] leading-tight">
             Transport Overview
           </h1>
           <p className="text-sm text-[#6C757D] font-medium mt-0.5">
@@ -27,7 +27,7 @@ export function TransportTopbar() {
       {/* Right side - Profile */}
       <div className="flex items-center gap-3">
         <div className="text-right flex flex-col items-end">
-          <span className="text-[15px] font-bold text-[#2C2E33] leading-none">Partner Name</span>
+          <span className="text-[15px] font-medium text-[#2C2E33] leading-none">Partner Name</span>
           <span className="text-[13px] text-[#6C757D] font-medium leading-[1.2]">Transport Partner</span>
         </div>
         <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm ring-1 ring-[#F2F2F2]">

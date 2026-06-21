@@ -66,8 +66,9 @@ export default function VerifyEmailForm() {
       await verifyOtp({ email, oneTimeCode: parseInt(otp.join(''), 10) }).unwrap();
       toast.success('Email verified successfully!');
       router.push('/login');
-    } catch (err: any) {
-      const msg = err?.data?.message || 'Invalid code. Please try again.';
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      const msg = error?.data?.message || 'Invalid code. Please try again.';
       setOtpError(msg);
       toast.error(msg);
     }
@@ -80,8 +81,9 @@ export default function VerifyEmailForm() {
       setOtpError('');
       toast.success('A new code has been sent to your email.');
       otpRefs.current[0]?.focus();
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Failed to resend code. Please try again.');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Failed to resend code. Please try again.');
     }
   };
 
@@ -103,12 +105,12 @@ export default function VerifyEmailForm() {
             <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
               <MailCheck size={32} className="text-primary" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-neutral-1">Verify Your Email</h2>
+            <h2 className="text-2xl sm:text-3xl font-medium text-neutral-1">Verify Your Email</h2>
             <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed">
               We&apos;ve sent a 6-digit verification code to
             </p>
             {email && (
-              <p className="text-sm font-bold text-neutral-1 break-all">{email}</p>
+              <p className="text-sm font-medium text-neutral-1 break-all">{email}</p>
             )}
           </div>
 
@@ -129,11 +131,11 @@ export default function VerifyEmailForm() {
               ))}
             </div>
             {otpError && (
-              <p className="text-red-500 text-xs font-bold text-center animate-pulse">{otpError}</p>
+              <p className="text-red-500 text-xs font-medium text-center animate-pulse">{otpError}</p>
             )}
           </div>
 
-          <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
+          <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
             <span className="text-neutral-2">Didn&apos;t receive the code?</span>
             <button
               onClick={handleResend}
@@ -148,7 +150,7 @@ export default function VerifyEmailForm() {
           <Button
             onClick={handleVerify}
             disabled={isVerifying}
-            className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center justify-center cursor-pointer gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20 group disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center justify-center cursor-pointer gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20 group disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isVerifying ? (
               <Loader2 size={20} className="animate-spin" />
@@ -161,7 +163,7 @@ export default function VerifyEmailForm() {
           </Button>
 
           <div className="text-center">
-            <Link href="/login" className="text-sm text-neutral-2 font-bold hover:text-primary transition-colors">
+            <Link href="/login" className="text-sm text-neutral-2 font-medium hover:text-primary transition-colors">
               Back to Login
             </Link>
           </div>

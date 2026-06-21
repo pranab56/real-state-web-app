@@ -103,7 +103,7 @@ export default function ManageRoomTypesPage() {
                 <Icon className="text-[#2B9724]" size={24} strokeWidth={1.5} />
               </div>
               <p className="text-[#6C757D] text-[14px] font-medium mb-1">{stat.label}</p>
-              <h3 className="text-[28px] font-bold text-[#2C2E33] leading-none">{stat.value}</h3>
+              <h3 className="text-[28px] font-medium text-[#2C2E33] leading-none">{stat.value}</h3>
             </div>
           );
         })}
@@ -117,7 +117,7 @@ export default function ManageRoomTypesPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-4 font-bold text-[14px] whitespace-nowrap transition-colors relative border-b-2 cursor-pointer ${isActive ? 'text-[#2C2E33] border-[#F1913D]' : 'text-[#6C757D] border-transparent hover:text-[#2C2E33]'
+              className={`py-4 font-medium text-[14px] whitespace-nowrap transition-colors relative border-b-2 cursor-pointer ${isActive ? 'text-[#2C2E33] border-[#F1913D]' : 'text-[#6C757D] border-transparent hover:text-[#2C2E33]'
                 }`}
             >
               {tab}
@@ -148,7 +148,7 @@ export default function ManageRoomTypesPage() {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 {/* Badge */}
-                <span className="absolute top-4 left-4 bg-[#F1913D] text-white text-[11px] font-bold px-4 py-1.5 rounded-full shadow-sm">
+                <span className="absolute top-4 left-4 bg-[#F1913D] text-white text-[11px] font-medium px-4 py-1.5 rounded-full shadow-sm">
                   {room.tag}
                 </span>
                 {/* Quick Actions */}
@@ -164,7 +164,7 @@ export default function ManageRoomTypesPage() {
 
               <div className="px-5 pb-5">
                 <div className="space-y-3 mb-4">
-                  <h3 className="text-[20px] font-bold text-[#2C2E33] group-hover:text-[#F1913D] transition-colors">{room.name}</h3>
+                  <h3 className="text-[20px] font-medium text-[#2C2E33] group-hover:text-[#F1913D] transition-colors">{room.name}</h3>
                   <div className="flex items-center gap-2 text-[#6C757D]">
                     <MapPin size={16} className="flex-shrink-0" strokeWidth={2} />
                     <p className="text-[14px] font-medium">{room.address}</p>
@@ -176,7 +176,7 @@ export default function ManageRoomTypesPage() {
                     <span className="text-[24px] font-extrabold text-[#2C2E33]">{room.price}</span>
                     <span className="text-[#6C757D] text-[14px] font-medium">/ night</span>
                   </div>
-                  <Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-bold h-10 px-6 rounded-lg transition-transform active:scale-95 text-[14px]">
+                  <Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-medium h-10 px-6 rounded-lg transition-transform active:scale-95 text-[14px]">
                     Book Now
                   </Button>
                 </div>
@@ -193,11 +193,11 @@ export default function ManageRoomTypesPage() {
           Previous
         </button>
         <div className="flex items-center gap-2">
-          <button className="w-11 h-11 rounded-sm bg-[#F1913D] cursor-pointer text-white font-bold shadow-md shadow-[#F1913D]/20 text-[15px]">1</button>
-          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">2</button>
-          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">3</button>
+          <button className="w-11 h-11 rounded-sm bg-[#F1913D] cursor-pointer text-white font-medium shadow-md shadow-[#F1913D]/20 text-[15px]">1</button>
+          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-medium hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">2</button>
+          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-medium hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">3</button>
           <span className="w-11 h-11 flex items-center justify-center bg-white text-[#6C757D] rounded-sm shadow-sm text-[15px]">...</span>
-          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-bold hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">12</button>
+          <button className="w-11 h-11 rounded-sm bg-white text-[#6C757D] cursor-pointer font-medium hover:bg-gray-50 hover:text-[#2C2E33] transition-colors shadow-sm text-[15px]">12</button>
         </div>
         <button className="flex items-center gap-2 h-11 px-5 cursor-pointer rounded-sm bg-white text-[#2C2E33] hover:bg-gray-50 shadow-sm transition-colors font-medium text-[14px]">
           Next

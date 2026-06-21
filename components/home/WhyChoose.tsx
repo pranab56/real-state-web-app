@@ -34,7 +34,7 @@ export default function WhyChoose() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl md:text-4xl font-bold text-neutral-1 leading-tight"
+            className="text-2xl md:text-4xl font-medium text-neutral-1 leading-tight"
           >
             {t('why.title')}
           </motion.h2>
@@ -65,7 +65,7 @@ export default function WhyChoose() {
                   {benefit.icon}
                 </div>
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-neutral-1 group-hover:text-primary transition-colors">
+              <h3 className="text-xl md:text-2xl font-medium text-neutral-1 group-hover:text-primary transition-colors">
                 {benefit.title}
               </h3>
               <p className="text-neutral-2 text-xs md:text-base leading-relaxed font-medium">

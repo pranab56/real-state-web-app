@@ -48,7 +48,7 @@ export default function RoutesManagementPage() {
               <CalendarCheck size={24} strokeWidth={1.5} />
             </div>
             <p className="text-[#6C757D] text-[15px] font-medium">{stat.label}</p>
-            <h3 className="text-[32px] font-bold text-[#2C2E33] leading-none">{stat.value}</h3>
+            <h3 className="text-[32px] font-medium text-[#2C2E33] leading-none">{stat.value}</h3>
           </div>
         ))}
       </div>
@@ -56,7 +56,7 @@ export default function RoutesManagementPage() {
       {/* Main Table Area */}
       <div className="bg-white rounded-[20px] border border-[#F2F2F2] shadow-sm">
         <div className="p-6 border-b border-[#F2F2F2] flex justify-between items-center">
-          <h2 className="text-[20px] font-bold text-[#2C2E33]">Vehicles List</h2>
+          <h2 className="text-[20px] font-medium text-[#2C2E33]">Vehicles List</h2>
 
           <Dialog open={isAddRouteOpen} onOpenChange={setIsAddRouteOpen}>
             <DialogTrigger render={<Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-semibold h-11 px-6 rounded-lg shadow-none" />}>
@@ -67,7 +67,7 @@ export default function RoutesManagementPage() {
             <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden rounded-[20px] border-0 shadow-xl [&>button]:hidden">
               <div className="p-6 border-b border-[#F2F2F2] flex justify-between items-start">
                 <div>
-                  <DialogTitle className="text-[20px] font-bold text-[#2C2E33]">Create New Route</DialogTitle>
+                  <DialogTitle className="text-[20px] font-medium text-[#2C2E33]">Create New Route</DialogTitle>
                   <p className="text-[14px] text-[#6C757D] font-medium mt-1.5">
                     Configure parameters for a new premium transport service.
                   </p>
@@ -157,7 +157,7 @@ export default function RoutesManagementPage() {
                   <SvgRouteIcon />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-[#2C2E33]">{route.title}</h3>
+                  <h3 className="text-[15px] font-medium text-[#2C2E33]">{route.title}</h3>
                   <p className="text-[13px] text-[#6C757D] font-medium mt-0.5">{route.description}</p>
                 </div>
               </div>
@@ -165,20 +165,20 @@ export default function RoutesManagementPage() {
               {/* Stats Sections */}
               <div className="flex-1 flex items-center justify-between md:px-4">
                 <div className="flex flex-col">
-                  <span className="text-[15px] font-bold text-[#2C2E33] mb-1">Distance</span>
+                  <span className="text-[15px] font-medium text-[#2C2E33] mb-1">Distance</span>
                   <span className="text-[14px] text-[#6C757D] font-medium">{route.distance}</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-[15px] font-bold text-[#2C2E33] mb-1">Avg. Time</span>
+                  <span className="text-[15px] font-medium text-[#2C2E33] mb-1">Avg. Time</span>
                   <span className="text-[14px] text-[#6C757D] font-medium">{route.time}</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-[15px] font-bold text-[#2C2E33] mb-1">Base Price</span>
+                  <span className="text-[15px] font-medium text-[#2C2E33] mb-1">Base Price</span>
                   <span className="text-[14px] text-[#6C757D] font-medium">{route.price}</span>
                 </div>
                 <div className="flex flex-col items-start min-w-[100px]">
-                  <span className="text-[15px] font-bold text-[#2C2E33] mb-2 pl-1">Status</span>
-                  <span className="inline-flex px-3.5 py-1 bg-[#2B9724]/10 text-[#2B9724] text-[12px] font-bold rounded-full items-center justify-center whitespace-nowrap">
+                  <span className="text-[15px] font-medium text-[#2C2E33] mb-2 pl-1">Status</span>
+                  <span className="inline-flex px-3.5 py-1 bg-[#2B9724]/10 text-[#2B9724] text-[12px] font-medium rounded-full items-center justify-center whitespace-nowrap">
                     {route.status}
                   </span>
                 </div>

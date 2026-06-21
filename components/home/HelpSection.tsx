@@ -38,7 +38,7 @@ export default function HelpSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl md:text-4xl font-bold text-neutral-1"
+            className="text-2xl md:text-4xl font-medium text-neutral-1"
           >
             {t('help.title')}
           </motion.h2>
@@ -76,12 +76,12 @@ export default function HelpSection() {
               <p className="text-neutral-2 leading-relaxed text-xs md:text-sm">
                 {service.description}
               </p>
-              <Button
+              {/* <Button
                 variant="ghost"
                 className="mt-2 md:mt-4 bg-[#F2F2F2] hover:bg-primary hover:text-white text-neutral-1 font-medium px-8 md:px-10 h-11 md:h-12 rounded transition-all"
               >
                 {service.btnText}
-              </Button>
+              </Button> */}
             </motion.div>
           ))}
         </div>

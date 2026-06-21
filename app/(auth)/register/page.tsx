@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useSignUpMutation } from '@/features/auth/authApi';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, ChevronLeft, Eye, EyeOff, Hotel, Loader2, Plane, User } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Eye, EyeOff, Hotel, Loader2, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -59,12 +59,11 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-type AccountType = 'customer' | 'hotel' | 'transit' | null;
+type AccountType = 'customer' | 'hotel' | null;
 
 const ACCOUNT_ROLE: Record<string, string> = {
   customer: 'customer',
   hotel: 'host',
-  transit: 'driver',
 };
 
 function Logo() {
@@ -111,8 +110,9 @@ export default function RegisterPage() {
       }).unwrap();
       toast.success('Account created! Please verify your email.');
       router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Registration failed. Please try again.');
     }
   };
 
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   key={`title-${idx}`}
-                  className="text-5xl font-bold leading-tight max-w-lg"
+                  className="text-5xl font-medium leading-tight max-w-lg"
                 >
                   {slide.title}
                 </motion.h1>
@@ -212,7 +212,7 @@ export default function RegisterPage() {
                       <Image src="/icons/document.png" alt="Type" width={100} height={100} className="object-contain" />
                     </div>
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-neutral-1">Choose Account Type</h2>
+                  <h2 className="text-2xl sm:text-3xl font-medium text-neutral-1">Choose Account Type</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium px-4">How do you want to start your journey?</p>
                 </div>
 
@@ -220,7 +220,6 @@ export default function RegisterPage() {
                   {[
                     { id: 'customer', title: 'Customer', desc: 'Book luxury stays, private islands, and curated high-end experiences worldwide.', icon: User },
                     { id: 'hotel', title: 'Hotel Partner', desc: 'Partner your 5-star hotel with us to reach global luxury travelers.', icon: Hotel },
-                    { id: 'transit', title: 'Transit Partner', desc: 'Provide premium private aviation, yacht, and chauffeur services.', icon: Plane },
                   ].map((type) => (
                     <button
                       key={type.id}
@@ -232,7 +231,7 @@ export default function RegisterPage() {
                         <type.icon size={32} className="text-neutral-2 group-hover:text-primary transition-colors hidden sm:block" />
                       </div>
                       <div className="flex-1 space-y-0.5 sm:space-y-1">
-                        <h4 className="text-lg sm:text-xl font-bold text-neutral-1">{type.title}</h4>
+                        <h4 className="text-lg sm:text-xl font-medium text-neutral-1">{type.title}</h4>
                         <p className="text-xs sm:text-sm text-neutral-2 font-medium leading-relaxed line-clamp-2">{type.desc}</p>
                       </div>
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-sm border border-gray-100 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all">
@@ -245,7 +244,7 @@ export default function RegisterPage() {
 
                 <div className="pt-4 sm:pt-8 text-center">
                   <p className="text-sm sm:text-base text-neutral-2 font-medium">
-                    Already have an account? <Link href="/login" className="text-primary hover:underline font-bold">Login</Link>
+                    Already have an account? <Link href="/login" className="text-primary hover:underline font-medium cursor-pointer">Login</Link>
                   </p>
                 </div>
               </motion.div>
@@ -261,7 +260,7 @@ export default function RegisterPage() {
                 className="space-y-8 lg:space-y-10"
               >
                 <div className="space-y-2 lg:space-y-4 text-center lg:text-left">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Create Account</h2>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-neutral-1">Create Account</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium px-4 lg:px-0">
                     Fill in your details to get started.
                   </p>
@@ -273,46 +272,46 @@ export default function RegisterPage() {
                     {/* First Name + Last Name */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div className="space-y-2 lg:space-y-3">
-                        <Label className="text-neutral-1 font-bold text-sm lg:text-base">First Name</Label>
+                        <Label className="text-neutral-1 font-medium text-sm lg:text-base">First Name</Label>
                         <Input
                           placeholder="Enter first name"
                           {...register('firstName')}
                           className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${errors.firstName ? 'ring-2 ring-red-500' : ''}`}
                         />
                         {errors.firstName && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.firstName.message}</p>
+                          <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.firstName.message}</p>
                         )}
                       </div>
                       <div className="space-y-2 lg:space-y-3">
-                        <Label className="text-neutral-1 font-bold text-sm lg:text-base">Last Name</Label>
+                        <Label className="text-neutral-1 font-medium text-sm lg:text-base">Last Name</Label>
                         <Input
                           placeholder="Enter last name"
                           {...register('lastName')}
                           className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${errors.lastName ? 'ring-2 ring-red-500' : ''}`}
                         />
                         {errors.lastName && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.lastName.message}</p>
+                          <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.lastName.message}</p>
                         )}
                       </div>
                     </div>
 
                     {/* Email */}
                     <div className="space-y-2 lg:space-y-3">
-                      <Label className="text-neutral-1 font-bold text-sm lg:text-base">Email Address</Label>
+                      <Label className="text-neutral-1 font-medium text-sm lg:text-base">Email Address</Label>
                       <Input
                         placeholder="Enter your email"
                         {...register('email')}
                         className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 font-medium text-sm lg:text-base ${errors.email ? 'ring-2 ring-red-500' : ''}`}
                       />
                       {errors.email && (
-                        <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.email.message}</p>
+                        <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.email.message}</p>
                       )}
                     </div>
 
                     {/* Password + Confirm Password */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div className="space-y-2 lg:space-y-3 relative">
-                        <Label className="text-neutral-1 font-bold text-sm">Password</Label>
+                        <Label className="text-neutral-1 font-medium text-sm">Password</Label>
                         <div className="relative">
                           <Input
                             type={showPassword ? 'text' : 'password'}
@@ -320,16 +319,16 @@ export default function RegisterPage() {
                             {...register('password')}
                             className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 pr-12 font-medium text-sm lg:text-base ${errors.password ? 'ring-2 ring-red-500' : ''}`}
                           />
-                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2">
+                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2 cursor-pointer">
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                           </button>
                         </div>
                         {errors.password && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.password.message}</p>
+                          <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.password.message}</p>
                         )}
                       </div>
                       <div className="space-y-2 lg:space-y-3 relative">
-                        <Label className="text-neutral-1 font-bold text-sm">Confirm Password</Label>
+                        <Label className="text-neutral-1 font-medium text-sm">Confirm Password</Label>
                         <div className="relative">
                           <Input
                             type={showConfirmPassword ? 'text' : 'password'}
@@ -337,12 +336,12 @@ export default function RegisterPage() {
                             {...register('confirmPassword')}
                             className={`h-11 lg:h-12 bg-[#F2F2F2] border-none rounded-lg px-4 lg:px-6 pr-12 font-medium text-sm lg:text-base ${errors.confirmPassword ? 'ring-2 ring-red-500' : ''}`}
                           />
-                          <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2">
+                          <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-2 cursor-pointer">
                             {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                           </button>
                         </div>
                         {errors.confirmPassword && (
-                          <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.confirmPassword.message}</p>
+                          <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{errors.confirmPassword.message}</p>
                         )}
                       </div>
                     </div>
@@ -358,23 +357,23 @@ export default function RegisterPage() {
                               id="terms"
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              className="border-neutral-2 data-[state=checked]:bg-primary size-4 sm:size-5"
+                              className="border-neutral-2 data-[state=checked]:bg-primary size-4 sm:size-5 cursor-pointer"
                             />
                           )}
                         />
-                        <Label htmlFor="terms" className="text-[10px] sm:text-xs text-neutral-2 font-medium leading-tight">
-                          I agree to the <Link href="#" className="text-primary hover:underline">Terms and Conditions</Link> and <Link href="#" className="text-primary hover:underline">Privacy Policy</Link>.
+                        <Label htmlFor="terms" className="text-[10px] sm:text-xs text-neutral-2 font-medium leading-tight cursor-pointer">
+                          I agree to the <Link href="#" className="text-primary hover:underline cursor-pointer">Terms and Conditions</Link> and <Link href="#" className="text-primary hover:underline cursor-pointer">Privacy Policy</Link>.
                         </Label>
                       </div>
                       {errors.terms && (
-                        <p className="text-red-500 text-[10px] font-bold ml-1">{errors.terms.message}</p>
+                        <p className="text-red-500 text-[10px] font-medium ml-1">{errors.terms.message}</p>
                       )}
                     </div>
 
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center cursor-pointer justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg text-base lg:text-lg flex items-center cursor-pointer justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       {isLoading ? <Loader2 size={20} className="animate-spin" /> : (
                         <>
@@ -387,7 +386,7 @@ export default function RegisterPage() {
 
                   <div className="text-center pt-6 sm:pt-8 border-t border-gray-50 mt-6 sm:mt-8">
                     <p className="text-sm sm:text-base text-neutral-2 font-medium">
-                      Already have an account? <Link href="/login" className="text-primary hover:underline font-bold">Login</Link>
+                      Already have an account? <Link href="/login" className="text-primary hover:underline font-medium cursor-pointer">Login</Link>
                     </p>
                   </div>
                 </div>
@@ -397,7 +396,7 @@ export default function RegisterPage() {
                     type="button"
                     onClick={() => { setStep(1); setAccountType(null); }}
                     variant="ghost"
-                    className="flex items-center gap-2 text-neutral-2 font-bold hover:text-primary hover:bg-primary/5 px-4 sm:px-6 h-10 sm:h-12 rounded-lg sm:rounded-xl bg-gray-100 border-none text-xs sm:text-sm"
+                    className="flex items-center gap-2 text-neutral-2 font-medium hover:text-primary hover:bg-primary/5 px-4 sm:px-6 h-10 sm:h-12 rounded-lg sm:rounded-xl bg-gray-100 border-none text-xs sm:text-sm cursor-pointer"
                   >
                     <ChevronLeft size={18} className="sm:hidden" />
                     <ChevronLeft size={20} className="hidden sm:block" />

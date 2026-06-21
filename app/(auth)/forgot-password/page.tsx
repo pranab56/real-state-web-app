@@ -126,8 +126,9 @@ export default function ForgotPasswordPage() {
       setSubmittedEmail(data.email);
       toast.success('OTP sent! Please check your email.');
       setStep(2);
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Failed to send OTP. Please try again.');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Failed to send OTP. Please try again.');
     }
   };
 
@@ -141,8 +142,9 @@ export default function ForgotPasswordPage() {
       setResetToken(result.data);
       toast.success('OTP verified!');
       setStep(3);
-    } catch (err: any) {
-      const msg = err?.data?.message || 'Invalid OTP. Please try again.';
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      const msg = error?.data?.message || 'Invalid OTP. Please try again.';
       setOtpError(msg);
       toast.error(msg);
     }
@@ -155,8 +157,9 @@ export default function ForgotPasswordPage() {
       setOtpError('');
       toast.success('A new code has been sent to your email.');
       otpRefs.current[0]?.focus();
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Failed to resend code.');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Failed to resend code.');
     }
   };
 
@@ -168,8 +171,9 @@ export default function ForgotPasswordPage() {
       }).unwrap();
       toast.success('Password reset successfully!');
       router.push('/login');
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Failed to reset password. Please try again.');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Failed to reset password. Please try again.');
     }
   };
 
@@ -201,7 +205,7 @@ export default function ForgotPasswordPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   key={`title-${idx}`}
-                  className="text-5xl font-bold leading-tight max-w-lg"
+                  className="text-5xl font-medium leading-tight max-w-lg"
                 >
                   {slide.title}
                 </motion.h1>
@@ -266,7 +270,7 @@ export default function ForgotPasswordPage() {
                 className="space-y-8 lg:space-y-10 border border-gray-100 rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 lg:p-12 bg-white shadow-xl shadow-black/[0.02]"
               >
                 <div className="text-center space-y-3 lg:space-y-4">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Reset Password</h2>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-neutral-1">Reset Password</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed px-2 sm:px-0">
                     Enter your email address and we&apos;ll send you a one-time code to reset your password.
                   </p>
@@ -274,21 +278,21 @@ export default function ForgotPasswordPage() {
 
                 <form className="space-y-6 sm:space-y-8" onSubmit={emailForm.handleSubmit(onEmailSubmit)}>
                   <div className="space-y-2 lg:space-y-3">
-                    <Label className="text-neutral-1 font-bold text-sm lg:text-base">Email Address</Label>
+                    <Label className="text-neutral-1 font-medium text-sm lg:text-base">Email Address</Label>
                     <Input
                       placeholder="Enter your email address"
                       {...emailForm.register('email')}
                       className={`h-11 sm:h-14 bg-[#F2F2F2] border-none rounded-lg sm:rounded-xl px-4 sm:px-6 font-medium text-sm sm:text-base ${emailForm.formState.errors.email ? 'ring-2 ring-red-500' : ''}`}
                     />
                     {emailForm.formState.errors.email && (
-                      <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{emailForm.formState.errors.email.message}</p>
+                      <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{emailForm.formState.errors.email.message}</p>
                     )}
                   </div>
 
                   <Button
                     type="submit"
                     disabled={isSendingOtp}
-                    className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center justify-center gap-2 group transition-all active:scale-95 shadow-lg shadow-primary/20 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center justify-center gap-2 group transition-all active:scale-95 shadow-lg shadow-primary/20 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {isSendingOtp ? <Loader2 size={20} className="animate-spin" /> : (
                       <>
@@ -316,9 +320,9 @@ export default function ForgotPasswordPage() {
                 className="space-y-8 lg:space-y-10 border border-gray-100 rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 lg:p-12 bg-white shadow-xl shadow-black/[0.02]"
               >
                 <div className="text-center space-y-3 lg:space-y-4">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Verify Account</h2>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-neutral-1">Verify Account</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed px-2 sm:px-0">
-                    Enter the 6-digit code sent to <span className="font-bold text-neutral-1">{submittedEmail}</span>
+                    Enter the 6-digit code sent to <span className="font-medium text-neutral-1">{submittedEmail}</span>
                   </p>
                 </div>
 
@@ -339,11 +343,11 @@ export default function ForgotPasswordPage() {
                     ))}
                   </div>
                   {otpError && (
-                    <p className="text-red-500 text-[10px] sm:text-xs font-bold text-center animate-pulse">{otpError}</p>
+                    <p className="text-red-500 text-[10px] sm:text-xs font-medium text-center animate-pulse">{otpError}</p>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
+                <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
                   <span className="text-neutral-2">Didn&apos;t receive the code?</span>
                   <button
                     onClick={handleResend}
@@ -358,7 +362,7 @@ export default function ForgotPasswordPage() {
                 <Button
                   onClick={onVerifyOtp}
                   disabled={isVerifyingOtp}
-                  className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20 group cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20 group cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isVerifyingOtp ? <Loader2 size={20} className="animate-spin" /> : (
                     <>
@@ -369,7 +373,7 @@ export default function ForgotPasswordPage() {
                 </Button>
 
                 <div className="text-center">
-                  <button onClick={() => setStep(1)} className="text-neutral-2 cursor-pointer font-bold hover:text-primary transition-colors text-xs sm:text-sm">Cancel and Restart</button>
+                  <button onClick={() => setStep(1)} className="text-neutral-2 cursor-pointer font-medium hover:text-primary transition-colors text-xs sm:text-sm">Cancel and Restart</button>
                 </div>
               </motion.div>
             )}
@@ -383,7 +387,7 @@ export default function ForgotPasswordPage() {
                 className="space-y-8 lg:space-y-10 border border-gray-100 rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 lg:p-12 bg-white shadow-xl shadow-black/[0.02]"
               >
                 <div className="text-center space-y-3 lg:space-y-4">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">New Password</h2>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-neutral-1">New Password</h2>
                   <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed px-2 sm:px-0">
                     Please enter a secure password you haven&apos;t used before.
                   </p>
@@ -391,7 +395,7 @@ export default function ForgotPasswordPage() {
 
                 <form className="space-y-6 sm:space-y-8" onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
                   <div className="space-y-2 sm:space-y-3 relative">
-                    <Label className="text-neutral-1 font-bold text-sm sm:text-base">New Password</Label>
+                    <Label className="text-neutral-1 font-medium text-sm sm:text-base">New Password</Label>
                     <div className="relative">
                       <Input
                         type={showPassword ? 'text' : 'password'}
@@ -408,12 +412,12 @@ export default function ForgotPasswordPage() {
                       </button>
                     </div>
                     {passwordForm.formState.errors.password && (
-                      <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{passwordForm.formState.errors.password.message}</p>
+                      <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{passwordForm.formState.errors.password.message}</p>
                     )}
                   </div>
 
                   <div className="space-y-2 sm:space-y-3 relative">
-                    <Label className="text-neutral-1 font-bold text-sm sm:text-base">Confirm Password</Label>
+                    <Label className="text-neutral-1 font-medium text-sm sm:text-base">Confirm Password</Label>
                     <div className="relative">
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
@@ -430,14 +434,14 @@ export default function ForgotPasswordPage() {
                       </button>
                     </div>
                     {passwordForm.formState.errors.confirmPassword && (
-                      <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{passwordForm.formState.errors.confirmPassword.message}</p>
+                      <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">{passwordForm.formState.errors.confirmPassword.message}</p>
                     )}
                   </div>
 
                   <Button
                     type="submit"
                     disabled={isResetting}
-                    className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center cursor-pointer justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20 group disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full h-11 sm:h-14 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg sm:rounded-xl text-base sm:text-lg flex items-center cursor-pointer justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20 group disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {isResetting ? <Loader2 size={20} className="animate-spin" /> : (
                       <>

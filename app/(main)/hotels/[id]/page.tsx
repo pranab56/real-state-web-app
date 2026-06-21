@@ -2,21 +2,19 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import { Combobox } from '@/components/ui/combobox';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/listings/listingsApi';
-import { baseURL } from '@/utils/BaseURL';
+import { useCreateReservationMutation } from '@/features/reservation/page';
+import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
+import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { cn } from '@/lib/utils';
+import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
@@ -26,14 +24,21 @@ import {
   Heart,
   Loader2,
   MapPin,
-  Share2,
+  MessageSquare,
   Star,
-  Zap,
+  User,
+  Zap
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { ApiError, Hotel, Review, RootState } from '@/types';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200';
 
@@ -41,6 +46,23 @@ const getImg = (path?: string) => {
   if (!path) return FALLBACK_IMG;
   if (path.startsWith('http')) return path;
   return `${baseURL}${path}`;
+};
+
+const getAvatarSrc = (path?: string) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
+};
+
+const getInitials = (firstName?: string, lastName?: string) =>
+  `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
+
+const getRatingLabel = (r: number) => {
+  if (r >= 5) return { label: 'Excellent', color: 'bg-green-50 text-green-600' };
+  if (r >= 4) return { label: 'Very Good', color: 'bg-blue-50 text-blue-600' };
+  if (r >= 3) return { label: 'Good', color: 'bg-yellow-50 text-yellow-600' };
+  if (r >= 2) return { label: 'Fair', color: 'bg-orange-50 text-orange-600' };
+  return { label: 'Poor', color: 'bg-red-50 text-red-500' };
 };
 
 const DatePicker = ({
@@ -53,40 +75,183 @@ const DatePicker = ({
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
   className?: string;
-}) => (
-  <div className={cn('space-y-1.5 sm:space-y-2 w-full', className)}>
-    <label className="text-[10px] sm:text-xs font-black w-full text-neutral-2 uppercase tracking-wider ml-1">{label}</label>
-    <Popover>
-      <PopoverTrigger>
-        <button
-          className={cn(
-            'w-full h-10 sm:h-12 bg-white border-none flex items-center justify-start text-left font-bold shadow-none hover:bg-white active:scale-95 transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm',
-            !date ? 'text-neutral-2' : 'text-neutral-1'
-          )}
-        >
-          <CalendarIcon className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 rounded-xl shadow-2xl border-none">
-        <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-xl border-none" />
-      </PopoverContent>
-    </Popover>
-  </div>
-);
+}) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={cn('space-y-1.5 sm:space-y-2 w-full', className)}>
+      <label className="text-[10px] sm:text-xs font-black w-full text-neutral-2 uppercase tracking-wider ml-1">{label}</label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger className="w-full">
+          <button
+            className={cn(
+              'w-full h-10 sm:h-12 bg-[#F6F6F6] border-none flex items-center justify-start text-left font-medium shadow-none hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
+              !date ? 'text-neutral-2' : 'text-neutral-1'
+            )}
+          >
+            <CalendarIcon className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+            {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-(--anchor-width) p-0 rounded-xl shadow-2xl border-none overflow-hidden ">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(d) => { setDate(d); setOpen(false); }}
+            className="w-full rounded-xl border-none"
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
+
+const replySchema = z.object({
+  comment: z.string().min(1, 'Comment is required'),
+});
+type ReplyFormValues = z.infer<typeof replySchema>;
+
+const COUNTRY_NAMES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia',
+  'Austria','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin',
+  'Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+  'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia',
+  'Comoros','Congo','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark','Djibouti','Dominica',
+  'Dominican Republic','Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini',
+  'Ethiopia','Fiji','Finland','France','Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada',
+  'Guatemala','Guinea','Guinea-Bissau','Guyana','Haiti','Honduras','Hungary','Iceland','India','Indonesia',
+  'Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati',
+  'Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania',
+  'Luxembourg','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania',
+  'Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique',
+  'Myanmar','Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria',
+  'North Korea','North Macedonia','Norway','Oman','Pakistan','Palau','Panama','Papua New Guinea','Paraguay',
+  'Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saint Kitts and Nevis',
+  'Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe',
+  'Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia',
+  'Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan',
+  'Suriname','Sweden','Switzerland','Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste',
+  'Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine',
+  'United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Vanuatu','Venezuela',
+  'Vietnam','Yemen','Zambia','Zimbabwe',
+];
+
+const COUNTRY_OPTIONS = COUNTRY_NAMES.map(name => ({ value: name, label: name }));
+
+const GUEST_OPTIONS = [
+  { value: '1', label: '1 Adult, 0 Children', guests: { adults: 1, children: 0, pets: 0 } },
+  { value: '2', label: '2 Adults, 0 Children', guests: { adults: 2, children: 0, pets: 0 } },
+  { value: '3', label: '3 Adults, 1 Children', guests: { adults: 3, children: 1, pets: 0 } },
+];
+
+const ROOM_OPTIONS = [
+  { value: 'standard', label: 'Standard Room' },
+  { value: 'deluxe', label: 'Deluxe Room' },
+  { value: 'suite', label: 'Luxury Suite' },
+  { value: 'luxury_suite', label: 'Luxury Suite Plus' },
+];
 
 export default function HotelDetailPage() {
   const params = useParams();
   const id = params?.id as string;
+  const router = useRouter();
 
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
+  const [guestKey, setGuestKey] = useState('2');
+  const [roomClass, setRoomClass] = useState('deluxe');
+  const [country, setCountry] = useState('');
 
-  const { data: apiData, isLoading } = useGetSingleListingQuery(id, { skip: !id });
+  const token = useSelector((state: RootState) => state.auth?.token);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [toggleWishlist] = useCreateWishlistToggleMutation();
+  const [createReservation, { isLoading: isBooking }] = useCreateReservationMutation();
+  const [createReview, { isLoading: isSubmittingReview }] = useCreateReviewMutation();
+
+  const userId = (() => {
+    if (!token) return undefined;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload._id ?? payload.userId ?? payload.id ?? payload.sub ?? undefined;
+    } catch { return undefined; }
+  })();
+
+  const { data: apiData, isLoading } = useGetSingleListingQuery({ id, userId }, { skip: !id });
   const { data: similarApiData } = useGetAllListingsQuery({ category: 'accommodation', page: 1, limit: 3 });
+  const h: Hotel | undefined = apiData?.data;
 
-  const h = apiData?.data;
-  const similarList: any[] = similarApiData?.data ?? [];
+  // Sync wishlist status from backend data
+  // We use useMemo to get the value directly from props/data to avoid useEffect setState
+  const initialWishlisted = h?.isWishlisted ?? false;
+  useEffect(() => {
+    setIsWishlisted(initialWishlisted);
+  }, [initialWishlisted]);
+
+  const handleWishlist = async () => {
+    if (!token) { toast.error('Please login to add to wishlist'); return; }
+    setIsWishlisted(prev => !prev);
+    try {
+      const res = await toggleWishlist({ property: id }).unwrap();
+      setIsWishlisted(res.data?.isWishlisted ?? !isWishlisted);
+      toast.success(res.message ?? 'Wishlist updated');
+    } catch (err) {
+      const error = err as ApiError;
+      setIsWishlisted(prev => !prev);
+      toast.error(error?.data?.message ?? 'Failed to update wishlist');
+    }
+  };
+
+  const handleBook = async () => {
+    if (!token) { toast.error('Please login to book'); return; }
+    if (!checkIn) { toast.error('Please select a check-in date'); return; }
+    if (!checkOut) { toast.error('Please select a check-out date'); return; }
+    if (!country) { toast.error('Please select your country'); return; }
+    const selectedGuests = GUEST_OPTIONS.find(o => o.value === guestKey)?.guests ?? { adults: 2, children: 0, pets: 0 };
+    try {
+      const res = await createReservation({
+        property: id,
+        checkIn: format(checkIn, 'yyyy-MM-dd'),
+        checkOut: format(checkOut, 'yyyy-MM-dd'),
+        guests: selectedGuests,
+        roomClass,
+        country: country.trim(),
+      }).unwrap();
+      toast.success(res.message ?? 'Reservation created!');
+      if (res.data?.checkoutUrl) {
+        router.push(res.data.checkoutUrl);
+      }
+    } catch (err) {
+      const error = err as ApiError;
+      toast.error(error?.data?.message || 'Failed to create reservation');
+    }
+  };
+  const similarList: Hotel[] = similarApiData?.data ?? [];
+
+  const { data: reviewsData } = useGetReviewsByPropertyQuery(
+    { propertyId: id, page: 1 },
+    { skip: !id }
+  );
+  const reviews: Review[] = reviewsData?.data ?? [];
+
+  const replyForm = useForm<ReplyFormValues>({
+    resolver: zodResolver(replySchema),
+    defaultValues: { comment: '' },
+  });
+
+  const onReplySubmit = async (data: ReplyFormValues) => {
+    if (!token) { toast.error('Please login to leave a review'); return; }
+    if (reviewRating === 0) { toast.error('Please select a rating'); return; }
+    try {
+      const res = await createReview({ property: id, rating: reviewRating, comment: data.comment }).unwrap();
+      toast.success(res.message ?? 'Review submitted successfully');
+      replyForm.reset();
+      setReviewRating(0);
+    } catch (err) {
+      const error = err as ApiError;
+      toast.error(error?.data?.message || 'Failed to submit review');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -131,7 +296,7 @@ export default function HotelDetailPage() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 sm:pb-12 border-b border-gray-100">
           <div className="space-y-4 md:space-y-6">
             {h?.status && (
-              <span className="inline-block bg-[#2B9724] text-white text-[10px] font-bold px-4 py-1.5 rounded-full shadow-lg shadow-green-500/10 capitalize">
+              <span className="inline-block bg-[#2B9724] text-white text-[10px] font-medium px-4 py-1.5 rounded-full shadow-lg shadow-green-500/10 capitalize">
                 {h.status}
               </span>
             )}
@@ -143,7 +308,7 @@ export default function HotelDetailPage() {
                     <Star key={i} size={16} className={i < Math.round(rating) ? 'fill-primary text-primary' : 'text-gray-200'} />
                   ))}
                 </div>
-                <span className="text-sm font-bold text-neutral-2">{rating.toFixed(1)} ({ratingCount} reviews)</span>
+                <span className="text-sm font-medium text-neutral-2">{rating.toFixed(1)} ({ratingCount} reviews)</span>
               </div>
             )}
             {addressStr && (
@@ -158,16 +323,16 @@ export default function HotelDetailPage() {
               <div>
                 <h2 className="text-3xl sm:text-4xl font-black text-neutral-1">
                   {currency} {price.toLocaleString()}
-                  <span className="text-xs sm:text-sm text-neutral-2 font-bold opacity-60"> / night</span>
+                  <span className="text-xs sm:text-sm text-neutral-2 font-medium opacity-60"> / night</span>
                 </h2>
               </div>
             )}
             <div className="flex gap-2 sm:gap-3">
-              <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer shadow-sm">
-                <Share2 size={20} className="sm:w-6 sm:h-6" />
-              </button>
-              <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#F7F7F7] flex items-center justify-center text-neutral-2 hover:bg-primary hover:text-white transition-all cursor-pointer shadow-sm">
-                <Heart size={20} className="sm:w-6 sm:h-6" />
+              <button
+                onClick={handleWishlist}
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-110 border-2 ${isWishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'bg-[#F7F7F7] border-transparent text-neutral-2 hover:bg-primary hover:text-white'}`}
+              >
+                <Heart size={20} className={`sm:w-6 sm:h-6 ${isWishlisted ? 'fill-red-500' : ''}`} />
               </button>
             </div>
           </div>
@@ -180,7 +345,7 @@ export default function HotelDetailPage() {
             {/* Description */}
             {description && (
               <div className="space-y-4 sm:space-y-6">
-                <h3 className="text-xl sm:text-2xl font-bold text-neutral-1">Description</h3>
+                <h3 className="text-xl sm:text-2xl font-medium text-neutral-1">Description</h3>
                 <p className="text-sm sm:text-base text-neutral-2 font-medium leading-relaxed">{description}</p>
               </div>
             )}
@@ -188,44 +353,158 @@ export default function HotelDetailPage() {
             {/* Amenities */}
             {amenities.length > 0 && (
               <div className="space-y-8">
-                <h3 className="text-2xl font-bold text-neutral-1">Popular Amenities</h3>
+                <h3 className="text-2xl font-medium text-neutral-1">Popular Amenities</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {amenities.map((amenity, i) => (
                     <div key={i} className="flex items-center gap-3 sm:gap-4 bg-[#F7F7F7] p-4 sm:p-6 rounded-lg">
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                         <Zap size={20} className="sm:w-6 sm:h-6" />
                       </div>
-                      <span className="text-xs sm:text-sm font-bold text-neutral-1">{amenity}</span>
+                      <span className="text-xs sm:text-sm font-medium text-neutral-1">{amenity}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Reviews placeholder */}
-            <div className="space-y-8">
+            {/* Guest Reviews */}
+            <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-                <h3 className="text-xl sm:text-2xl font-bold text-neutral-1">Guest Reviews</h3>
+                <h3 className="text-xl sm:text-2xl font-medium text-neutral-1">Guest Reviews</h3>
                 {ratingCount > 0 && (
                   <div className="flex items-center gap-2">
                     <div className="flex gap-0.5">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={14} className={i < Math.round(rating) ? 'fill-primary text-primary' : 'text-gray-200'} />
+                        <Star key={i} size={14} className={i < Math.round(rating) ? 'fill-primary text-primary' : 'fill-gray-200 text-gray-200'} />
                       ))}
                     </div>
-                    <span className="text-sm font-bold text-neutral-2">{rating.toFixed(1)} ({ratingCount})</span>
+                    <span className="text-sm font-medium text-neutral-2">{rating.toFixed(1)} ({ratingCount})</span>
                   </div>
                 )}
               </div>
-              {ratingCount === 0 && (
-                <p className="text-neutral-2 font-medium text-sm">No reviews yet.</p>
+
+              {reviews.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
+                    <MessageSquare size={24} className="text-gray-300" />
+                  </div>
+                  <p className="text-neutral-2 font-medium text-sm">No reviews yet.</p>
+                </div>
               )}
+
+              {reviews.length > 0 && (
+                <div className="divide-y divide-gray-100 border border-gray-100 rounded-2xl overflow-hidden bg-white">
+                  {reviews.slice(0, 2).map((review: Review, idx: number) => {
+                    const customer = review.customer ?? {};
+                    const avatarSrc = getAvatarSrc(customer.image);
+                    const initials = getInitials(customer.firstName, customer.lastName);
+                    const displayName = `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim() || customer.email || 'Anonymous';
+                    const dateStr = review.createdAt
+                      ? new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                      : '';
+                    const ratingInfo = getRatingLabel(review.rating ?? 0);
+
+                    return (
+                      <div key={review._id ?? idx} className="flex gap-4 p-5 md:p-6">
+                        <div className="shrink-0">
+                          {avatarSrc ? (
+                            <div className="relative w-11 h-11 rounded-full overflow-hidden border border-gray-100">
+                              <Image src={avatarSrc} alt={displayName} fill className="object-cover" />
+                            </div>
+                          ) : (
+                            <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center">
+                              {initials !== '?' ? (
+                                <span className="text-primary font-bold text-sm">{initials}</span>
+                              ) : (
+                                <User size={16} className="text-primary" />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-semibold text-neutral-1">{displayName}</span>
+                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${ratingInfo.color}`}>
+                                {ratingInfo.label}
+                              </span>
+                            </div>
+                            <span className="text-xs text-neutral-2 font-medium whitespace-nowrap">{dateStr}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} size={13} className={i < (review.rating ?? 0) ? 'fill-primary text-primary' : 'fill-gray-200 text-gray-200'} />
+                            ))}
+                            <span className="text-xs text-neutral-2 font-medium ml-1">{review.rating}/5</span>
+                          </div>
+                          <p className="text-sm text-neutral-2 font-medium leading-relaxed">{review.comment}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {(ratingCount ?? reviews.length) > 2 && (
+                <Link
+                  href={`/hotels/${id}/reviews`}
+                  className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 rounded-xl text-sm font-semibold text-neutral-1 hover:border-primary hover:text-primary transition-all"
+                >
+                  See All {ratingCount} Reviews
+                  <ChevronRight size={16} />
+                </Link>
+              )}
+            </div>
+
+            {/* Leave A Reply */}
+            <div className="space-y-8 bg-[#FDFDFD] p-10 rounded-3xl border border-gray-100">
+              <h3 className="text-2xl font-medium text-neutral-1">Leave A Reply</h3>
+              <form className="space-y-6" onSubmit={replyForm.handleSubmit(onReplySubmit)}>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-neutral-1 ml-1">Your Rating</label>
+                  <div className="flex gap-1.5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewRating(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className="cursor-pointer p-0.5 transition-transform hover:scale-110"
+                      >
+                        <Star
+                          size={28}
+                          className={star <= (hoverRating || reviewRating) ? 'fill-primary text-primary' : 'fill-gray-200 text-gray-200'}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-neutral-1 ml-1">Your Review</label>
+                  <Textarea
+                    placeholder="Write comments here..."
+                    {...replyForm.register('comment')}
+                    className={`min-h-[150px] bg-[#F6F6F6] border-none rounded-lg p-6 font-medium resize-none shadow-none ${replyForm.formState.errors.comment ? 'ring-2 ring-red-500' : ''}`}
+                  />
+                  {replyForm.formState.errors.comment && (
+                    <p className="text-red-500 text-xs font-medium mt-1 ml-1">{replyForm.formState.errors.comment.message}</p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="h-12 px-10 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-lg shadow-primary/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+                >
+                  {isSubmittingReview ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : 'Post Comment'}
+                </Button>
+              </form>
             </div>
           </div>
 
           {/* Booking Sidebar */}
           <aside className="space-y-8">
-            <div className="bg-[#FAF6F2] rounded-2xl p-6 sm:p-10 space-y-8 sm:space-y-10 border border-primary/5 shadow-xl">
+            <div className="bg-[#FAF6F2] rounded-lg p-6 sm:p-6 space-y-8 sm:space-y-10 border border-primary/5">
               <h3 className="text-xl sm:text-2xl font-black text-neutral-1 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg">
                   <Bookmark className="w-6 h-6" />
@@ -233,37 +512,40 @@ export default function HotelDetailPage() {
                 Reserve Stay
               </h3>
               <div className="space-y-5 sm:space-y-6">
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   <DatePicker className="w-full" label="Check In" date={checkIn} setDate={setCheckIn} />
                   <DatePicker className="w-full" label="Check Out" date={checkOut} setDate={setCheckOut} />
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Guests</label>
-                  <Select defaultValue="2">
-                    <SelectTrigger className="w-full h-10 py-6 sm:h-12 sm:py-6 bg-white border-none font-bold text-neutral-1 shadow-none transition-all active:scale-95 text-xs sm:text-sm">
-                      <SelectValue placeholder="Guests" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-none shadow-2xl">
-                      <SelectItem value="1">1 Adult, 0 Children</SelectItem>
-                      <SelectItem value="2">2 Adults, 0 Children</SelectItem>
-                      <SelectItem value="3">3 Adults, 1 Children</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Combobox
+                    options={GUEST_OPTIONS}
+                    value={guestKey}
+                    onChange={setGuestKey}
+                    placeholder="Select guests"
+                  />
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Room Type</label>
-                  <Select defaultValue="deluxe">
-                    <SelectTrigger className="w-full h-10 py-6 sm:h-12 bg-white border-none font-bold text-neutral-1 shadow-none transition-all active:scale-95 text-xs sm:text-sm">
-                      <SelectValue placeholder="Select Room" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-none shadow-2xl">
-                      <SelectItem value="standard">Standard Room</SelectItem>
-                      <SelectItem value="deluxe">Deluxe Room</SelectItem>
-                      <SelectItem value="suite">Luxury Suite</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Combobox
+                    options={ROOM_OPTIONS}
+                    value={roomClass}
+                    onChange={setRoomClass}
+                    placeholder="Select room type"
+                  />
+                </div>
+
+                <div className="space-y-1.5 sm:space-y-2">
+                  <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Country</label>
+                  <Combobox
+                    options={COUNTRY_OPTIONS}
+                    value={country}
+                    onChange={setCountry}
+                    placeholder="Search country..."
+                    searchable
+                  />
                 </div>
 
                 {price != null && (
@@ -272,16 +554,19 @@ export default function HotelDetailPage() {
                       <span className="text-neutral-2 font-extrabold">{currency} {price.toLocaleString()} / night</span>
                     </div>
                     <div className="flex justify-between pt-4 sm:pt-6 border-t border-primary/10 text-lg sm:text-xl font-black tracking-tight">
-                      <span className="text-neutral-1 uppercase">Price</span>
+                      <span className="text-neutral-1">Price</span>
                       <span className="text-primary">{currency} {price.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
 
-                <Button className="w-full h-14 bg-primary hover:bg-black text-white font-black rounded-xl shadow-xl shadow-primary/30 transition-all active:scale-95 text-lg uppercase tracking-tighter">
-                  Book This Hotel
+                <Button
+                  onClick={handleBook}
+                  disabled={isBooking}
+                  className="w-full h-14 bg-primary hover:bg-primary text-white font-black rounded-xl transition-all active:scale-95 text-lg tracking-tighter cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isBooking ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : 'Book This Hotel'}
                 </Button>
-                <p className="text-center text-[10px] font-black text-neutral-2/40 uppercase tracking-widest">Verification may be required</p>
               </div>
             </div>
           </aside>
@@ -297,11 +582,11 @@ export default function HotelDetailPage() {
               <p className="text-sm sm:text-base text-neutral-2 font-medium">Explore hundreds of luxury stays across the globe.</p>
             </div>
             <Link href="/hotels">
-              <Button variant="outline" className="h-10 sm:h-12 px-6 sm:px-8 rounded-lg font-bold border-gray-200 hover:bg-primary hover:text-white transition-all shadow-sm w-fit">View All</Button>
+              <Button variant="outline" className="h-10 sm:h-12 px-6 sm:px-8 rounded-lg font-medium border-gray-200 hover:bg-primary hover:text-white transition-all shadow-sm w-fit">View All</Button>
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {similarList.map((hotel: any, i: number) => (
+            {similarList.map((hotel: Hotel, i: number) => (
               <motion.div
                 key={hotel._id ?? i}
                 className="group bg-white rounded-2xl overflow-hidden shadow-2xl shadow-black/[0.03] hover:shadow-primary/5 transition-all duration-700"
@@ -330,7 +615,7 @@ export default function HotelDetailPage() {
                     <div className="flex items-center justify-between pt-6 sm:pt-8 border-t border-gray-50">
                       <div className="flex items-baseline gap-1">
                         <span className="text-xl sm:text-2xl font-black text-neutral-1">{hotel.currency ?? 'ETB'} {hotel.price?.toLocaleString() ?? ''}</span>
-                        <span className="text-[9px] sm:text-[10px] text-neutral-2 font-bold opacity-40">/ night</span>
+                        <span className="text-[9px] sm:text-[10px] text-neutral-2 font-medium opacity-40">/ night</span>
                       </div>
                       <Button size="sm" className="bg-primary px-4 sm:px-6 py-5 sm:py-6 rounded-lg font-black cursor-pointer hover:bg-primary/80 uppercase text-[9px] sm:text-[10px] tracking-widest transition-all shadow-lg shadow-primary/20">
                         Book Now

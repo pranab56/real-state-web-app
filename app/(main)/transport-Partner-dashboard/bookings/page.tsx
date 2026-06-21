@@ -72,26 +72,26 @@ export default function TransportBookingsPage() {
               <CalendarCheck size={24} strokeWidth={1.5} />
             </div>
             <p className="text-[#6C757D] text-[15px] font-medium">{stat.label}</p>
-            <h3 className="text-[32px] font-bold text-[#2C2E33] leading-none">{stat.value}</h3>
+            <h3 className="text-[32px] font-medium text-[#2C2E33] leading-none">{stat.value}</h3>
           </div>
         ))}
       </div>
 
       {/* Main Table Area */}
       <div className="bg-white rounded-[20px] p-7 border border-[#F2F2F2] shadow-sm">
-        <h2 className="text-[20px] font-bold text-[#2C2E33] mb-6">Recent Bookings</h2>
+        <h2 className="text-[20px] font-medium text-[#2C2E33] mb-6">Recent Bookings</h2>
 
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="bg-transparent border-b border-[#F2F2F2] w-full justify-start rounded-none h-auto p-0 mb-6 gap-6">
             <TabsTrigger
               value="all"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] data-[state=active]:text-[#2C2E33] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-bold text-[15px]"
+              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] data-[state=active]:text-[#2C2E33] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-medium text-[15px]"
             >
               All Bookings
             </TabsTrigger>
             <TabsTrigger
               value="scheduled"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] data-[state=active]:text-[#2C2E33] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-bold text-[15px]"
+              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#f97316] data-[state=active]:text-[#2C2E33] data-[state=active]:shadow-none rounded-none px-0 py-3 bg-transparent hover:bg-transparent text-[#6C757D] font-medium text-[15px]"
             >
               Scheduled
             </TabsTrigger>
@@ -133,7 +133,7 @@ export default function TransportBookingsPage() {
                           <div className="w-[38px] h-[38px] rounded-lg overflow-hidden relative flex-shrink-0 bg-gray-100">
                             <Image src={b.image} alt={b.name} fill className="object-cover" />
                           </div>
-                          <span className="font-bold text-[#2C2E33] text-[14px]">{b.name}</span>
+                          <span className="font-medium text-[#2C2E33] text-[14px]">{b.name}</span>
                         </div>
                       </td>
                       <td className="py-5 px-4 text-[#2C2E33] font-semibold text-[14px]">{b.rideType}</td>
@@ -147,11 +147,11 @@ export default function TransportBookingsPage() {
                         </span>
                       </td>
                       <td className="py-5 px-4">
-                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${getStatusStyle(b.status)}`}>
+                        <span className={`px-4 py-1.5 rounded-full text-[12px] font-medium ${getStatusStyle(b.status)}`}>
                           {b.status}
                         </span>
                       </td>
-                      <td className="py-5 px-4 font-bold text-[#2C2E33] text-[14px]">{b.amount}</td>
+                      <td className="py-5 px-4 font-medium text-[#2C2E33] text-[14px]">{b.amount}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -160,7 +160,7 @@ export default function TransportBookingsPage() {
               {/* Pagination */}
               <div className="flex flex-col md:flex-row items-center justify-between mt-6 pt-4 border-t border-[#F2F2F2]">
                 <div className="text-[14px] text-[#6C757D] font-medium mb-4 md:mb-0">
-                  Showing <span className="font-bold text-[#2C2E33]">1-9</span> of <span className="font-bold text-[#2C2E33]">240</span> enteries
+                  Showing <span className="font-medium text-[#2C2E33]">1-9</span> of <span className="font-medium text-[#2C2E33]">240</span> enteries
                 </div>
 
                 <div className="flex items-center space-x-2">

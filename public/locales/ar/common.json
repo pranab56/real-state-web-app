@@ -183,7 +183,7 @@
       "agent_btn": "تواصل مع وكيل"
     },
     "main": {
-      "showing": "عرض <span class=\"text-neutral-1 font-bold not-italic\">{{start}}-{{end}}</span> من <span class=\"text-neutral-1 font-bold not-italic\">{{total}}</span> عقارات",
+      "showing": "عرض <span class=\"text-neutral-1 font-medium not-italic\">{{start}}-{{end}}</span> من <span class=\"text-neutral-1 font-medium not-italic\">{{total}}</span> عقارات",
       "sort_by": "صنف حسب:",
       "sort_newest": "الأحدث أولاً",
       "sort_oldest": "الأقدم أولاً",
@@ -205,7 +205,7 @@
       "available": "المتاح فقط"
     },
     "main": {
-      "showing": "عرض <span class=\"text-neutral-1 font-bold\">{{start}}-{{end}}</span> من <span class=\"text-neutral-1 font-bold\">{{total}} فنادق</span>",
+      "showing": "عرض <span class=\"text-neutral-1 font-medium\">{{start}}-{{end}}</span> من <span class=\"text-neutral-1 font-medium\">{{total}} فنادق</span>",
       "book_now": "احجز الآن",
       "per_night": "/ الليلة"
     }

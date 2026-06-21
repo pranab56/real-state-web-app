@@ -160,7 +160,7 @@ export default function MessagesPage() {
             <div className="pt-4">
               <div className="px-5 mb-2 flex items-center gap-2 text-[#6C757D]">
                 <Pin size={16} strokeWidth={2.5} className="text-[#6C757D]" />
-                <span className="text-[13px] font-bold uppercase tracking-wide">Pinned</span>
+                <span className="text-[13px] font-medium uppercase tracking-wide">Pinned</span>
               </div>
               <div className="flex flex-col">
                 {pinnedContacts.map((contact) => (
@@ -181,7 +181,7 @@ export default function MessagesPage() {
           <div className="py-2">
             <div className="px-5 mb-2 flex items-center gap-2 text-[#6C757D]">
               <MessageSquare size={16} strokeWidth={2.5} className="text-[#6C757D]" />
-              <span className="text-[13px] font-bold uppercase tracking-wide">All Messages</span>
+              <span className="text-[13px] font-medium uppercase tracking-wide">All Messages</span>
             </div>
             <div className="flex flex-col">
               {otherContacts.length > 0 ? otherContacts.map((contact) => (
@@ -208,8 +208,8 @@ export default function MessagesPage() {
               <Image src={activeContact.avatar} alt={activeContact.name} fill className="object-cover" />
             </div>
             <div className="flex flex-col justify-center">
-              <h2 className="text-[20px] font-bold text-[#2C2E33] leading-tight">{activeContact.name}</h2>
-              <p className="text-[#6C757D] text-[12px] font-bold mt-0.5 uppercase tracking-wide">
+              <h2 className="text-[20px] font-medium text-[#2C2E33] leading-tight">{activeContact.name}</h2>
+              <p className="text-[#6C757D] text-[12px] font-medium mt-0.5 uppercase tracking-wide">
                 Online . {activeContact.role}
               </p>
             </div>
@@ -236,7 +236,7 @@ export default function MessagesPage() {
         {/* Messages History */}
         <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6 relative z-0 custom-scrollbar">
           <div className="flex justify-center w-full mb-4">
-            <span className="bg-white px-4 py-1.5 rounded-lg text-[13px] font-bold text-[#6C757D] shadow-sm shadow-gray-200/50">
+            <span className="bg-white px-4 py-1.5 rounded-lg text-[13px] font-medium text-[#6C757D] shadow-sm shadow-gray-200/50">
               Today, March 12
             </span>
           </div>
@@ -262,7 +262,7 @@ export default function MessagesPage() {
                     } text-[15px] font-medium leading-relaxed`}>
                     {msg.text}
                   </div>
-                  <div className={`text-[11px] font-bold text-[#A1A1A1] mt-1.5 ${msg.sender === 'me' ? 'text-right mr-1' : 'ml-1'}`}>
+                  <div className={`text-[11px] font-medium text-[#A1A1A1] mt-1.5 ${msg.sender === 'me' ? 'text-right mr-1' : 'ml-1'}`}>
                     {msg.time}
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export default function MessagesPage() {
           <button
             onClick={handleSendMessage}
             disabled={!messageInput.trim()}
-            className="h-[52px] px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl flex items-center gap-2 shadow-sm transition-all text-[16px] cursor-pointer active:scale-95"
+            className="h-[52px] px-8 bg-[#F1913D] hover:bg-[#F1913D]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl flex items-center gap-2 shadow-sm transition-all text-[16px] cursor-pointer active:scale-95"
           >
             <Send size={18} strokeWidth={2.5} /> Send
           </button>
@@ -309,7 +309,7 @@ function ContactItem({ contact, isActive, onClick }: { contact: { id: number, na
           <Image src={contact.avatar} alt={contact.name} fill className="object-cover" />
         </div>
         <div className="flex flex-col justify-center">
-          <span className={`font-bold text-[15px] transition-colors ${isActive ? 'text-[#F1913D]' : 'text-[#2C2E33]'}`}>
+          <span className={`font-medium text-[15px] transition-colors ${isActive ? 'text-[#F1913D]' : 'text-[#2C2E33]'}`}>
             {contact.name}
           </span>
           <span className={`text-[13px] font-medium leading-tight mt-0.5 truncate max-w-[140px] ${contact.typing ? 'text-[#2B9724]' : 'text-[#6C757D]'}`}>
@@ -318,7 +318,7 @@ function ContactItem({ contact, isActive, onClick }: { contact: { id: number, na
         </div>
       </div>
       <div className="flex flex-col items-end justify-center min-w-[30px]">
-        <span className="text-[11px] font-bold text-[#A1A1A1] mb-1">{contact.time}</span>
+        <span className="text-[11px] font-medium text-[#A1A1A1] mb-1">{contact.time}</span>
         {contact.unread ? (
           <span className="flex items-center justify-center bg-[#DC3545] text-white text-[10px] font-black h-[18px] min-w-[18px] rounded-full px-1 shadow-sm">
             {contact.unread}

@@ -54,11 +54,6 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-const ROLE_REDIRECT: Record<string, string> = {
-  customer: '/',
-  host: '/hotels-partner-dashboard',
-  driver: '/transport-Partner-dashboard',
-};
 
 function Logo() {
   return (
@@ -77,7 +72,6 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -93,13 +87,20 @@ export default function LoginPage() {
       const result = await login({ email: data.email, password: data.password }).unwrap();
       dispatch(setCredentials({
         token: result.data.accessToken,
-        refreshToken: null,
-        user: { role: result.data.role },
+        refreshToken: result.data.refreshToken,
+        user: {
+          _id: result.data._id,
+          firstName: result.data.firstName,
+          lastName: result.data.lastName,
+          email: result.data.email,
+          role: result.data.role,
+        },
       }));
       toast.success('Welcome back!');
-      router.push(ROLE_REDIRECT[result.data.role] ?? '/');
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Login failed. Please try again.');
+      router.push('/');
+    } catch (err) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Login failed. Please try again.');
     }
   };
 
@@ -131,7 +132,7 @@ export default function LoginPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   key={`title-${idx}`}
-                  className="text-5xl font-bold leading-tight max-w-lg"
+                  className="text-5xl font-medium leading-tight max-w-lg"
                 >
                   {slide.title}
                 </motion.h1>
@@ -180,7 +181,7 @@ export default function LoginPage() {
         <div className="w-full max-w-xl space-y-8 lg:space-y-12">
 
           {/* Mobile Logo */}
-          <div className="lg:hidden flex justify-center mb-8">
+          <div className="lg:hidden flex justify-center mb-8 ">
             <div className="w-48">
               <Logo />
             </div>
@@ -188,13 +189,13 @@ export default function LoginPage() {
 
           <div className="space-y-8 lg:space-y-10 border border-gray-100 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-sm lg:shadow-none bg-white">
             <div className="text-center space-y-2 lg:space-y-4">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-1">Welcome back!</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-neutral-1">Welcome back!</h2>
               <p className="text-sm sm:text-base text-neutral-2 font-medium px-4 sm:px-0">Sign in to access your premium property dashboard</p>
             </div>
 
             <form className="space-y-5 lg:space-y-7" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-2 lg:space-y-3">
-                <Label htmlFor="email" className="text-neutral-1 font-bold text-sm lg:text-base">Email Address</Label>
+                <Label htmlFor="email" className="text-neutral-1 font-medium text-sm lg:text-base">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
@@ -203,14 +204,14 @@ export default function LoginPage() {
                   className={`h-11 lg:h-12 bg-[#F2F2F2] border-none focus-visible:ring-1 focus-visible:ring-primary rounded-lg px-4 lg:px-6 text-neutral-1 placeholder:text-neutral-2 font-medium text-sm lg:text-base ${errors.email ? 'ring-2 ring-red-500' : ''}`}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                  <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
                     {errors.email.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-2 lg:space-y-3 relative">
-                <Label htmlFor="password" className="text-neutral-1 font-bold text-sm lg:text-base flex justify-between w-full">
+                <Label htmlFor="password" className="text-neutral-1 font-medium text-sm lg:text-base flex justify-between w-full">
                   Password
                   <Link href="/forgot-password" className="text-xs text-neutral-2 hover:text-primary transition-colors">Forget Password?</Link>
                 </Label>
@@ -231,7 +232,7 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-xs font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                  <p className="text-red-500 text-xs font-medium mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
                     {errors.password.message}
                   </p>
                 )}
@@ -241,7 +242,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 lg:h-12 cursor-pointer bg-primary hover:bg-primary/90 text-white font-bold rounded-lg text-base lg:text-lg flex items-center justify-center gap-2 transition-all active:scale-95 group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full h-11 lg:h-12 cursor-pointer bg-primary hover:bg-primary/90 text-white font-medium rounded-lg text-base lg:text-lg flex items-center justify-center gap-2 transition-all active:scale-95 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <Loader2 size={20} className="animate-spin" />
@@ -260,11 +261,11 @@ export default function LoginPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <Button type="button" variant="outline" className="h-12 lg:h-14 border-gray-100 rounded-lg font-bold flex items-center gap-3 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-2">
+                <Button type="button" variant="outline" className="h-12 lg:h-14 cursor-pointer border-gray-100 rounded-lg font-medium flex items-center gap-3 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-2">
                   <Image src="https://www.svgrepo.com/show/475656/google-color.svg" width={20} height={20} alt="Google" className="size-5" />
                   Continue With Google
                 </Button>
-                <Button type="button" variant="outline" className="h-12 lg:h-14 border-gray-100 rounded-lg font-bold flex items-center gap-3 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-2">
+                <Button type="button" variant="outline" className="h-12 lg:h-14 cursor-pointer border-gray-100 rounded-lg font-medium flex items-center gap-3 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-2">
                   <Image src="https://www.svgrepo.com/show/475647/facebook-color.svg" width={20} height={20} alt="Facebook" className="size-5" />
                   Continue With Facebook
                 </Button>
@@ -272,7 +273,7 @@ export default function LoginPage() {
 
               <div className="text-center pt-2 lg:pt-4">
                 <p className="text-xs sm:text-sm lg:text-base text-neutral-2 font-medium">
-                  Don&apos;t have any account? <Link href="/register" className="text-primary hover:underline font-bold">Register Now</Link>
+                  Don&apos;t have any account? <Link href="/register" className="text-primary hover:underline font-medium">Register Now</Link>
                 </p>
               </div>
             </form>

@@ -1,237 +1,180 @@
 'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Check, Plus, Star } from 'lucide-react';
+import { baseURL } from '@/utils/BaseURL';
+import { format } from 'date-fns';
+import { MapPin, MessageSquare, Star } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useGetMyReviewsQuery } from '../../../../features/review/reviewApi';
+import { Hotel, Review } from '@/types';
 
-const reviewsData = [
-  {
-    id: 1,
-    name: "What's nearby?",
-    date: 'August 13, 2023',
-    category: 'All',
-    content:
-      "It's really easy to use and it is exactly what I am looking for. A lot of good looking templates & it's highly customizable. Live support is helpful, solved my issue in no time.",
-    rating: 5,
-    verified: true,
-    avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=150&auto=format&fit=crop',
-  },
-  {
-    id: 2,
-    name: 'Sarah Johnson',
-    date: 'September 02, 2023',
-    category: 'Positive',
-    content:
-      'Absolutely love this platform! Finding the perfect property has never been easier. The filters are intuitive and the customer support team responds quickly.',
-    rating: 5,
-    verified: true,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop',
-  },
-  {
-    id: 3,
-    name: 'Michael Torres',
-    date: 'October 18, 2023',
-    category: 'Negative',
-    content:
-      'Had some issues with the booking confirmation process. The response time from the support team was slower than expected in this case.',
-    rating: 2,
-    verified: false,
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop',
-  },
-  {
-    id: 4,
-    name: 'Amelia Chen',
-    date: 'November 05, 2023',
-    category: 'Positive',
-    content:
-      'Great experience from start to finish. The listing photos were accurate, and the check-in process was seamless. Would highly recommend!',
-    rating: 4,
-    verified: true,
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop',
-  },
-  {
-    id: 5,
-    name: 'David Kim',
-    date: 'December 20, 2023',
-    category: 'Negative',
-    content:
-      'The property looked different in the photos. Management needs to ensure listings match the actual conditions on the ground.',
-    rating: 2,
-    verified: false,
-    avatar: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=150&auto=format&fit=crop',
-  },
-];
+const getImg = (path?: string) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
+};
+
+const getInitials = (firstName?: string, lastName?: string) =>
+  `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
+
+const getRatingLabel = (rating: number) => {
+  if (rating >= 5) return { label: 'Excellent', color: 'text-green-600 bg-green-50' };
+  if (rating >= 4) return { label: 'Very Good', color: 'text-blue-600 bg-blue-50' };
+  if (rating >= 3) return { label: 'Good', color: 'text-yellow-600 bg-yellow-50' };
+  if (rating >= 2) return { label: 'Fair', color: 'text-orange-600 bg-orange-50' };
+  return { label: 'Poor', color: 'text-red-600 bg-red-50' };
+};
 
 export default function PartnerDashboardReviews() {
-  const [activeTab, setActiveTab] = useState('All');
+  const { data, isLoading } = useGetMyReviewsQuery({});
 
-  const filteredReviews = activeTab === 'All'
-    ? reviewsData
-    : reviewsData.filter(r => r.category === activeTab);
+  const reviews: Review[] = data?.data ?? [];
+  const pagination = data?.pagination;
+  const total: number = pagination?.total ?? 0;
+  const avgRating =
+    reviews.length > 0
+      ? reviews.reduce((sum: number, r: Review) => sum + (r.rating ?? 0), 0) / reviews.length
+      : 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
 
-      {/* Top Tabs */}
-      <div className="bg-white rounded-sm px-4 md:px-8 py-4 md:py-[22px] flex gap-6 md:gap-10 shadow-sm border border-[#F2F2F2] overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {['All', 'Positive', 'Negative'].map((tab) => {
-          const isActive = activeTab === tab;
-          return (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`font-bold text-[16px] relative transition-colors pb-1 cursor-pointer ${isActive ? 'text-[#2C2E33]' : 'text-[#6C757D] hover:text-[#2C2E33]'
-                }`}
-            >
-              {tab}
-              {isActive && (
-                <div className="absolute -bottom-[24px] left-0 right-0 h-[3px] bg-[#F1913D]" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Main Container */}
-      <div className="bg-white rounded-sm p-4 md:p-8 shadow-sm border border-gray-100">
-
-        {/* Header Setup */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <h1 className="text-[24px] font-bold text-[#2C2E33]">Recent Review</h1>
-
-          <Dialog>
-            <DialogTrigger className="flex items-center justify-center gap-2 bg-[#F1913D] hover:bg-[#F1913D]/90 transition-colors text-white font-semibold py-2.5 px-6 rounded-[10px] shadow-sm cursor-pointer outline-none">
-              <Plus size={18} strokeWidth={2.5} /> Write a Review
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-[650px] p-8 gap-6 border-none rounded-sm shadow-2xl bg-white">
-              <DialogHeader>
-                <DialogTitle className="text-[24px] font-bold text-[#2C2E33]">
-                  Write a New Review
-                </DialogTitle>
-              </DialogHeader>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-                <div className="space-y-2">
-                  <label className="text-[15px] font-bold text-[#2C2E33]">Name</label>
-                  <Input
-                    placeholder="Enter your name here..."
-                    className="bg-[#F5F5F5] border-none h-[50px] rounded-[10px] text-[15px] placeholder:text-[#A1A1A1] focus-visible:ring-1 focus-visible:ring-[#F1913D]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[15px] font-bold text-[#2C2E33]">Email Address</label>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email address here..."
-                    className="bg-[#F5F5F5] border-none h-[50px] rounded-[10px] text-[15px] placeholder:text-[#A1A1A1] focus-visible:ring-1 focus-visible:ring-[#F1913D]"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[15px] font-bold text-[#2C2E33]">Review From</label>
-                <Select>
-                  <SelectTrigger className="bg-[#F5F5F5] w-full border-none py-6 h-[50px] rounded-[10px] text-[15px] text-[#A1A1A1] focus:ring-1 focus:ring-[#F1913D]">
-                    <SelectValue placeholder="Select review from here..." />
-                  </SelectTrigger>
-                  <SelectContent className="rounded">
-                    <SelectItem value="property" className="py-1 rounded-none">Property Listing</SelectItem>
-                    <SelectItem value="agent" className="py-1 rounded-none">Agent Service</SelectItem>
-                    <SelectItem value="general" className="py-1 rounded-none">General Experience</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[15px] font-bold text-[#2C2E33]">Review</label>
-                <Textarea
-                  placeholder="Write Comments here..."
-                  className="bg-[#F5F5F5] border-none min-h-[140px] rounded-[10px] text-[15px] placeholder:text-[#A1A1A1] resize-none focus-visible:ring-1 focus-visible:ring-[#F1913D] p-4"
-                />
-              </div>
-
-              <div className="flex justify-end pt-2">
-                <button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-bold text-[16px] py-3.5 px-8 rounded-[10px] shadow-sm transition-colors">
-                  Post Comment
-                </button>
-              </div>
-            </DialogContent>
-          </Dialog>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-[#F1913D]/10 flex items-center justify-center flex-shrink-0">
+            <MessageSquare size={22} className="text-[#F1913D]" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Total Reviews</p>
+            <p className="text-[26px] font-semibold text-[#2C2E33] leading-tight">{total}</p>
+          </div>
         </div>
 
-        {/* Reviews List */}
-        <div className="flex flex-col">
-          {filteredReviews.length === 0 && (
-            <p className="text-center py-12 text-[#6C757D] font-medium">No reviews found.</p>
-          )}
-          {filteredReviews.map((review, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 py-6 sm:py-8 border-b border-[#F2F2F2] last:border-0"
-            >
-              <div className="relative w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 shadow-sm border border-gray-100">
-                <Image
-                  src={review.avatar}
-                  alt={review.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-2 pt-1">
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-[20px] font-bold text-[#2C2E33] leading-tight">
-                      {review.name}
-                    </h3>
-                    {review.verified && (
-                      <div className="flex items-center justify-center bg-[#2B9724] rounded-[4px] w-5 h-5">
-                        <Check size={14} strokeWidth={3} className="text-white" />
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center flex-shrink-0">
+            <Star size={22} className="text-yellow-500 fill-yellow-500" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">Average Rating</p>
+            <p className="text-[26px] font-semibold text-[#2C2E33] leading-tight">
+              {avgRating > 0 ? avgRating.toFixed(1) : '—'}
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+            <Star size={22} className="text-green-600 fill-green-600" />
+          </div>
+          <div>
+            <p className="text-[13px] text-[#6C757D] font-medium">5-Star Reviews</p>
+            <p className="text-[26px] font-semibold text-[#2C2E33] leading-tight">
+              {reviews.filter((r: Review) => r.rating === 5).length}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Reviews List */}
+      <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6 lg:p-8">
+        <h1 className="text-[22px] font-medium text-[#2C2E33] mb-6">My Reviews</h1>
+
+        {isLoading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-2 border-[#F1913D] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {!isLoading && reviews.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 text-center gap-3">
+            <MessageSquare size={40} className="text-gray-300" />
+            <p className="text-[#6C757D] font-medium text-[15px]">No reviews yet</p>
+            <p className="text-[#6C757D] text-[13px]">Reviews from your guests will appear here.</p>
+          </div>
+        )}
+
+        <div className="divide-y divide-[#F2F2F2]">
+          {reviews.map((review: Review) => {
+            const customer = review.customer ?? {};
+            const property = typeof review.property === 'object' ? review.property : ({} as Hotel);
+            const avatarUrl = getImg(customer.image);
+            const initials = getInitials(customer.firstName, customer.lastName);
+            const location = [property.address?.city, property.address?.country].filter(Boolean).join(', ');
+            const ratingInfo = getRatingLabel(review.rating ?? 0);
+            const dateStr = review.createdAt
+              ? format(new Date(review.createdAt), 'MMM dd, yyyy')
+              : '';
+
+            return (
+              <div key={review._id} className="py-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
+
+                {/* Avatar */}
+                <div className="flex-shrink-0">
+                  {avatarUrl ? (
+                    <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                      <Image src={avatarUrl} alt={customer.firstName ?? 'User'} fill className="object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-[#F1913D]/15 flex items-center justify-center flex-shrink-0 border border-[#F1913D]/20">
+                      <span className="text-[#F1913D] font-bold text-[16px]">{initials}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-[16px] font-semibold text-[#2C2E33]">
+                          {customer.firstName} {customer.lastName}
+                        </h3>
+                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${ratingInfo.color}`}>
+                          {ratingInfo.label}
+                        </span>
                       </div>
-                    )}
+                      <p className="text-[13px] text-[#6C757D] font-medium mt-0.5">{customer.email}</p>
+                    </div>
+                    <span className="text-[13px] text-[#6C757D] font-medium whitespace-nowrap">{dateStr}</span>
                   </div>
-                  <span className="text-[#6C757D] font-medium text-[14px] mt-1">
-                    {review.date}
-                  </span>
+
+                  {/* Stars */}
+                  <div className="flex items-center gap-0.5 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={15}
+                        className={i < (review.rating ?? 0) ? 'fill-[#F1913D] text-[#F1913D]' : 'fill-gray-200 text-gray-200'}
+                      />
+                    ))}
+                    <span className="text-[13px] text-[#6C757D] font-medium ml-1">{review.rating}/5</span>
+                  </div>
+
+                  {/* Comment */}
+                  <p className="text-[14px] text-[#2C2E33] font-medium leading-relaxed mb-3">
+                    {review.comment}
+                  </p>
+
+                  {/* Property info */}
+                  {property.title && (
+                    <div className="inline-flex items-center gap-2 bg-[#F9F9F9] border border-[#F2F2F2] rounded-md px-3 py-1.5">
+                      <MapPin size={13} className="text-[#F1913D] shrink-0" />
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
+                        <span className="text-[12px] font-semibold text-[#2C2E33]">{property.title}</span>
+                        {location && (
+                          <span className="text-[12px] text-[#6C757D] font-medium sm:before:content-['·'] sm:before:mx-1">{location}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-1 mt-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={18}
-                      className={
-                        i < review.rating ? 'fill-[#F1913D] text-[#F1913D]' : 'fill-gray-200 text-gray-200'
-                      }
-                    />
-                  ))}
-                </div>
-
-                <p className="text-[#2C2E33] text-[14px] sm:text-[15px] font-medium leading-relaxed max-w-full sm:max-w-[90%]">
-                  {review.content}
-                </p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-
       </div>
+
     </div>
   );
 }

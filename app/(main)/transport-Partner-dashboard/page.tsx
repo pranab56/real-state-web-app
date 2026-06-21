@@ -97,14 +97,14 @@ export default function TransportPartnerDashboardPage() {
               <CalendarCheck size={20} strokeWidth={2} />
             </div>
             <p className="text-[#6C757D] text-[14px] font-medium mb-1.5">{stat.label}</p>
-            <h3 className="text-[24px] font-bold text-[#2C2E33] leading-none">{stat.value}</h3>
+            <h3 className="text-[24px] font-medium text-[#2C2E33] leading-none">{stat.value}</h3>
           </div>
         ))}
       </div>
 
       {/* Recent Bookings Table */}
       <div className="bg-white rounded-[16px] p-7 border-none shadow-sm shadow-gray-200/50">
-        <h2 className="text-[18px] font-bold text-[#2C2E33] mb-6">Recent Bookings</h2>
+        <h2 className="text-[18px] font-medium text-[#2C2E33] mb-6">Recent Bookings</h2>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left font-medium whitespace-nowrap border-collapse">
@@ -141,7 +141,7 @@ export default function TransportPartnerDashboardPage() {
                       <div className="w-[38px] h-[38px] rounded-lg overflow-hidden relative flex-shrink-0 bg-gray-100">
                         <Image src={b.image} alt={b.name} fill className="object-cover" />
                       </div>
-                      <span className="font-bold text-[#2C2E33] text-[14px]">{b.name}</span>
+                      <span className="font-medium text-[#2C2E33] text-[14px]">{b.name}</span>
                     </div>
                   </td>
                   <td className="py-5 px-4 text-[#2C2E33] font-semibold text-[14px]">{b.rideType}</td>
@@ -155,11 +155,11 @@ export default function TransportPartnerDashboardPage() {
                     </span>
                   </td>
                   <td className="py-5 px-4">
-                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-bold ${getStatusStyle(b.status)}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-medium ${getStatusStyle(b.status)}`}>
                       {b.status}
                     </span>
                   </td>
-                  <td className="py-5 px-4 font-bold text-[#2C2E33] text-[14px]">{b.amount}</td>
+                  <td className="py-5 px-4 font-medium text-[#2C2E33] text-[14px]">{b.amount}</td>
                 </tr>
               ))}
             </tbody>
@@ -171,7 +171,7 @@ export default function TransportPartnerDashboardPage() {
       <div className="bg-white rounded-[16px] p-7 border-none shadow-sm shadow-gray-200/50">
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h2 className="text-[18px] font-bold text-[#2C2E33]">Monthly Booking Trends</h2>
+            <h2 className="text-[18px] font-medium text-[#2C2E33]">Monthly Booking Trends</h2>
             <p className="text-[#6C757D] text-[14px] font-medium mt-1">
               Total bookings per day across all luxury categories
             </p>

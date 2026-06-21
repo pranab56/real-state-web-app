@@ -183,7 +183,7 @@
       "agent_btn": "ከወኪል ጋር ይገናኙ"
     },
     "main": {
-      "showing": "ከ <span class=\"text-neutral-1 font-bold not-italic\">{{total}}</span> ንብረቶች ውስጥ <span class=\"text-neutral-1 font-bold not-italic\">{{start}}-{{end}}</span> እያሳየ ነው",
+      "showing": "ከ <span class=\"text-neutral-1 font-medium not-italic\">{{total}}</span> ንብረቶች ውስጥ <span class=\"text-neutral-1 font-medium not-italic\">{{start}}-{{end}}</span> እያሳየ ነው",
       "sort_by": "በዚህ ደርድር:",
       "sort_newest": "አዳዲሶች መጀመሪያ",
       "sort_oldest": "ቀደሞቹ መጀመሪያ",
@@ -205,7 +205,7 @@
       "available": "ክፍት የሆኑ ብቻ"
     },
     "main": {
-      "showing": "ከ <span class=\"text-neutral-1 font-bold\">{{total}} ሆቴሎች</span> ውስጥ <span class=\"text-neutral-1 font-bold\">{{start}}-{{end}}</span> እያሳየ ነው",
+      "showing": "ከ <span class=\"text-neutral-1 font-medium\">{{total}} ሆቴሎች</span> ውስጥ <span class=\"text-neutral-1 font-medium\">{{start}}-{{end}}</span> እያሳየ ነው",
       "book_now": "አሁን ይያዙ",
       "per_night": "/ በአዳር"
     }

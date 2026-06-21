@@ -72,7 +72,7 @@ export default function AddRoomPage() {
 
         {/* Room Name */}
         <div className="space-y-3">
-          <label className="text-[14px] font-bold text-[#2C2E33]">Room Name</label>
+          <label className="text-[14px] font-medium text-[#2C2E33]">Room Name</label>
           <input
             type="text"
             placeholder="e.g. Presidential Ocean Suite"
@@ -83,7 +83,7 @@ export default function AddRoomPage() {
         {/* Room Type & Base Price */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
-            <label className="text-[14px] font-bold text-[#2C2E33]">Room Type</label>
+            <label className="text-[14px] font-medium text-[#2C2E33]">Room Type</label>
             <Select defaultValue="hotel">
               <SelectTrigger className="w-full h-12 py-6 bg-[#F5F5F5] rounded-[10px] border-none outline-none ring-0 shadow-none text-[14px] font-medium text-[#2C2E33] focus:ring-1 focus:ring-[#F1913D]">
                 <SelectValue placeholder="Select type" />
@@ -96,7 +96,7 @@ export default function AddRoomPage() {
             </Select>
           </div>
           <div className="space-y-3">
-            <label className="text-[14px] font-bold text-[#2C2E33]">Base Price (Per Night)</label>
+            <label className="text-[14px] font-medium text-[#2C2E33]">Base Price (Per Night)</label>
             <Select defaultValue="etb42">
               <SelectTrigger className="w-full h-12 py-6 bg-[#F5F5F5] rounded-[10px] border-none outline-none ring-0 shadow-none text-[14px] font-medium text-[#2C2E33] focus:ring-1 focus:ring-[#F1913D]">
                 <SelectValue placeholder="Select price" />
@@ -112,7 +112,7 @@ export default function AddRoomPage() {
 
         {/* Description */}
         <div className="space-y-3">
-          <label className="text-[14px] font-bold text-[#2C2E33]">Description</label>
+          <label className="text-[14px] font-medium text-[#2C2E33]">Description</label>
           <textarea
             rows={5}
             placeholder="Describe the room features, view, and unique selling points..."
@@ -122,7 +122,7 @@ export default function AddRoomPage() {
 
         {/* Upload Image */}
         <div className="space-y-3">
-          <label className="text-[14px] font-bold text-[#2C2E33]">Upload Image</label>
+          <label className="text-[14px] font-medium text-[#2C2E33]">Upload Image</label>
 
           {/* Hidden file input */}
           <input
@@ -142,7 +142,7 @@ export default function AddRoomPage() {
             <div className="w-16 h-16 bg-[#FFF4ED] group-hover:bg-[#F1913D]/15 rounded-2xl flex items-center justify-center mb-3 transition-colors">
               <CloudUpload className="text-[#F1913D]" size={32} strokeWidth={1.5} />
             </div>
-            <p className="text-[14px] font-bold text-[#2C2E33]">Click to upload room images</p>
+            <p className="text-[14px] font-medium text-[#2C2E33]">Click to upload room images</p>
             <p className="text-[13px] text-[#6C757D] mt-1">PNG, JPG, WEBP up to 10MB each · Multiple allowed</p>
           </div>
 
@@ -169,7 +169,7 @@ export default function AddRoomPage() {
                     <X size={12} strokeWidth={2.5} />
                   </button>
                   {idx === 0 && (
-                    <span className="absolute bottom-1.5 left-1.5 bg-[#F1913D] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Main</span>
+                    <span className="absolute bottom-1.5 left-1.5 bg-[#F1913D] text-white text-[10px] font-medium px-2 py-0.5 rounded-full">Main</span>
                   )}
                 </div>
               ))}
@@ -179,7 +179,7 @@ export default function AddRoomPage() {
 
         {/* Amenities & Features (Tag Input) */}
         <div className="space-y-3">
-          <label className="text-[14px] font-bold text-[#2C2E33]">Amenities & Features</label>
+          <label className="text-[14px] font-medium text-[#2C2E33]">Amenities & Features</label>
           <p className="text-[13px] text-[#6C757D] -mt-1">Type an amenity and press Enter or click + to add it.</p>
 
           {/* Tag container */}
@@ -232,13 +232,13 @@ export default function AddRoomPage() {
           <Button
             type="button"
             onClick={() => router.back()}
-            className="w-[140px] h-12 bg-[#F5F5F5] hover:bg-gray-200 text-[#2C2E33] font-bold rounded-[10px] transition-colors shadow-none border-none outline-none cursor-pointer"
+            className="w-[140px] h-12 bg-[#F5F5F5] hover:bg-gray-200 text-[#2C2E33] font-medium rounded-[10px] transition-colors shadow-none border-none outline-none cursor-pointer"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            className="w-[240px] h-12 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-bold rounded-[10px] transition-colors shadow-sm outline-none cursor-pointer"
+            className="w-[240px] h-12 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium rounded-[10px] transition-colors shadow-sm outline-none cursor-pointer"
           >
             Add to Hotel Property
           </Button>
