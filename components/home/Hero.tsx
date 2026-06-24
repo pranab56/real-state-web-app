@@ -53,7 +53,7 @@ const BATHROOM_OPTIONS = [
 ];
 
 export default function Hero() {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
   const router = useRouter();
 
   // ── Tab state ──

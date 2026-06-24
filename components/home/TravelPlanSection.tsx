@@ -13,17 +13,20 @@ export default function TravelPlanSection() {
     {
       title: t('travel.cards.hotels_title'),
       description: t('travel.cards.hotels_desc'),
-      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=600&h=400&fit=crop'
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=600&h=400&fit=crop',
+      href: '/hotels'
     },
     {
       title: t('travel.cards.guesthouses_title'),
       description: t('travel.cards.guesthouses_desc'),
-      image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=600&h=400&fit=crop'
+      image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=600&h=400&fit=crop',
+      href: '/hotels'
     },
     {
       title: t('travel.cards.rides_title'),
       description: t('travel.cards.rides_desc'),
-      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=600&h=400&fit=crop'
+      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=600&h=400&fit=crop',
+      href: '/transportation'
     }
   ];
 
@@ -71,29 +74,28 @@ export default function TravelPlanSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {travelCards.map((card, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-[#2C2E33] border border-white/10 rounded-2xl overflow-hidden hover:border-primary transition-all duration-300 flex flex-col items-center text-center p-0"
-              >
-                <div className="relative w-full h-48 md:h-52 overflow-hidden">
-                  <Image src={card.image} alt={card.title} fill className="object-cover" />
-                </div>
-                <div className="p-6 md:p-8 space-y-3 md:space-y-4 flex flex-col items-center">
-                  <h3 className="text-lg md:text-xl font-medium line-clamp-2 min-h-0 md:min-h-[3.5rem] flex items-center">
-                    {card.title}
-                  </h3>
-                  <p className="text-neutral-2 text-xs md:text-sm leading-relaxed mb-2 md:mb-4">
-                    {card.description}
-                  </p>
-                  {/* <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium h-11 md:h-12 px-8 md:px-10 rounded-xl transition-all w-full text-sm">
-                    {t('help.services.learn_more')}
-                  </Button> */}
-                </div>
-              </motion.div>
+              <Link href={card.href} key={idx} className="block">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ y: -6 }}
+                  className="bg-[#2C2E33] border border-white/10 rounded-2xl overflow-hidden hover:border-primary transition-all duration-300 flex flex-col items-center text-center p-0 cursor-pointer h-full group"
+                >
+                  <div className="relative w-full h-48 md:h-52 overflow-hidden">
+                    <Image src={card.image} alt={card.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <div className="p-6 md:p-8 space-y-3 md:space-y-4 flex flex-col items-center">
+                    <h3 className="text-lg md:text-xl font-medium line-clamp-2 min-h-0 md:min-h-[3.5rem] flex items-center group-hover:text-primary transition-colors">
+                      {card.title}
+                    </h3>
+                    <p className="text-neutral-2 text-xs md:text-sm leading-relaxed mb-2 md:mb-4">
+                      {card.description}
+                    </p>
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -109,7 +111,7 @@ export default function TravelPlanSection() {
             className="bg-[#FFF9F2] rounded-3xl md:rounded-[1.5rem] overflow-hidden flex flex-col lg:flex-row relative min-h-0 md:min-h-[450px]"
           >
             <div className="lg:w-2/3 p-8 md:p-12 lg:p-20 space-y-6 md:space-y-8 z-10 text-center lg:text-left">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl w-10/12 font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('travel.ready_title') }} />
+              <h2 className="text-3xl md:text-4xl lg:text-5xl w-10/12 font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('travel.ready_title') }} />
               <p className="text-neutral-2 text-sm md:text-lg max-w-lg mx-auto lg:mx-0 font-medium">
                 {t('travel.ready_subtitle')}
               </p>
@@ -118,9 +120,9 @@ export default function TravelPlanSection() {
               </Link>
             </div>
 
-            <div className="relative w-full lg:w-1/3 h-[250px] md:h-[350px] lg:h-auto">
+            <div className="relative w-full lg:w-2/3 h-[250px] md:h-[350px] lg:h-auto">
               <Image
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop"
+                src="/images/homeOne.png"
                 alt="Professional Man"
                 fill
                 className="object-cover object-top"

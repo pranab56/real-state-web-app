@@ -41,7 +41,6 @@ export default function PartnerDashboardPayments() {
 
   const totalAmount  = transactions.reduce((s: number, tx: Transaction) => s + (tx.amount ?? 0), 0);
   const totalNet     = transactions.reduce((s: number, tx: Transaction) => s + (tx.netAmount ?? 0), 0);
-  const paidCount    = transactions.filter((tx: Transaction & { isPaid?: boolean }) => tx.isPaid).length;
 
   const showingFrom = total === 0 ? 0 : (page - 1) * limit + 1;
   const showingTo   = Math.min(page * limit, total);

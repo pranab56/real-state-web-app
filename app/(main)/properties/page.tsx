@@ -3,8 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
-import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { baseURL } from '@/utils/BaseURL';
+import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
 import { motion } from 'framer-motion';
 import {
   Bath,
@@ -22,8 +22,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { Hotel, RootState } from '@/types';
+import { Hotel } from '@/types';
 
 const LIMIT = 6;
 const MAX_PRICE = 500000;
@@ -45,6 +44,36 @@ const getImg = (path?: string) => {
   if (path.startsWith('http')) return path;
   return `${baseURL}${path}`;
 };
+
+function PriceConvertButton({ price, currency }: { price?: number; currency?: string }) {
+  const [trigger, { isFetching }] = useLazyGetExchangeRatesQuery();
+  const [convertedText, setConvertedText] = useState<string | null>(null);
+
+  if (currency !== 'USD' || price == null) return null;
+
+  const handleConvert = async () => {
+    try {
+      const res = await trigger('USD').unwrap();
+      const rate = res?.rates?.ETB;
+      if (!rate) return;
+      setConvertedText(`ETB ${Math.round(price * rate).toLocaleString()}`);
+      setTimeout(() => setConvertedText(null), 3000);
+    } catch {
+      // conversion is a non-critical enhancement — fail silently
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleConvert}
+      disabled={isFetching}
+      className="shrink-0 h-7 px-2.5 rounded-full border border-primary/30 text-primary text-[10px] sm:text-[11px] font-medium hover:bg-primary hover:text-white transition-all disabled:opacity-60 cursor-pointer whitespace-nowrap"
+    >
+      {isFetching ? '...' : convertedText ?? 'Convert ETB'}
+    </button>
+  );
+}
 
 function PropertiesPageContent() {
   const { t } = useTranslation('common');
@@ -416,7 +445,10 @@ function PropertiesPageContent() {
                     </div>
                     <div className="p-4 sm:p-5 space-y-4">
                       <div className="space-y-2">
-                        <h3 className="text-xl sm:text-2xl font-black text-neutral-1">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</h3>
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-xl sm:text-2xl font-black text-neutral-1">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</h3>
+                          <PriceConvertButton price={item.price} currency={item.currency} />
+                        </div>
                         <Link href={`/properties/${item._id ?? item.id}`} className="text-base sm:text-lg font-medium text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight">
                           {item.title ?? item.name}
                         </Link>

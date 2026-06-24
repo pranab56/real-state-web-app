@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Check, FileText, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Check, FileText, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 export default function BuyingProperty() {
@@ -57,6 +58,14 @@ export default function BuyingProperty() {
                 </div>
               ))}
             </div>
+
+            <Link
+              href="/poa"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium h-12 px-8 rounded-sm shadow-xl shadow-primary/20 transition-all"
+            >
+              {t('buying.poa_certified')}
+              <ArrowRight size={16} />
+            </Link>
           </motion.div>
 
           {/* Right Visual */}

@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { useCreatePoaMutation } from '@/features/poa/poaApi';
 import { cn } from '@/lib/utils';
+import { ApiError } from '@/types';
 import { motion } from 'framer-motion';
 import {
   FileText,
@@ -13,13 +14,9 @@ import {
   UserCheck,
 } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { ApiError, RootState } from '@/types';
 
 // ── Shared field height ──
 const FIELD_H = 'h-12';
@@ -91,8 +88,6 @@ const ProcessStep = ({ title, description }: { title: string; description: strin
 export default function POAPage() {
   const { t } = useTranslation('common');
   const [createPoa, { isLoading }] = useCreatePoaMutation();
-  const token = useSelector((state: RootState) => state.auth?.token);
-  const router = useRouter();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -105,7 +100,6 @@ export default function POAPage() {
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (!token) { router.push('/login'); return; }
     const errs = runValidation({ name, email, phone, message });
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
@@ -118,7 +112,6 @@ export default function POAPage() {
       }).unwrap();
       toast.success('Consultation request submitted! We will contact you shortly.');
       setName(''); setEmail(''); setPhone(''); setMessage('');
-      setErrors({});
       setErrors({});
     } catch (err) {
       const error = err as ApiError;
@@ -226,18 +219,6 @@ export default function POAPage() {
 
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
 
-              {!token && (
-                <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-                  <span className="text-amber-600 text-sm font-medium">
-                    Please{' '}
-                    <Link href="/login" className="underline underline-offset-2 hover:text-amber-700 font-semibold">
-                      login
-                    </Link>
-                    {' '}to request a consultation.
-                  </span>
-                </div>
-              )}
-
               {/* Name */}
               <div>
                 <label className="block text-sm font-semibold text-neutral-1 mb-1.5">
@@ -247,8 +228,7 @@ export default function POAPage() {
                   value={name}
                   onChange={(e) => { setName(e.target.value); clearErr('name'); }}
                   placeholder={t('poa.consultation.name_placeholder')}
-                  disabled={!token}
-                  className={cn(inputCls(errors.name), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls(errors.name)}
                 />
                 <FieldError msg={errors.name} />
               </div>
@@ -263,8 +243,7 @@ export default function POAPage() {
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); clearErr('email'); }}
                   placeholder={t('poa.consultation.email_placeholder')}
-                  disabled={!token}
-                  className={cn(inputCls(errors.email), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls(errors.email)}
                 />
                 <FieldError msg={errors.email} />
               </div>
@@ -278,8 +257,7 @@ export default function POAPage() {
                   value={phone}
                   onChange={(e) => { setPhone(e.target.value); clearErr('phone'); }}
                   placeholder={t('poa.consultation.phone_placeholder')}
-                  disabled={!token}
-                  className={cn(inputCls(errors.phone), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls(errors.phone)}
                 />
                 <FieldError msg={errors.phone} />
               </div>
@@ -294,13 +272,11 @@ export default function POAPage() {
                   onChange={(e) => { setMessage(e.target.value); clearErr('message'); }}
                   placeholder={t('poa.consultation.message_placeholder')}
                   rows={4}
-                  disabled={!token}
                   className={cn(
                     'w-full rounded-lg px-5 py-3 text-neutral-1 font-medium text-sm outline-none transition-all resize-none border',
                     errors.message
                       ? 'bg-red-50/20 border-red-400 focus:ring-2 focus:ring-red-200'
-                      : 'bg-[#F6F6F6] border-transparent focus:ring-2 focus:ring-primary/20',
-                    !token && 'opacity-50 cursor-not-allowed'
+                      : 'bg-[#F6F6F6] border-transparent focus:ring-2 focus:ring-primary/20'
                   )}
                 />
                 <FieldError msg={errors.message} />

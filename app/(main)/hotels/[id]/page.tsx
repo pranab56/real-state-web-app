@@ -70,11 +70,13 @@ const DatePicker = ({
   date,
   setDate,
   className,
+  minDate,
 }: {
   label: string;
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
   className?: string;
+  minDate?: Date;
 }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -97,6 +99,7 @@ const DatePicker = ({
             mode="single"
             selected={date}
             onSelect={(d) => { setDate(d); setOpen(false); }}
+            disabled={minDate ? { before: minDate } : undefined}
             className="w-full rounded-xl border-none"
           />
         </PopoverContent>
@@ -110,32 +113,7 @@ const replySchema = z.object({
 });
 type ReplyFormValues = z.infer<typeof replySchema>;
 
-const COUNTRY_NAMES = [
-  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia',
-  'Austria','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin',
-  'Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
-  'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia',
-  'Comoros','Congo','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark','Djibouti','Dominica',
-  'Dominican Republic','Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini',
-  'Ethiopia','Fiji','Finland','France','Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada',
-  'Guatemala','Guinea','Guinea-Bissau','Guyana','Haiti','Honduras','Hungary','Iceland','India','Indonesia',
-  'Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati',
-  'Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania',
-  'Luxembourg','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania',
-  'Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique',
-  'Myanmar','Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria',
-  'North Korea','North Macedonia','Norway','Oman','Pakistan','Palau','Panama','Papua New Guinea','Paraguay',
-  'Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saint Kitts and Nevis',
-  'Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe',
-  'Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia',
-  'Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan',
-  'Suriname','Sweden','Switzerland','Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste',
-  'Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine',
-  'United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Vanuatu','Venezuela',
-  'Vietnam','Yemen','Zambia','Zimbabwe',
-];
-
-const COUNTRY_OPTIONS = COUNTRY_NAMES.map(name => ({ value: name, label: name }));
+const CURRENCY_OPTIONS = ['USD', 'ETB'] as const;
 
 const GUEST_OPTIONS = [
   { value: '1', label: '1 Adult, 0 Children', guests: { adults: 1, children: 0, pets: 0 } },
@@ -159,7 +137,7 @@ export default function HotelDetailPage() {
   const [checkOut, setCheckOut] = useState<Date>();
   const [guestKey, setGuestKey] = useState('2');
   const [roomClass, setRoomClass] = useState('deluxe');
-  const [country, setCountry] = useState('');
+  const [bookingCurrency, setBookingCurrency] = useState<typeof CURRENCY_OPTIONS[number]>('USD');
 
   const token = useSelector((state: RootState) => state.auth?.token);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -206,7 +184,6 @@ export default function HotelDetailPage() {
     if (!token) { toast.error('Please login to book'); return; }
     if (!checkIn) { toast.error('Please select a check-in date'); return; }
     if (!checkOut) { toast.error('Please select a check-out date'); return; }
-    if (!country) { toast.error('Please select your country'); return; }
     const selectedGuests = GUEST_OPTIONS.find(o => o.value === guestKey)?.guests ?? { adults: 2, children: 0, pets: 0 };
     try {
       const res = await createReservation({
@@ -215,7 +192,7 @@ export default function HotelDetailPage() {
         checkOut: format(checkOut, 'yyyy-MM-dd'),
         guests: selectedGuests,
         roomClass,
-        country: country.trim(),
+        currency: bookingCurrency,
       }).unwrap();
       toast.success(res.message ?? 'Reservation created!');
       if (res.data?.checkoutUrl) {
@@ -513,8 +490,8 @@ export default function HotelDetailPage() {
               </h3>
               <div className="space-y-5 sm:space-y-6">
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                  <DatePicker className="w-full" label="Check In" date={checkIn} setDate={setCheckIn} />
-                  <DatePicker className="w-full" label="Check Out" date={checkOut} setDate={setCheckOut} />
+                  <DatePicker className="w-full" label="Check In" date={checkIn} setDate={setCheckIn} minDate={new Date()} />
+                  <DatePicker className="w-full" label="Check Out" date={checkOut} setDate={setCheckOut} minDate={checkIn ?? new Date()} />
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
@@ -538,14 +515,30 @@ export default function HotelDetailPage() {
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
-                  <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Country</label>
-                  <Combobox
-                    options={COUNTRY_OPTIONS}
-                    value={country}
-                    onChange={setCountry}
-                    placeholder="Search country..."
-                    searchable
-                  />
+                  <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Currency</label>
+                  <div className="flex gap-3 sm:gap-4">
+                    {CURRENCY_OPTIONS.map((opt) => (
+                      <label
+                        key={opt}
+                        className={cn(
+                          'flex-1 flex items-center justify-center gap-2 h-10 sm:h-12 rounded-lg border text-xs sm:text-sm font-medium cursor-pointer transition-all',
+                          bookingCurrency === opt
+                            ? 'bg-primary text-white border-primary'
+                            : 'bg-[#F6F6F6] text-neutral-2 border-transparent hover:border-primary/30'
+                        )}
+                      >
+                        <input
+                          type="radio"
+                          name="bookingCurrency"
+                          value={opt}
+                          checked={bookingCurrency === opt}
+                          onChange={() => setBookingCurrency(opt)}
+                          className="sr-only"
+                        />
+                        {opt}
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
                 {price != null && (

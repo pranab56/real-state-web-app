@@ -57,9 +57,9 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 function Logo() {
   return (
-    <div className="flex items-center gap-2">
+    <Link href="/" className="flex items-center gap-2">
       <Image src="/icons/logo.png" alt="Logo" width={1000} height={1000} className='w-full h-10' />
-    </div>
+    </Link>
   );
 }
 

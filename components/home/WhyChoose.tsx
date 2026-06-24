@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Globe2, ShieldCheck, Users } from 'lucide-react';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 export default function WhyChoose() {
@@ -52,26 +53,28 @@ export default function WhyChoose() {
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {benefits.map((benefit, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white p-8 md:p-12 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 text-center flex flex-col items-center gap-4 md:gap-6 group cursor-default"
-            >
-              <div className="mb-2 group-hover:scale-110 transition-transform duration-500 shrink-0">
-                <div className="scale-75 md:scale-100">
-                  {benefit.icon}
+            <Link href="/poa" key={index} className="block h-full">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -10 }}
+                className="bg-white p-8 md:p-12 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 text-center flex flex-col items-center gap-4 md:gap-6 group cursor-pointer h-full"
+              >
+                <div className="mb-2 group-hover:scale-110 transition-transform duration-500 shrink-0">
+                  <div className="scale-75 md:scale-100">
+                    {benefit.icon}
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-xl md:text-2xl font-medium text-neutral-1 group-hover:text-primary transition-colors">
-                {benefit.title}
-              </h3>
-              <p className="text-neutral-2 text-xs md:text-base leading-relaxed font-medium">
-                {benefit.description}
-              </p>
-            </motion.div>
+                <h3 className="text-xl md:text-2xl font-medium text-neutral-1 group-hover:text-primary transition-colors">
+                  {benefit.title}
+                </h3>
+                <p className="text-neutral-2 text-xs md:text-base leading-relaxed font-medium">
+                  {benefit.description}
+                </p>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>

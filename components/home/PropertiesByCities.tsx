@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Building2, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/autoplay';
@@ -39,7 +40,7 @@ export default function PropertiesByCities() {
               <div className="flex flex-col">
                 <h4 className="text-base md:text-2xl font-medium text-neutral-1 leading-tight">{t('cities.promo1_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  {t('cities.promo1_desc')} <span className="font-medium underline cursor-pointer">{t('cities.promo1_link')}</span>
+                  {t('cities.promo1_desc')} <Link href="/hotels" className="font-medium underline cursor-pointer hover:text-primary transition-colors">{t('cities.promo1_link')}</Link>
                 </p>
               </div>
             </div>
@@ -55,7 +56,7 @@ export default function PropertiesByCities() {
               <div className="flex flex-col">
                 <h4 className="text-base md:text-2xl font-medium text-neutral-1 leading-tight">{t('cities.promo2_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  {t('cities.promo2_desc')} <span className="font-medium underline cursor-pointer">{t('cities.promo2_link')}</span>
+                  {t('cities.promo2_desc')} <Link href="/register" className="font-medium underline cursor-pointer hover:text-primary transition-colors">{t('cities.promo2_link')}</Link>
                 </p>
               </div>
             </div>
@@ -71,7 +72,7 @@ export default function PropertiesByCities() {
               <div className="flex flex-col">
                 <h4 className="text-base md:text-2xl font-medium text-neutral-1 leading-tight">{t('cities.promo3_title')}</h4>
                 <p className="text-[11px] md:text-sm text-neutral-2">
-                  {t('cities.promo3_desc')} <span className="font-medium underline cursor-pointer">{t('cities.promo3_link')}</span>
+                  {t('cities.promo3_desc')} <Link href="/hotels" className="font-medium underline cursor-pointer hover:text-primary transition-colors">{t('cities.promo3_link')}</Link>
                 </p>
               </div>
             </div>
@@ -112,25 +113,27 @@ export default function PropertiesByCities() {
           >
             {cities.map((city, index) => (
               <SwiperSlide key={index}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex flex-col items-center gap-2 md:gap-2 group/card cursor-pointer"
-                >
-                  <div className="w-24 h-24 md:w-40 md:h-40 rounded-full border-2 md:border-4 border-transparent group-hover/card:border-primary transition-all duration-500 shadow-lg md:shadow-xl bg-primary/10 flex items-center justify-center">
-                    <Building2 className="w-10 h-10 md:w-16 md:h-16 text-primary" />
-                  </div>
-                  <div className="text-center">
-                    <h5 className="text-sm md:text-xl font-medium text-neutral-1 group-hover/card:text-primary transition-colors whitespace-nowrap">
-                      {city.city}
-                    </h5>
-                    <p className="text-[10px] md:text-sm text-neutral-2 font-medium mt-0.5 md:mt-1">
-                      {t('cities.properties_count', { count: city.count })}
-                    </p>
-                  </div>
-                </motion.div>
+                <Link href={`/properties?city=${encodeURIComponent(city.city)}`}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex flex-col items-center gap-2 md:gap-2 group/card cursor-pointer"
+                  >
+                    <div className="w-24 h-24 md:w-40 md:h-40 rounded-full border-2 md:border-4 border-transparent group-hover/card:border-primary transition-all duration-500 shadow-lg md:shadow-xl bg-primary/10 flex items-center justify-center">
+                      <Building2 className="w-10 h-10 md:w-16 md:h-16 text-primary" />
+                    </div>
+                    <div className="text-center">
+                      <h5 className="text-sm md:text-xl font-medium text-neutral-1 group-hover/card:text-primary transition-colors whitespace-nowrap">
+                        {city.city}
+                      </h5>
+                      <p className="text-[10px] md:text-sm text-neutral-2 font-medium mt-0.5 md:mt-1">
+                        {t('cities.properties_count', { count: city.count })}
+                      </p>
+                    </div>
+                  </motion.div>
+                </Link>
               </SwiperSlide>
             ))}
           </Swiper>

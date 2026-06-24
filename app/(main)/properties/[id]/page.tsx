@@ -7,6 +7,7 @@ import { useCreateInquiryMutation } from '@/features/inquiry/inquiryApi';
 import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/listings/listingsApi';
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
+import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
@@ -36,7 +37,6 @@ import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import * as z from 'zod';
-import { ApiError, Hotel, Review, RootState } from '@/types';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
 
@@ -89,6 +89,7 @@ export default function PropertyDetailPage() {
 
   const token = useSelector((state: RootState) => state.auth?.token);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [playVideo, setPlayVideo] = useState(false);
   const [reviewRating, setReviewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [toggleWishlist] = useCreateWishlistToggleMutation();
@@ -104,6 +105,7 @@ export default function PropertyDetailPage() {
   })();
 
   const { data: apiData, isLoading } = useGetSingleListingQuery({ id, userId }, { skip: !id });
+  console.log("apiData", apiData);
   const { data: featuredApiData } = useGetAllListingsQuery({ category: 'listing', page: 1, limit: 3, isFeatured: true, isVerified: true });
   const { data: reviewsData } = useGetReviewsByPropertyQuery({ property: id, }, { skip: !id });
 
@@ -146,10 +148,6 @@ export default function PropertyDetailPage() {
   });
 
   const onContactSubmit = async (data: ContactFormValues) => {
-    if (!token) {
-      router.push('/login');
-      return;
-    }
     try {
       const res = await createInquiry({
         property: id,
@@ -317,13 +315,28 @@ export default function PropertyDetailPage() {
             {p?.videoUrl && (
               <div className="space-y-8">
                 <h3 className="text-2xl font-medium text-neutral-1">Video</h3>
-                <div className="relative aspect-video rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-2xl">
-                  <Image src={getImg(images[0])} alt="Video" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/40 group-hover:scale-110 transition-transform duration-300">
-                      <Play size={32} fill="currentColor" />
-                    </div>
-                  </div>
+                <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl">
+                  {playVideo ? (
+                    <video
+                      src={getImg(p.videoUrl)}
+                      controls
+                      autoPlay
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setPlayVideo(true)}
+                      className="absolute inset-0 w-full h-full group cursor-pointer"
+                    >
+                      <Image src={getImg(images[0])} alt="Video" fill className="object-cover" />
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/40 group-hover:scale-110 transition-transform duration-300">
+                          <Play size={32} fill="currentColor" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -507,28 +520,16 @@ export default function PropertyDetailPage() {
           <aside className="space-y-8">
             <div className="bg-[#FAF6F2] rounded-lg p-10 space-y-8 sticky top-24">
               <div className="space-y-2">
-                <h3 className="text-2xl font-medium text-neutral-1">Contact Sellers</h3>
+                <h3 className="text-2xl font-medium text-neutral-1">Contact Owner</h3>
                 <p className="text-sm text-neutral-2 font-medium italic">Reach out to the owner or agent for more details.</p>
               </div>
-              {!token && (
-                <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-                  <span className="text-amber-600 text-sm font-medium">
-                    Please{' '}
-                    <Link href="/login" className="underline underline-offset-2 hover:text-amber-700 font-semibold">
-                      login
-                    </Link>
-                    {' '}to contact the seller.
-                  </span>
-                </div>
-              )}
               <form className="space-y-4" onSubmit={contactForm.handleSubmit(onContactSubmit)}>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-neutral-1 ml-1">Name</label>
                   <Input
                     placeholder="Enter your name"
                     {...contactForm.register('name')}
-                    disabled={!token}
-                    className={`h-12 bg-white border-none rounded-sm px-6 font-medium disabled:opacity-50 disabled:cursor-not-allowed ${contactForm.formState.errors.name ? 'ring-2 ring-red-500' : ''}`}
+                    className={`h-12 bg-white border-none rounded-sm px-6 font-medium ${contactForm.formState.errors.name ? 'ring-2 ring-red-500' : ''}`}
                   />
                   {contactForm.formState.errors.name && (
                     <p className="text-red-500 text-xs font-medium mt-1 ml-1">{contactForm.formState.errors.name.message}</p>
@@ -539,8 +540,7 @@ export default function PropertyDetailPage() {
                   <Input
                     placeholder="eg: +251 912345678"
                     {...contactForm.register('phone')}
-                    disabled={!token}
-                    className={`h-12 bg-white border-none rounded-sm px-6 font-medium disabled:opacity-50 disabled:cursor-not-allowed ${contactForm.formState.errors.phone ? 'ring-2 ring-red-500' : ''}`}
+                    className={`h-12 bg-white border-none rounded-sm px-6 font-medium ${contactForm.formState.errors.phone ? 'ring-2 ring-red-500' : ''}`}
                   />
                   {contactForm.formState.errors.phone && (
                     <p className="text-red-500 text-xs font-medium mt-1 ml-1">{contactForm.formState.errors.phone.message}</p>
@@ -551,8 +551,7 @@ export default function PropertyDetailPage() {
                   <Input
                     placeholder="example@gmail.com"
                     {...contactForm.register('email')}
-                    disabled={!token}
-                    className={`h-12 bg-white border-none rounded-sm px-6 font-medium disabled:opacity-50 disabled:cursor-not-allowed ${contactForm.formState.errors.email ? 'ring-2 ring-red-500' : ''}`}
+                    className={`h-12 bg-white border-none rounded-sm px-6 font-medium ${contactForm.formState.errors.email ? 'ring-2 ring-red-500' : ''}`}
                   />
                   {contactForm.formState.errors.email && (
                     <p className="text-red-500 text-xs font-medium mt-1 ml-1">{contactForm.formState.errors.email.message}</p>
@@ -563,8 +562,7 @@ export default function PropertyDetailPage() {
                   <Textarea
                     placeholder="enter your message here..."
                     {...contactForm.register('message')}
-                    disabled={!token}
-                    className={`min-h-[120px] bg-white border-none rounded-sm p-6 font-medium resize-none shadow-none disabled:opacity-50 disabled:cursor-not-allowed ${contactForm.formState.errors.message ? 'ring-2 ring-red-500' : ''}`}
+                    className={`min-h-[120px] bg-white border-none rounded-sm p-6 font-medium resize-none shadow-none ${contactForm.formState.errors.message ? 'ring-2 ring-red-500' : ''}`}
                   />
                   {contactForm.formState.errors.message && (
                     <p className="text-red-500 text-xs font-medium mt-1 ml-1">{contactForm.formState.errors.message.message}</p>
@@ -573,11 +571,13 @@ export default function PropertyDetailPage() {
                 <Button
                   type="submit"
                   disabled={isSending}
-                  onClick={!token ? () => router.push('/login') : undefined}
                   className="w-full h-12 bg-primary hover:bg-primary/90 text-white cursor-pointer font-medium rounded-lg shadow-lg shadow-primary/10 transition-all mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSending ? <><Loader2 size={16} className="animate-spin" /> Sending...</> : 'Send Message'}
                 </Button>
+                <p className="text-xs text-neutral-2 font-medium text-center pt-1">
+                  Please fill out the following information and we will get back to you asap!
+                </p>
               </form>
             </div>
           </aside>

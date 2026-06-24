@@ -5,15 +5,12 @@ import { Combobox } from '@/components/ui/combobox';
 import { PlacesAutocomplete } from '@/components/ui/places-autocomplete';
 import { useCreateTransportationMutation } from '@/features/transportation/transportationApi';
 import { cn } from '@/lib/utils';
+import { ApiError } from '@/types';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { ApiError, RootState } from '@/types';
 
 // ── All fields share this height ──
 const FIELD_H = 'h-12';
@@ -80,6 +77,12 @@ const LUGGAGE_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({
   label: n === 0 ? 'No luggage' : `${n} ${n === 1 ? 'bag' : 'bags'}`,
 }));
 
+// ── "datetime-local" inputs need "YYYY-MM-DDTHH:mm" in local time ──
+const toDateTimeLocal = (d: Date) => {
+  const tzOffsetMs = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - tzOffsetMs).toISOString().slice(0, 16);
+};
+
 interface FormErrors {
   customerName?: string;
   customerPhone?: string;
@@ -106,14 +109,13 @@ function runValidation(f: {
   if (!f.pickupAddress) e.pickup = 'Pickup address is required';
   if (!f.dropoffAddress) e.dropoff = 'Drop-off address is required';
   if (!f.pickupAt) e.pickupAt = 'Pickup date & time is required';
+  else if (new Date(f.pickupAt).getTime() < Date.now()) e.pickupAt = 'Pickup date & time cannot be in the past';
   return e;
 }
 
 export default function TransportationPage() {
   const { t } = useTranslation('common');
   const [createTransportation, { isLoading }] = useCreateTransportationMutation();
-  const token = useSelector((state: RootState) => state.auth?.token);
-  const router = useRouter();
 
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -134,7 +136,6 @@ export default function TransportationPage() {
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (!token) { router.push('/login'); return; }
     const errs = runValidation({
       customerName, customerPhone, customerEmail,
       serviceType, vehicleType,
@@ -165,7 +166,6 @@ export default function TransportationPage() {
       setPassengerName(''); setPassengers('1'); setLuggage('0');
       setServiceType(''); setVehicleType(''); setFlightNumber('');
       setPickupAt(''); setPickup(emptyLocation()); setDropoff(emptyLocation());
-      setErrors({});
       setErrors({});
     } catch (err) {
       const error = err as ApiError;
@@ -212,18 +212,6 @@ export default function TransportationPage() {
         >
           <form onSubmit={handleSubmit} noValidate className="space-y-8">
 
-            {!token && (
-              <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-                <span className="text-amber-600 text-sm font-medium">
-                  Please{' '}
-                  <Link href="/login" className="underline underline-offset-2 hover:text-amber-700 font-semibold">
-                    login
-                  </Link>
-                  {' '}to confirm a booking.
-                </span>
-              </div>
-            )}
-
             {/* ── Contact Information ── */}
             <section className="space-y-4">
               <h3 className="text-xs font-black text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
@@ -237,8 +225,7 @@ export default function TransportationPage() {
                   value={customerName}
                   onChange={(e) => { setCustomerName(e.target.value); clearErr('customerName'); }}
                   placeholder={t('transportation.form.requester_placeholder')}
-                  disabled={!token}
-                  className={cn(inputCls(errors.customerName), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls(errors.customerName)}
                 />
                 <FieldError msg={errors.customerName} />
               </Field>
@@ -251,8 +238,7 @@ export default function TransportationPage() {
                     value={customerPhone}
                     onChange={(e) => { setCustomerPhone(e.target.value); clearErr('customerPhone'); }}
                     placeholder={t('transportation.form.phone_placeholder')}
-                    disabled={!token}
-                    className={cn(inputCls(errors.customerPhone), !token && 'opacity-50 cursor-not-allowed')}
+                    className={inputCls(errors.customerPhone)}
                   />
                   <FieldError msg={errors.customerPhone} />
                 </Field>
@@ -265,8 +251,7 @@ export default function TransportationPage() {
                     value={customerEmail}
                     onChange={(e) => { setCustomerEmail(e.target.value); clearErr('customerEmail'); }}
                     placeholder={t('transportation.form.email_placeholder')}
-                    disabled={!token}
-                    className={cn(inputCls(errors.customerEmail), !token && 'opacity-50 cursor-not-allowed')}
+                    className={inputCls(errors.customerEmail)}
                   />
                   <FieldError msg={errors.customerEmail} />
                 </Field>
@@ -339,9 +324,9 @@ export default function TransportationPage() {
                   id="pickupAt"
                   type="datetime-local"
                   value={pickupAt}
+                  min={toDateTimeLocal(new Date())}
                   onChange={(e) => { setPickupAt(e.target.value); clearErr('pickupAt'); }}
-                  disabled={!token}
-                  className={cn(inputCls(errors.pickupAt), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls(errors.pickupAt)}
                 />
                 <FieldError msg={errors.pickupAt} />
               </Field>
@@ -377,8 +362,7 @@ export default function TransportationPage() {
                   value={flightNumber}
                   onChange={(e) => setFlightNumber(e.target.value)}
                   placeholder={t('transportation.form.flight_placeholder')}
-                  disabled={!token}
-                  className={cn(inputCls(), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls()}
                 />
               </Field>
             </section>
@@ -397,8 +381,7 @@ export default function TransportationPage() {
                   value={passengerName}
                   onChange={(e) => setPassengerName(e.target.value)}
                   placeholder={t('transportation.form.passenger_placeholder')}
-                  disabled={!token}
-                  className={cn(inputCls(), !token && 'opacity-50 cursor-not-allowed')}
+                  className={inputCls()}
                 />
               </Field>
             </section>
@@ -408,7 +391,6 @@ export default function TransportationPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                onClick={!token ? () => router.push('/login') : undefined}
                 className={cn(
                   FIELD_H,
                   'w-full bg-primary hover:bg-primary/90 text-white font-medium rounded-lg text-sm transition-transform cursor-pointer active:scale-[0.98] disabled:opacity-70 border-none'
