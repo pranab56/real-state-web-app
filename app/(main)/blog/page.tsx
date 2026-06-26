@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { useGetAllBlogsQuery, useGetAllCategoryQuery } from '@/features/blog/blogsApi';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
-import { ArrowRight, BookOpen, Clock, Loader2, Search, Tag, User, X } from 'lucide-react';
+import { ArrowRight, BookOpen, ChevronRight, Clock, Loader2, Search, Tag, User, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -64,28 +64,36 @@ function BlogContent() {
   const gridPosts = filtered.slice(1);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pt-20 md:pt-28">
+    <div className="min-h-screen bg-[#FAFAFA]">
 
-      {/* Page Header */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="container mx-auto px-4 md:px-6 py-10 md:py-14">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-2">
-              <span className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wide inline-block">
-                {t('blog.breadcrumb_grid')}
-              </span>
-              <h1 className="text-3xl md:text-4xl font-black text-neutral-1">{t('blog.title')}</h1>
-              <p className="text-sm md:text-base text-neutral-2 font-medium max-w-lg">
-                Stay informed with expert insights, market trends, and tips on real estate.
-              </p>
+      {/* Hero */}
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 bg-[#1E2024] overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?q=80&w=2070&auto=format&fit=crop"
+            alt="Blog Hero"
+            fill
+            className="object-cover opacity-40"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2024] via-transparent to-transparent" />
+        </div>
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-4 md:space-y-6">
+            <div className="flex items-center gap-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-white/60">
+              <Link href="/" className="hover:text-primary transition-colors">{t('blog.hero.home')}</Link>
+              <ChevronRight size={10} />
+              <span className="text-white">{t('blog.title')}</span>
             </div>
+            <h1 className="text-3xl md:text-6xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: t('blog.hero.title') }} />
+            <p className="text-sm md:text-lg text-white/70 max-w-2xl font-medium leading-relaxed">{t('blog.hero.subtitle')}</p>
             {filtered.length > 0 && (
-              <span className="text-sm text-neutral-2 font-medium whitespace-nowrap">
+              <p className="text-xs md:text-sm text-white/50 font-medium pt-1">
                 {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
-                {activeCategory && <span className="ml-1">in <span className="text-primary font-semibold">{activeCategory}</span></span>}
-              </span>
+                {activeCategory && <> in <span className="text-primary font-medium">{activeCategory}</span></>}
+              </p>
             )}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -107,7 +115,7 @@ function BlogContent() {
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
                 <BookOpen size={26} className="text-gray-300" />
               </div>
-              <p className="text-neutral-1 font-semibold text-lg">No articles found</p>
+              <p className="text-neutral-1 font-medium text-lg">No articles found</p>
               <p className="text-neutral-2 text-sm font-medium">
                 {debouncedSearch
                   ? `No results for "${debouncedSearch}"`
@@ -118,7 +126,7 @@ function BlogContent() {
               {(debouncedSearch || activeCategory) && (
                 <button
                   onClick={() => { setSearchInput(''); setActiveCategory(''); }}
-                  className="text-primary font-semibold text-sm hover:underline cursor-pointer"
+                  className="text-primary font-medium text-sm hover:underline cursor-pointer"
                 >
                   Clear filters
                 </button>
@@ -149,17 +157,17 @@ function BlogContent() {
                         priority
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      <span className="absolute top-4 left-4 text-[11px] font-bold text-white bg-primary px-3 py-1 rounded-full uppercase tracking-wide shadow">
+                      <span className="absolute top-4 left-4 text-[11px] font-medium text-white bg-primary px-3 py-1.5 rounded-full uppercase tracking-wide shadow-lg">
                         Featured
                       </span>
                     </div>
                     <div className="p-6 md:p-8 flex flex-col justify-center gap-4">
                       {featuredPost.category && (
-                        <span className="text-[11px] font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full w-fit">
+                        <span className="text-[11px] font-medium text-primary bg-primary/10 px-3 py-1 rounded-full w-fit">
                           {featuredPost.category}
                         </span>
                       )}
-                      <h2 className="text-xl md:text-2xl font-black text-neutral-1 group-hover:text-primary transition-colors leading-snug">
+                      <h2 className="text-xl md:text-2xl font-medium text-neutral-1 group-hover:text-primary transition-colors leading-snug">
                         {featuredPost.title}
                       </h2>
                       <p className="text-sm text-neutral-2 font-medium leading-relaxed">
@@ -181,7 +189,7 @@ function BlogContent() {
                           {getReadTime(featuredPost.content)} min read
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-sm font-medium text-primary group-hover:gap-3 transition-all">
                         {t('blog.read_more')} <ArrowRight size={15} />
                       </div>
                     </div>
@@ -212,7 +220,7 @@ function BlogContent() {
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           {post.category && (
-                            <span className="absolute top-3 left-3 text-[11px] font-semibold text-primary bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm">
+                            <span className="absolute top-3 left-3 text-[11px] font-medium text-primary bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm">
                               {post.category}
                             </span>
                           )}
@@ -234,13 +242,13 @@ function BlogContent() {
                               {getReadTime(post.content)} min read
                             </span>
                           </div>
-                          <h2 className="text-base md:text-lg font-bold text-neutral-1 group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                          <h2 className="text-base md:text-lg font-medium text-neutral-1 group-hover:text-primary transition-colors leading-snug line-clamp-2">
                             {post.title}
                           </h2>
                           <p className="text-sm text-neutral-2 font-medium leading-relaxed line-clamp-3 flex-1">
                             {getExcerpt(post.content)}
                           </p>
-                          <div className="flex items-center gap-1.5 text-sm font-semibold text-primary group-hover:gap-2.5 transition-all mt-auto pt-1">
+                          <div className="flex items-center gap-1.5 text-sm font-medium text-primary group-hover:gap-2.5 transition-all mt-auto pt-1">
                             {t('blog.read_more')} <ArrowRight size={14} />
                           </div>
                         </div>
@@ -259,7 +267,7 @@ function BlogContent() {
 
             {/* Search */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-sm">
-              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">{t('blog.search_title')}</h3>
+              <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">{t('blog.search_title')}</h3>
               <div className="relative">
                 <Input
                   value={searchInput}
@@ -287,7 +295,7 @@ function BlogContent() {
             {/* Categories */}
             {categories.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-sm">
-                <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">{t('blog.categories')}</h3>
+                <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">{t('blog.categories')}</h3>
                 <div className="space-y-1">
                   <button
                     onClick={() => setActiveCategory('')}
@@ -301,7 +309,7 @@ function BlogContent() {
                       <Tag size={13} className={activeCategory === '' ? 'text-primary' : 'text-neutral-2/50 group-hover:text-neutral-2'} />
                       All Posts
                     </span>
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
                       activeCategory === '' ? 'bg-primary text-white' : 'bg-gray-100 text-neutral-2'
                     }`}>
                       {allPosts.length}
@@ -324,7 +332,7 @@ function BlogContent() {
                           <Tag size={13} className={isActive ? 'text-primary' : 'text-neutral-2/50 group-hover:text-neutral-2'} />
                           {cat}
                         </span>
-                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${
                           isActive ? 'bg-primary text-white' : 'bg-gray-100 text-neutral-2'
                         }`}>
                           {count}
@@ -339,14 +347,14 @@ function BlogContent() {
             {/* Stats */}
             {allPosts.length > 0 && (
               <div className="bg-primary rounded-2xl p-6 space-y-4 text-white">
-                <h3 className="text-xs font-bold uppercase tracking-wider opacity-70">Overview</h3>
+                <h3 className="text-xs font-medium uppercase tracking-wider opacity-70">Overview</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <p className="text-2xl font-black">{allPosts.length}</p>
+                    <p className="text-2xl font-semibold">{allPosts.length}</p>
                     <p className="text-xs font-medium opacity-70">Total Articles</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-2xl font-black">{categories.length}</p>
+                    <p className="text-2xl font-semibold">{categories.length}</p>
                     <p className="text-xs font-medium opacity-70">Categories</p>
                   </div>
                 </div>

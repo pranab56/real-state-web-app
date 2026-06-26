@@ -39,7 +39,7 @@ export default function TermsPage() {
       </section>
 
       {/* Content */}
-      <section className="container mx-auto px-4 md:px-6 max-w-5xl py-16 md:py-24">
+      <section className="container mx-auto px-4 md:px-6 max-w-5xl py-10 md:py-16">
         {isLoading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={32} className="animate-spin text-primary" />
@@ -47,19 +47,30 @@ export default function TermsPage() {
         )}
 
         {!isLoading && !terms && (
-          <p className="text-neutral-2 text-center font-medium">Content not available.</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="prose prose-base md:prose-lg max-w-none"
+          >
+            {t('terms.sections', { returnObjects: true }) instanceof Array ?
+              (t('terms.sections', { returnObjects: true }) as Array<{ title: string; content: string }>).map((section, idx) => (
+                <div key={idx} className="mb-8">
+                  <h2 className="text-xl md:text-2xl font-medium text-neutral-1 mb-4">{section.title}</h2>
+                  <p className="text-neutral-2 leading-relaxed text-sm lg:text-base font-medium opacity-80 whitespace-pre-line">
+                    {section.content}
+                  </p>
+                </div>
+              )) : <p className="text-neutral-2 text-center font-medium">Content not available.</p>}
+          </motion.div>
         )}
 
         {!isLoading && terms && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose prose-base md:prose-lg max-w-none"
-          >
-            <p className="text-neutral-2 leading-relaxed text-sm lg:text-base font-medium opacity-80 whitespace-pre-line">
-              {terms.content}
-            </p>
-          </motion.div>
+            className="prose prose-base md:prose-lg max-w-none prose-headings:text-neutral-1 prose-p:text-neutral-2 prose-p:leading-relaxed prose-p:text-sm prose-p:lg:text-base prose-strong:text-neutral-1 prose-li:text-neutral-2 prose-li:leading-relaxed prose-li:text-sm prose-li:lg:text-base prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:border-primary prose-blockquote:bg-[#FAF6F2] prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-md"
+            dangerouslySetInnerHTML={{ __html: terms.content }}
+          />
         )}
       </section>
     </div>

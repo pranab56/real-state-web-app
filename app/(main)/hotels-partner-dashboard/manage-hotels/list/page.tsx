@@ -1,15 +1,17 @@
 'use client';
 
-import { useGetAllPropertyQuery, useDeletePropertyMutation } from '@/features/manageHotels/manageHotelsApi';
+import { PriceConvertButton } from '@/components/shared/price-convert-button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useDeletePropertyMutation, useGetAllPropertyQuery } from '@/features/manageHotels/manageHotelsApi';
+import { ApiError, Hotel, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, MapPin, Pencil, Plus, Star, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2, MapPin, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { ApiError, Hotel, RootState } from '@/types';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&h=600&fit=crop';
 
@@ -27,7 +29,10 @@ export default function ManageHotelsListPage() {
     { userId, page },
     { skip: !userId }
   );
+
+  console.log("all data", data)
   const [deleteProperty, { isLoading: deleteLoading }] = useDeletePropertyMutation();
+  const [deleteTarget, setDeleteTarget] = useState<Hotel | null>(null);
 
   const properties: Hotel[] = data?.data ?? [];
   const pagination = data?.pagination;
@@ -35,11 +40,12 @@ export default function ManageHotelsListPage() {
   const total: number = pagination?.total ?? 0;
   const showPagination = totalPage > 1;
 
-  const handleDelete = async (propertyId: string) => {
-    if (!confirm('Are you sure you want to delete this property?')) return;
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget?._id) return;
     try {
-      const res = await deleteProperty({ propertyId }).unwrap();
+      const res = await deleteProperty({ propertyId: deleteTarget._id }).unwrap();
       toast.success(res.message ?? 'Property deleted');
+      setDeleteTarget(null);
     } catch (err) {
       const error = err as ApiError;
       toast.error(error?.data?.message ?? 'Failed to delete');
@@ -124,8 +130,7 @@ export default function ManageHotelsListPage() {
                       </button>
                     </Link>
                     <button
-                      onClick={() => handleDelete(hotel._id || '')}
-                      disabled={deleteLoading}
+                      onClick={() => setDeleteTarget(hotel)}
                       className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#DC3545] hover:bg-[#DC3545] hover:text-white transition-colors shadow-sm cursor-pointer disabled:opacity-60"
                     >
                       <Trash2 size={14} strokeWidth={2.5} />
@@ -149,9 +154,7 @@ export default function ManageHotelsListPage() {
                       <span className="text-[18px] font-bold text-[#2C2E33]">{hotel.currency} {hotel.price?.toLocaleString()}</span>
                       <span className="text-[12px] text-[#6C757D] font-medium">/ night</span>
                     </div>
-                    <span className="text-[11px] font-medium text-[#6C757D] bg-[#F5F5F5] px-2 py-0.5 rounded capitalize">
-                      {hotel.structureType}
-                    </span>
+                    <PriceConvertButton price={hotel.price} currency={hotel.currency} />
                   </div>
                 </div>
               </motion.div>
@@ -190,6 +193,36 @@ export default function ManageHotelsListPage() {
           </button>
         </div>
       )}
+
+      {/* Delete confirmation */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && !deleteLoading && setDeleteTarget(null)}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle>Delete property?</DialogTitle>
+            <DialogDescription>
+              This will permanently delete &ldquo;{deleteTarget?.title}&rdquo;. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setDeleteTarget(null)}
+              disabled={deleteLoading}
+              className="h-10 px-5 bg-[#F5F5F5] hover:bg-gray-200 text-[#2C2E33] font-medium rounded-[10px] transition-colors cursor-pointer text-[14px] disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDelete}
+              disabled={deleteLoading}
+              className="h-10 px-5 bg-[#DC3545] hover:bg-[#DC3545]/90 text-white font-medium rounded-[10px] transition-colors shadow-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[14px]"
+            >
+              {deleteLoading ? <><Loader2 size={16} className="animate-spin" /> Deleting...</> : 'Delete'}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

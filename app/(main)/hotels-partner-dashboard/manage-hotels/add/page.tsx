@@ -1,13 +1,18 @@
 'use client';
 
-import { useCreatePropertyMutation } from '@/features/manageHotels/manageHotelsApi';
+import { useCreatePropertyMutation, useGetAllPropertyQuery, useUpdatePropertyMutation } from '@/features/manageHotels/manageHotelsApi';
+import { Hotel, RootState } from '@/types';
+import { baseURL } from '@/utils/BaseURL';
 import { motion } from "framer-motion";
 import { CloudUpload, Loader2, MapPin, X } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { Label } from '../../../../../components/ui/label';
+
+const getImg = (path: string) => (path.startsWith('http') ? path : `${baseURL}${path}`);
 
 interface NominatimResult {
   place_id: number;
@@ -74,8 +79,23 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 export default function AddHotelPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('edit');
+  const isEditMode = !!editId;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [createProperty, { isLoading }] = useCreatePropertyMutation();
+  const [createProperty, { isLoading: isCreating }] = useCreatePropertyMutation();
+  const [updateProperty, { isLoading: isUpdating }] = useUpdatePropertyMutation();
+  const isLoading = isCreating || isUpdating;
+
+  // Fetch the property to edit by matching its _id against the list of properties
+  const userId = useSelector((state: RootState) => state.auth?.user?._id);
+  const { data: propertiesData, isFetching: isLoadingEditTarget } = useGetAllPropertyQuery(
+    { userId, page: 1 },
+    { skip: !userId || !isEditMode }
+  );
+  const editingHotel: Hotel | undefined = propertiesData?.data?.find((p: Hotel) => p._id === editId);
+  const prefilledRef = useRef(false);
 
   // Form state
   const [title, setTitle] = useState('');
@@ -89,6 +109,7 @@ export default function AddHotelPage() {
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
   const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageError, setImageError] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [addressInput, setAddressInput] = useState("");
@@ -97,6 +118,27 @@ export default function AddHotelPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+
+  // Prefill the form once the matching property has loaded
+  useEffect(() => {
+    if (!editingHotel || prefilledRef.current) return;
+    prefilledRef.current = true;
+
+    const addr = editingHotel.address;
+
+    setTitle(editingHotel.title ?? '');
+    setStructureType(editingHotel.structureType ?? 'hotel');
+    setDescription(editingHotel.description ?? '');
+    setPrice(editingHotel.price !== undefined ? String(editingHotel.price) : '');
+    setAmenities(editingHotel.amenities ?? []);
+    setStreet(addr?.street ?? '');
+    setCity(addr?.city ?? '');
+    setState(addr?.state ?? '');
+    setPostalCode(addr?.postalCode ?? '');
+    setCountry(addr?.country ?? '');
+    setAddressInput([addr?.street, addr?.city, addr?.state, addr?.country].filter(Boolean).join(', '));
+    setExistingImages(editingHotel.images ?? []);
+  }, [editingHotel]);
 
   const toggleAmenity = (item: string) => {
     setAmenities(prev =>
@@ -123,17 +165,14 @@ export default function AddHotelPage() {
     });
   };
 
-  
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) { toast.error('Title is required'); return; }
     if (!price || isNaN(Number(price))) { toast.error('Valid price is required'); return; }
-    if (images.length === 0) { toast.error('Please upload at least one image'); return; }
+    if (images.length === 0 && existingImages.length === 0) { toast.error('Please upload at least one image'); return; }
     if (!street || !city || !country) { toast.error('Please select a valid address from the suggestions'); return; }
 
     try {
-   
       const fd = new FormData();
 
       // Basic info
@@ -149,11 +188,7 @@ export default function AddHotelPage() {
       fd.append('address[street]', String(street.trim()));
       fd.append('address[city]', String(city.trim()));
       fd.append('address[state]', String(state.trim()));
-      // Force postalCode to be a string even if backend tries to parse it
-      // by ensuring it's not purely numeric? No, better to just make sure we
-      // are sending a string and the backend handles it
-      const postalCodeValue = postalCode.trim();
-      fd.append('address[postalCode]', String(postalCodeValue));
+      fd.append('address[postalCode]', String(postalCode.trim()));
       fd.append('address[country]', String(country.trim()));
 
       // Location coordinates structure
@@ -162,21 +197,19 @@ export default function AddHotelPage() {
         fd.append('location[coordinates][1]', String(longitude));
       }
 
-      // Multiple images
+      // New images — backend has no field for specifying which existing images
+      // to keep/remove, so only send this when new images were actually added.
       images.forEach(img => fd.append('image', img.file));
 
-      // Debug: log FormData contents
-      console.log('FormData contents:');
-      for (const [key, value] of fd.entries()) {
-        console.log(`${key}:`, value, `(type: ${typeof value})`);
-      }
+      const res = isEditMode
+        ? await updateProperty({ id: editId, data: fd }).unwrap()
+        : await createProperty(fd).unwrap();
 
-      const res = await createProperty(fd).unwrap();
-      toast.success(res.message ?? 'Hotel created successfully!');
+      toast.success(res.message ?? (isEditMode ? 'Hotel updated successfully!' : 'Hotel created successfully!'));
       router.push('/hotels-partner-dashboard/manage-hotels/list');
     } catch (err) {
       const error = err as { data?: { message?: string } };
-      toast.error(error?.data?.message ?? 'Failed to create hotel');
+      toast.error(error?.data?.message ?? (isEditMode ? 'Failed to update hotel' : 'Failed to create hotel'));
     }
   };
 
@@ -250,9 +283,18 @@ export default function AddHotelPage() {
   };
 
   const addressFilled = !!(street || city || country);
+
+  if (isEditMode && isLoadingEditTarget) {
+    return (
+      <div className="bg-white rounded-sm p-5 md:p-8 border border-[#F2F2F2] shadow-sm flex items-center justify-center py-24">
+        <div className="w-8 h-8 border-2 border-[#F1913D] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-sm p-5 md:p-8 border border-[#F2F2F2] shadow-sm">
-      <h1 className="text-[20px] font-semibold text-[#2C2E33] mb-6">Add New Hotel</h1>
+      <h1 className="text-[20px] font-semibold text-[#2C2E33] mb-6">{isEditMode ? 'Edit Hotel' : 'Add New Hotel'}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
 
@@ -431,6 +473,21 @@ export default function AddHotelPage() {
             <p className="text-[12px] text-[#6C757D] mt-1">PNG, JPG, WEBP up to 10MB each · Multiple allowed</p>
           </div>
           {imageError && <p className="text-red-500 text-[13px] font-medium mt-2">{imageError}</p>}
+          {existingImages.length > 0 && (
+            <>
+              <p className="text-[12px] text-[#6C757D] mt-3 mb-1">Current images (removing individual images isn&apos;t supported yet)</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                {existingImages.map((img, idx) => (
+                  <div key={img} className="relative rounded-[10px] overflow-hidden border border-[#F2F2F2] shadow-sm aspect-square bg-gray-100">
+                    <Image src={getImg(img)} alt={`Current ${idx + 1}`} fill className="object-cover" unoptimized />
+                    {idx === 0 && images.length === 0 && (
+                      <span className="absolute bottom-1.5 left-1.5 bg-[#F1913D] text-white text-[10px] font-medium px-2 py-0.5 rounded-full">Main</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
           {images.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-3">
               {images.map((img, idx) => (
@@ -443,7 +500,7 @@ export default function AddHotelPage() {
                   >
                     <X size={12} strokeWidth={2.5} />
                   </button>
-                  {idx === 0 && (
+                  {idx === 0 && existingImages.length === 0 && (
                     <span className="absolute bottom-1.5 left-1.5 bg-[#F1913D] text-white text-[10px] font-medium px-2 py-0.5 rounded-full">Main</span>
                   )}
                 </div>
@@ -466,7 +523,9 @@ export default function AddHotelPage() {
             disabled={isLoading}
             className="h-12 px-10 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium rounded-[10px] transition-colors shadow-sm cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 text-[14px]"
           >
-            {isLoading ? <><Loader2 size={16} className="animate-spin" /> Creating...</> : 'Add Hotel Property'}
+            {isLoading
+              ? <><Loader2 size={16} className="animate-spin" /> {isEditMode ? 'Updating...' : 'Creating...'}</>
+              : (isEditMode ? 'Update Hotel Property' : 'Add Hotel Property')}
           </button>
         </div>
 

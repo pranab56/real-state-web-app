@@ -87,7 +87,7 @@
     "promo3_link": "Explore Beachside"
   },
   "top_dest": {
-    "title": "Top Destination",
+    "title": "Top Destinations",
     "subtitle": "We have hundreds of place for you to choose from.",
     "book_now": "Book Now",
     "per_night": "/ night"
@@ -256,6 +256,11 @@
   "blog": {
     "breadcrumb_grid": "Blog Grid",
     "title": "Blog",
+    "hero": {
+      "home": "Home",
+      "title": "Insights, Tips & <span class=\"text-primary\">Market Trends</span>",
+      "subtitle": "Stay informed with expert insights, market trends, and tips on real estate, hotels, and transportation across Ethiopia."
+    },
     "read_more": "Read More",
     "search_title": "Search Blog",
     "search_placeholder": "Search Now",

@@ -23,6 +23,7 @@ import {
   Star,
   User
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -83,36 +84,9 @@ export function HotelSidebar() {
       {/* Logo Area */}
       <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-8 h-8 flex-shrink-0">
-            <svg viewBox="0 0 100 100" fill="none" className="w-full h-full">
-              <path
-                d="M20 50L50 25L80 50"
-                stroke="#F1913D"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M30 45L70 45L30 85L70 85"
-                stroke="#F1913D"
-                strokeWidth="12"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M45 55L55 65L85 35"
-                stroke="#2B9724"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className={`relative ${isCollapsed ? "w-[200px] h-[20px]" : "w-[200px] h-[50px]"} flex-shrink-0`}>
+            <Image src="/icons/logo.png" fill className="object-contain" alt="ZilaHomes" />
           </div>
-          {!isCollapsed && (
-            <span className="text-xl font-black text-white tracking-tighter leading-none whitespace-nowrap overflow-hidden">
-              ZilaHomes
-            </span>
-          )}
         </Link>
       </div>
 

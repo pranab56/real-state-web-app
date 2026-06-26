@@ -118,6 +118,7 @@ export interface Reservation {
 }
 
 export interface ApiError {
+  status?: number | string;
   data?: {
     message?: string;
   };

@@ -1,5 +1,6 @@
 'use client';
 
+import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
@@ -28,6 +29,7 @@ import { Hotel, RootState } from '@/types';
 
 const LIMIT = 6;
 const MAX_PRICE = 50000;
+const TYPE_VISIBLE_LIMIT = 6;
 
 const HOTEL_TYPES = [
   'house', 'apartment', 'villa', 'penthouse',
@@ -49,10 +51,10 @@ const getImg = (path?: string) => {
 function HotelsPageContent() {
   const { t } = useTranslation('common');
   const sp = useSearchParams();
-  // ... rest of the existing function content ...
   const token = useSelector((state: RootState) => state.auth?.token);
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
   const [toggleWishlist] = useCreateWishlistToggleMutation();
+  const [showAllTypes, setShowAllTypes] = useState(false);
 
   const handleWishlist = async (id: string) => {
     if (!token) { toast.error('Please login to add to wishlist'); return; }
@@ -245,7 +247,7 @@ function HotelsPageContent() {
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">Hotel Type</h3>
               <div className="flex flex-wrap gap-2">
-                {HOTEL_TYPES.map((type) => (
+                {(showAllTypes ? HOTEL_TYPES : HOTEL_TYPES.slice(0, TYPE_VISIBLE_LIMIT)).map((type) => (
                   <button
                     key={type}
                     onClick={() => handleStructureTypeChange(type)}
@@ -257,6 +259,14 @@ function HotelsPageContent() {
                     {formatType(type)}
                   </button>
                 ))}
+                {HOTEL_TYPES.length > TYPE_VISIBLE_LIMIT && (
+                  <button
+                    onClick={() => setShowAllTypes((prev) => !prev)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all border border-dashed border-primary/40 text-primary hover:bg-primary/5"
+                  >
+                    {showAllTypes ? 'Show Less' : `+${HOTEL_TYPES.length - TYPE_VISIBLE_LIMIT} More`}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -408,13 +418,16 @@ function HotelsPageContent() {
                             </div>
                           </div>
                         </Link>
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-2xl sm:text-3xl font-extrabold text-neutral-1">{hotel.currency ?? 'ETB'} {hotel.price?.toLocaleString() ?? ''}</span>
-                            <span className="text-neutral-2 text-xs sm:text-sm font-medium">{t('hotels.main.per_night')}</span>
+                        <div className="flex flex-col gap-4 pt-4 border-t border-gray-50">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-2xl sm:text-3xl font-extrabold text-neutral-1">{hotel.currency ?? 'ETB'} {hotel.price?.toLocaleString() ?? ''}</span>
+                              <span className="text-neutral-2 text-xs sm:text-sm font-medium">{t('hotels.main.per_night')}</span>
+                            </div>
+                            <PriceConvertButton price={hotel.price} currency={hotel.currency} />
                           </div>
                           <Link href={`/hotels/${hotel._id ?? hotel.id}`}>
-                            <Button className="bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-medium h-10 sm:h-12 px-4 sm:px-6 rounded-sm transition-all active:scale-95 text-sm sm:text-base border-none">{t('hotels.main.book_now')}</Button>
+                            <Button className="w-full bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-medium h-10 sm:h-12 px-4 sm:px-6 rounded-sm transition-all active:scale-95 text-sm sm:text-base border-none">{t('hotels.main.book_now')}</Button>
                           </Link>
                         </div>
                       </div>

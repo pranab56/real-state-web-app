@@ -24,7 +24,7 @@ const FormLabel = ({
   optional?: boolean;
   htmlFor?: string;
 }) => (
-  <label htmlFor={htmlFor} className="block text-sm font-semibold text-neutral-1 mb-1.5">
+  <label htmlFor={htmlFor} className="block text-sm font-medium text-neutral-1 mb-1.5">
     {children}
     {optional && <span className="ml-1.5 text-[11px] font-medium text-neutral-2/50">(optional)</span>}
   </label>
@@ -37,13 +37,16 @@ const Field = ({ children, className }: { children: React.ReactNode; className?:
   <div className={cn('flex flex-col', className)}>{children}</div>
 );
 
+// ── shared light-border style used by Combobox / PlacesAutocomplete on this form ──
+const FIELD_BORDER_CLS = 'border-gray-200 hover:border-primary/30';
+
 const inputCls = (error?: string) =>
   cn(
     FIELD_H,
-    'w-full bg-[#F6F6F6] rounded-sm px-5 text-neutral-1 font-medium text-sm outline-none transition-all border',
+    'w-full bg-[#F6F6F6] rounded-lg px-5 text-neutral-1 font-medium text-sm outline-none transition-all border',
     error
       ? 'border-red-400 bg-red-50/20 focus:ring-2 focus:ring-red-200'
-      : 'border-transparent focus:ring-2 focus:ring-primary/20'
+      : 'border-gray-200 hover:border-primary/30 focus:border-primary/40 focus:ring-2 focus:ring-primary/20'
   );
 
 interface LocationField {
@@ -176,7 +179,7 @@ export default function TransportationPage() {
   return (
     <div className="min-h-screen bg-[#F8F8F8]">
       {/* Hero */}
-      <div className="relative h-[280px] md:h-[420px] flex items-center justify-center text-center px-4 md:px-6">
+      <div className="relative h-[280px] md:h-[520px] flex items-center justify-center text-center px-4 md:px-6">
         <Image
           src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2000&h=800&fit=crop"
           alt="Road Background"
@@ -184,7 +187,7 @@ export default function TransportationPage() {
           className="object-cover brightness-[0.4]"
           priority
         />
-        <div className="relative max-w-4xl space-y-3 md:space-y-4 pt-10 md:pt-0">
+        <div className="relative max-w-4xl space-y-3 md:space-y-4 pt-10 md:pt-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -203,7 +206,7 @@ export default function TransportationPage() {
       </div>
 
       {/* Form Card */}
-      <div className="container mx-auto px-4 md:px-6 -mt-8 md:-mt-10 pb-16 md:pb-24 relative z-10">
+      <div className="container mx-auto px-4 md:px-6 -mt-8 md:-mt-16 pb-16 md:pb-24 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,7 +217,7 @@ export default function TransportationPage() {
 
             {/* ── Contact Information ── */}
             <section className="space-y-4">
-              <h3 className="text-xs font-black text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
+              <h3 className="text-xs font-semibold text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
                 Contact Information
               </h3>
 
@@ -260,7 +263,7 @@ export default function TransportationPage() {
 
             {/* ── Trip Details ── */}
             <section className="space-y-4">
-              <h3 className="text-xs font-black text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
+              <h3 className="text-xs font-semibold text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
                 Trip Details
               </h3>
 
@@ -273,6 +276,7 @@ export default function TransportationPage() {
                     onChange={(v) => { setServiceType(v); clearErr('serviceType'); }}
                     placeholder="Select service type"
                     error={!!errors.serviceType}
+                    className={FIELD_BORDER_CLS}
                   />
                   <FieldError msg={errors.serviceType} />
                 </Field>
@@ -285,6 +289,7 @@ export default function TransportationPage() {
                     onChange={(v) => { setVehicleType(v); clearErr('vehicleType'); }}
                     placeholder="Select vehicle type"
                     error={!!errors.vehicleType}
+                    className={FIELD_BORDER_CLS}
                   />
                   <FieldError msg={errors.vehicleType} />
                 </Field>
@@ -300,6 +305,7 @@ export default function TransportationPage() {
                     clearErr('pickup');
                   }}
                   error={!!errors.pickup}
+                  className={FIELD_BORDER_CLS}
                 />
                 <FieldError msg={errors.pickup} />
               </Field>
@@ -314,6 +320,7 @@ export default function TransportationPage() {
                     clearErr('dropoff');
                   }}
                   error={!!errors.dropoff}
+                  className={FIELD_BORDER_CLS}
                 />
                 <FieldError msg={errors.dropoff} />
               </Field>
@@ -339,6 +346,7 @@ export default function TransportationPage() {
                     value={passengers}
                     onChange={setPassengers}
                     placeholder="Passengers"
+                    className={FIELD_BORDER_CLS}
                   />
                 </Field>
 
@@ -349,6 +357,7 @@ export default function TransportationPage() {
                     value={luggage}
                     onChange={setLuggage}
                     placeholder="Luggage"
+                    className={FIELD_BORDER_CLS}
                   />
                 </Field>
               </div>
@@ -369,7 +378,7 @@ export default function TransportationPage() {
 
             {/* ── Passenger ── */}
             <section className="space-y-4">
-              <h3 className="text-xs font-black text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
+              <h3 className="text-xs font-semibold text-neutral-2/70 uppercase tracking-widest pb-2 border-b border-gray-100">
                 Passenger
               </h3>
               <Field>

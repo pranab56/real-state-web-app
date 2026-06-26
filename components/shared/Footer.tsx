@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCreateNewsletterMutation } from "@/features/newsletter/newsletterApi";
 import { Loader2 } from "lucide-react";
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from "react";
@@ -14,30 +15,9 @@ function Logo() {
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-1.5">
-        <div className="relative w-12 h-12">
+        <div className="relative w-70 h-20">
           {/* Logo SVG matching the image design */}
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-            {/* Roof shape */}
-            <path d="M20 50L50 25L80 50" stroke="#F1913D" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-            {/* Z Shape components */}
-            <path d="M30 45L70 45L30 85L70 85" stroke="#F1913D" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
-            {/* Green accent stroke */}
-            <path d="M45 55L55 65L85 35" stroke="#2B9724" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <div className="flex flex-col">
-          <div className="flex items-baseline">
-            <span className="text-2xl font-medium text-white tracking-tight">Zila</span>
-            <span className="text-2xl font-medium text-white tracking-tight">Homes</span>
-            <span className="text-[10px] text-white/80 font-medium ml-0.5">™</span>
-          </div>
-          <div className="flex items-center gap-1 -mt-1 text-[7px] text-neutral-2 font-semibold tracking-widest uppercase">
-            <span>Verified</span>
-            <span>•</span>
-            <span>Trusted</span>
-            <span>•</span>
-            <span>Connected</span>
-          </div>
+          <Image src={"/icons/logo.png"} fill alt="ZilaHomes" />
         </div>
       </div>
     </div>
@@ -73,7 +53,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#1E2024] text-white py-12 md:py-16 px-4 md:px-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
           {/* Brand Column */}
           <div className="md:col-span-4 flex flex-col items-center md:items-start gap-6 md:gap-10 text-center md:text-left">

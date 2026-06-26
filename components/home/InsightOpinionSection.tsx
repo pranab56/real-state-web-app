@@ -1,5 +1,6 @@
 'use client';
 
+import { BlogPost } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -8,7 +9,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useGetAllBlogsQuery } from '../../features/blog/blogsApi';
-import { BlogPost } from '@/types';
 
 const getImg = (path?: string) => {
   if (!path) return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
@@ -39,7 +39,7 @@ export default function InsightOpinionSection() {
           {blogs.map((blog: BlogPost, index: number) => (
             <motion.div
               key={blog._id}
-              initial={{ opacity: 0, y: 30 }}
+
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}

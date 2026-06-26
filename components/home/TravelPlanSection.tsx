@@ -60,7 +60,6 @@ export default function TravelPlanSection() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-10 md:mb-16 space-y-2 md:space-y-4">
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-2xl md:text-4xl font-medium px-4"
@@ -76,7 +75,6 @@ export default function TravelPlanSection() {
             {travelCards.map((card, idx) => (
               <Link href={card.href} key={idx} className="block">
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
@@ -105,7 +103,6 @@ export default function TravelPlanSection() {
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="bg-[#FFF9F2] rounded-3xl md:rounded-[1.5rem] overflow-hidden flex flex-col lg:flex-row relative min-h-0 md:min-h-[450px]"
@@ -137,7 +134,6 @@ export default function TravelPlanSection() {
         <div className="container mx-auto px-4 md:px-6 text-center">
           <div className="space-y-2 md:space-y-4 mb-10 md:mb-16">
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-2xl md:text-4xl font-medium text-neutral-1"
@@ -153,7 +149,6 @@ export default function TravelPlanSection() {
             {howItWorks.map((item, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}

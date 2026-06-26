@@ -38,7 +38,7 @@ export default function HelpSection() {
         {/* Header */}
         <div className="text-center mb-10 md:mb-16 space-y-2 md:space-y-4 px-4">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-2xl md:text-4xl font-medium text-neutral-1"
@@ -46,7 +46,7 @@ export default function HelpSection() {
             {t('help.title')}
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
@@ -61,7 +61,7 @@ export default function HelpSection() {
           {services.map((service, index) => (
             <Link href={service.href} key={index} className="block">
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}

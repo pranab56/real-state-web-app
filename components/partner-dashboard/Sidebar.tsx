@@ -18,10 +18,12 @@ import {
   FileText,
   Heart,
   LayoutDashboard,
+  Loader2,
   LogOut,
   Star,
   User
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -42,6 +44,7 @@ export function Sidebar() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLinkClick = () => {
     if (window.innerWidth < 1024) {
@@ -49,7 +52,9 @@ export function Sidebar() {
     }
   };
 
-  const handleLogoutConfirm = () => {
+  const handleLogoutConfirm = async () => {
+    setIsLoggingOut(true);
+    await new Promise(r => setTimeout(r, 800));
     dispatch(logout());
     router.push('/login');
   };
@@ -62,36 +67,10 @@ export function Sidebar() {
       {/* Logo Area */}
       <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-8 h-8 flex-shrink-0">
-            <svg viewBox="0 0 100 100" fill="none" className="w-full h-full">
-              <path
-                d="M20 50L50 25L80 50"
-                stroke="#F1913D"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M30 45L70 45L30 85L70 85"
-                stroke="#F1913D"
-                strokeWidth="12"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M45 55L55 65L85 35"
-                stroke="#2B9724"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className={`relative ${isCollapsed ? "w-[200px] h-[20px]" : "w-[200px] h-[50px]"} flex-shrink-0`}>
+            <Image src="/icons/logo.png" fill className="object-contain" alt="ZilaHomes" />
           </div>
-          {!isCollapsed && (
-            <span className="text-xl font-black text-white tracking-tighter leading-none whitespace-nowrap overflow-hidden">
-              ZilaHomes
-            </span>
-          )}
+
         </Link>
       </div>
 
@@ -180,15 +159,21 @@ export function Sidebar() {
           <DialogFooter className="flex flex-row gap-3 mt-2">
             <button
               onClick={() => setShowLogoutModal(false)}
-              className="flex-1 h-11 rounded-xl border border-gray-200 text-neutral-2 font-semibold text-sm hover:bg-gray-50 transition-colors cursor-pointer"
+              disabled={isLoggingOut}
+              className="flex-1 h-11 rounded-xl border border-gray-200 text-neutral-2 font-semibold text-sm hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleLogoutConfirm}
-              className="flex-1 h-11 rounded-xl bg-[#DC3545] hover:bg-[#DC3545]/90 text-white font-semibold text-sm transition-colors cursor-pointer"
+              disabled={isLoggingOut}
+              className="flex-1 h-11 rounded-xl bg-[#DC3545] hover:bg-[#DC3545]/90 text-white font-semibold text-sm transition-colors cursor-pointer disabled:opacity-80 flex items-center justify-center gap-2"
             >
-              Yes, Logout
+              {isLoggingOut ? (
+                <><Loader2 size={16} className="animate-spin" /> Logging out...</>
+              ) : (
+                'Yes, Logout'
+              )}
             </button>
           </DialogFooter>
         </DialogContent>

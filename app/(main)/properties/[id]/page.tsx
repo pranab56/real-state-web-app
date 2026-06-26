@@ -1,5 +1,6 @@
 'use client';
 
+import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +8,7 @@ import { useCreateInquiryMutation } from '@/features/inquiry/inquiryApi';
 import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/listings/listingsApi';
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
+import { logout } from '@/features/auth/authSlice';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,11 +36,22 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
+
+const isTokenExpired = (token?: string | null) => {
+  if (!token) return true;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (!payload?.exp) return false;
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+};
 
 const getImg = (path?: string) => {
   if (!path) return FALLBACK_IMG;
@@ -86,6 +99,7 @@ export default function PropertyDetailPage() {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const token = useSelector((state: RootState) => state.auth?.token);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -96,16 +110,31 @@ export default function PropertyDetailPage() {
   const [createInquiry, { isLoading: isSending }] = useCreateInquiryMutation();
   const [createReview, { isLoading: isSubmittingReview }] = useCreateReviewMutation();
 
+  const redirectToLogin = (message = 'Your session has expired. Please login again.') => {
+    dispatch(logout());
+    toast.error(message);
+    router.push('/login');
+  };
+
+  const tokenExpired = isTokenExpired(token);
+
   const userId = (() => {
-    if (!token) return undefined;
+    if (!token || tokenExpired) return undefined;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload._id ?? payload.userId ?? payload.id ?? payload.sub ?? undefined;
     } catch { return undefined; }
   })();
 
+  // a logged-in session whose token has already expired should be treated as logged out
+  useEffect(() => {
+    if (token && tokenExpired) {
+      redirectToLogin();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, tokenExpired]);
+
   const { data: apiData, isLoading } = useGetSingleListingQuery({ id, userId }, { skip: !id });
-  console.log("apiData", apiData);
   const { data: featuredApiData } = useGetAllListingsQuery({ category: 'listing', page: 1, limit: 3, isFeatured: true, isVerified: true });
   const { data: reviewsData } = useGetReviewsByPropertyQuery({ property: id, }, { skip: !id });
 
@@ -123,6 +152,7 @@ export default function PropertyDetailPage() {
 
   const handleWishlist = async () => {
     if (!token) { toast.error('Please login to add to wishlist'); return; }
+    if (tokenExpired) { redirectToLogin(); return; }
     setIsWishlisted(prev => !prev);
     try {
       const res = await toggleWishlist({ property: id }).unwrap();
@@ -131,6 +161,7 @@ export default function PropertyDetailPage() {
     } catch (err) {
       const error = err as ApiError;
       setIsWishlisted(prev => !prev);
+      if (error?.status === 401) { redirectToLogin(); return; }
       toast.error(error?.data?.message ?? 'Failed to update wishlist');
     }
   };
@@ -163,6 +194,7 @@ export default function PropertyDetailPage() {
   };
   const onReplySubmit = async (data: ReplyFormValues) => {
     if (!token) { toast.error('Please login to leave a review'); return; }
+    if (tokenExpired) { redirectToLogin(); return; }
     if (reviewRating === 0) { toast.error('Please select a rating'); return; }
     try {
       const res = await createReview({ property: id, rating: reviewRating, comment: data.comment }).unwrap();
@@ -171,6 +203,7 @@ export default function PropertyDetailPage() {
       setReviewRating(0);
     } catch (err) {
       const error = err as ApiError;
+      if (error?.status === 401) { redirectToLogin(); return; }
       toast.error(error?.data?.message ?? 'Failed to submit review');
     }
   };
@@ -200,7 +233,7 @@ export default function PropertyDetailPage() {
   return (
     <div className="min-h-screen bg-white pt-10">
       {/* Photo Gallery */}
-      <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-12">
+      <section className="container mx-auto px-4 md:px-6 pt-6 md:pt-20">
         <div className="flex flex-col gap-8 md:gap-12">
           <button
             onClick={() => router.back()}
@@ -266,10 +299,13 @@ export default function PropertyDetailPage() {
           <div className="flex flex-row items-center justify-between lg:justify-end gap-6 lg:text-right w-full lg:w-auto pt-4 lg:pt-0 border-t lg:border-none border-gray-100">
             <div>
               {price != null && (
-                <h2 className="text-3xl md:text-4xl font-black text-primary uppercase">
-                  {currency} {price.toLocaleString()}
-                  {purpose === 'for rent' && <span className="text-xs md:text-sm text-neutral-2 font-medium lowercase"> /month</span>}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-3xl md:text-4xl font-black text-primary uppercase">
+                    {currency} {price.toLocaleString()}
+                    {purpose === 'for rent' && <span className="text-xs md:text-sm text-neutral-2 font-medium lowercase"> /month</span>}
+                  </h2>
+                  <PriceConvertButton price={price} currency={currency} />
+                </div>
               )}
             </div>
             <div className="flex gap-2 sm:gap-3">

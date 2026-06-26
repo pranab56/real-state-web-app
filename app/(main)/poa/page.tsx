@@ -123,7 +123,7 @@ export default function POAPage() {
     <div className="min-h-screen bg-white">
 
       {/* ── Hero ── */}
-      <section className="container mx-auto px-4 md:px-6 pt-24 pb-12 md:pt-24 md:pb-20">
+      <section className="container mx-auto px-4 md:px-6 pt-24 pb-12 md:pt-32 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -203,7 +203,7 @@ export default function POAPage() {
           {/* Image panel */}
           <div className="lg:w-1/2 relative min-h-[250px] md:min-h-[400px]">
             <Image
-              src="/images/company/image1.png"
+              src="/images/poa.png"
               alt={t('poa.consultation_img_alt')}
               fill
               className="object-cover brightness-[0.9]"

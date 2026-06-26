@@ -32,7 +32,7 @@ export default function WhyChoose() {
         {/* Header */}
         <div className="text-center mb-10 md:mb-16 space-y-2 md:space-y-4 px-4">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-2xl md:text-4xl font-medium text-neutral-1 leading-tight"
@@ -40,7 +40,6 @@ export default function WhyChoose() {
             {t('why.title')}
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
@@ -55,7 +54,6 @@ export default function WhyChoose() {
           {benefits.map((benefit, index) => (
             <Link href="/poa" key={index} className="block h-full">
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}

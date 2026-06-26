@@ -16,14 +16,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { Hotel, Reservation, RootState, Review, Transaction } from '@/types';
-import {
-  Area,
-  AreaChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=150&auto=format&fit=crop';
 
@@ -57,14 +49,6 @@ const getTxStatusStyle = (status: string) => {
 
 const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 
-const chartData = [
-  { name: 'JAN', value: 100 }, { name: 'FEB', value: 300 },
-  { name: 'MAR', value: 200 }, { name: 'APR', value: 120 },
-  { name: 'MAY', value: 80 },  { name: 'JUN', value: 450 },
-  { name: 'JUL', value: 380 }, { name: 'AUG', value: 360 },
-  { name: 'SEP', value: 650 }, { name: 'OCT', value: 50 },
-  { name: 'NOV', value: 450 }, { name: 'DEC', value: 80 },
-];
 
 export function Overview() {
   const userId = useSelector((state: RootState) => state.auth?.user?._id);
@@ -313,29 +297,6 @@ export function Overview() {
 
       </div>
 
-      {/* ── Chart ── */}
-      <div className="bg-white p-6 rounded-lg border border-[#F2F2F2] shadow-sm">
-        <div className="mb-6">
-          <h2 className="text-[18px] font-semibold text-[#2C2E33]">Booking Trend</h2>
-          <p className="text-[13px] text-[#6C757D] mt-0.5 font-medium">Overview for the past 12 months</p>
-        </div>
-        <div className="h-[260px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#F1913D" stopOpacity={0.5} />
-                  <stop offset="95%" stopColor="#F1913D" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#A1A1A1', fontSize: 12, fontWeight: 600 }} dy={10} />
-              <YAxis hide />
-              <Tooltip contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', fontWeight: 600 }} />
-              <Area type="monotone" dataKey="value" stroke="#F1913D" strokeWidth={2.5} fillOpacity={1} fill="url(#colorValue)" activeDot={{ r: 5, fill: '#fff', stroke: '#F1913D', strokeWidth: 2.5 }} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
     </div>
   );

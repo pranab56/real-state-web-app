@@ -1,10 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Slider } from '@/components/ui/slider';
 import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
+import { Hotel } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
-import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
 import { motion } from 'framer-motion';
 import {
   Bath,
@@ -22,11 +22,12 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hotel } from '@/types';
 
 const LIMIT = 6;
 const MAX_PRICE = 500000;
 const MAX_AREA = 10000;
+const TYPE_VISIBLE_LIMIT = 6;
+const FEATURED_VISIBLE_LIMIT = 4;
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 
@@ -45,40 +46,12 @@ const getImg = (path?: string) => {
   return `${baseURL}${path}`;
 };
 
-function PriceConvertButton({ price, currency }: { price?: number; currency?: string }) {
-  const [trigger, { isFetching }] = useLazyGetExchangeRatesQuery();
-  const [convertedText, setConvertedText] = useState<string | null>(null);
-
-  if (currency !== 'USD' || price == null) return null;
-
-  const handleConvert = async () => {
-    try {
-      const res = await trigger('USD').unwrap();
-      const rate = res?.rates?.ETB;
-      if (!rate) return;
-      setConvertedText(`ETB ${Math.round(price * rate).toLocaleString()}`);
-      setTimeout(() => setConvertedText(null), 3000);
-    } catch {
-      // conversion is a non-critical enhancement — fail silently
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={handleConvert}
-      disabled={isFetching}
-      className="shrink-0 h-7 px-2.5 rounded-full border border-primary/30 text-primary text-[10px] sm:text-[11px] font-medium hover:bg-primary hover:text-white transition-all disabled:opacity-60 cursor-pointer whitespace-nowrap"
-    >
-      {isFetching ? '...' : convertedText ?? 'Convert ETB'}
-    </button>
-  );
-}
 
 function PropertiesPageContent() {
   const { t } = useTranslation('common');
   const sp = useSearchParams();
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
+  const [showAllTypes, setShowAllTypes] = useState(false);
 
   // ── Pagination & search — initialise from URL params ──
   const [page, setPage] = useState(1);
@@ -292,7 +265,7 @@ function PropertiesPageContent() {
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">Property Type</h3>
               <div className="flex flex-wrap gap-2">
-                {STRUCTURE_TYPES.map((type) => (
+                {(showAllTypes ? STRUCTURE_TYPES : STRUCTURE_TYPES.slice(0, TYPE_VISIBLE_LIMIT)).map((type) => (
                   <button
                     key={type}
                     onClick={() => handleStructureTypeChange(type)}
@@ -304,6 +277,14 @@ function PropertiesPageContent() {
                     {formatType(type)}
                   </button>
                 ))}
+                {STRUCTURE_TYPES.length > TYPE_VISIBLE_LIMIT && (
+                  <button
+                    onClick={() => setShowAllTypes((prev) => !prev)}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all border border-dashed border-primary/40 text-primary hover:bg-primary/5"
+                  >
+                    {showAllTypes ? 'Show Less' : `+${STRUCTURE_TYPES.length - TYPE_VISIBLE_LIMIT} More`}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -365,37 +346,30 @@ function PropertiesPageContent() {
           </div>
 
           {/* Featured mini list */}
-          <div className="space-y-6 border border-gray-100 bg-white p-6 rounded-2xl">
+          <div className="border border-gray-100 bg-white p-6 rounded-2xl space-y-6">
             <h3 className="font-medium text-neutral-1">{t('listing.sidebar.featured_homes')}</h3>
             {featuredList.length === 0 ? (
               <p className="text-sm text-neutral-2 text-center py-4">No featured properties</p>
             ) : (
-              featuredList.map((item: Hotel, idx: number) => (
-                <Link href={`/properties/${item._id ?? item.id}`} key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
-                  <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                    <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-medium text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{item.title ?? item.name}</h4>
-                    <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">
-                      {item.listing?.bedrooms ?? 0} {t('featured.property.beds')} | {item.listing?.bathrooms ?? 0} {t('featured.property.baths')}
-                    </p>
-                    <p className="text-sm font-black text-primary">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</p>
-                  </div>
-                </Link>
-              ))
+              <div
+                className={`space-y-6 ${featuredList.length > FEATURED_VISIBLE_LIMIT ? 'max-h-[360px] overflow-y-auto pr-2 custom-scrollbar' : ''}`}
+              >
+                {featuredList.map((item: Hotel, idx: number) => (
+                  <Link href={`/properties/${item._id ?? item.id}`} key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                      <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-medium text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{item.title ?? item.name}</h4>
+                      <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">
+                        {item.listing?.bedrooms ?? 0} {t('featured.property.beds')} | {item.listing?.bathrooms ?? 0} {t('featured.property.baths')}
+                      </p>
+                      <p className="text-sm font-black text-primary">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             )}
-          </div>
-
-          {/* CTA */}
-          <div className="relative rounded-2xl overflow-hidden min-h-[400px] flex flex-col justify-end">
-            <Image src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?q=80&w=800&h=1200&fit=crop" alt="Agent" fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-            <div className="relative p-8 space-y-6 text-white">
-              <h3 className="text-2xl font-black leading-tight tracking-tight">{t('listing.sidebar.agent_title')}</h3>
-              <p className="text-sm text-white/80 font-medium">{t('listing.sidebar.agent_desc')}</p>
-              <Button className="w-full bg-[#F1913D] hover:bg-white hover:text-primary text-white font-medium h-12 rounded-xl transition-all border-none">{t('listing.sidebar.agent_btn')}</Button>
-            </div>
           </div>
         </aside>
 
@@ -435,7 +409,7 @@ function PropertiesPageContent() {
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
               {listings.map((item: Hotel, index: number) => (
                 <motion.div key={item._id ?? item.id ?? index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }}>
-                  <div className="group bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 relative">
+                  <Link href={`/properties/${item._id ?? item.id}`} className="group block bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 relative">
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute top-4 left-4 flex gap-2">
@@ -449,9 +423,9 @@ function PropertiesPageContent() {
                           <h3 className="text-xl sm:text-2xl font-black text-neutral-1">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</h3>
                           <PriceConvertButton price={item.price} currency={item.currency} />
                         </div>
-                        <Link href={`/properties/${item._id ?? item.id}`} className="text-base sm:text-lg font-medium text-neutral-1 hover:text-primary transition-colors line-clamp-1 block leading-tight">
+                        <p className="text-base sm:text-lg font-medium text-neutral-1 group-hover:text-primary transition-colors line-clamp-1 leading-tight">
                           {item.title ?? item.name}
-                        </Link>
+                        </p>
                         <div className="flex items-start gap-1.5 text-neutral-2">
                           <MapPin size={16} className="mt-1 flex-shrink-0 text-primary w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           <p className="font-medium text-[13px] sm:text-sm italic line-clamp-1">
@@ -474,7 +448,7 @@ function PropertiesPageContent() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </motion.div>
               ))}
             </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { useCreateWishlistToggleMutation, useGetMyWishlistsQuery } from '@/features/wishlists/wishlistsApi';
 import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
@@ -191,9 +192,12 @@ export default function WishlistPage() {
                       </div>
 
                       {/* Price */}
-                      <p className="text-[20px] font-bold text-[#F1913D]">
-                        {property.currency} {property.price?.toLocaleString()}
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-[20px] font-bold text-[#F1913D]">
+                          {property.currency} {property.price?.toLocaleString()}
+                        </p>
+                        <PriceConvertButton price={property.price} currency={property.currency} />
+                      </div>
 
                       {/* Address */}
                       {addressStr && (

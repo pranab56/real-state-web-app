@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Strict Mode double-invokes effects in dev, which disconnects/reconnects
+  // framer-motion's whileInView IntersectionObservers and replays scroll
+  // animations on first load. Disabled so animations only play once.
+  reactStrictMode: false,
   experimental: {
     serverActions: {
       allowedOrigins: ['10.10.7.37', '192.168.1.202'],

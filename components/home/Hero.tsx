@@ -63,6 +63,12 @@ export default function Hero() {
   const { data: settingsData } = useGetSettingsQuery({});
   const contactInfo = settingsData?.data?.contactInfo;
 
+  const phone = contactInfo?.phone ?? '7070';
+  const whatsApp = contactInfo?.whatsApp ?? 'WhatsApp';
+  const email = contactInfo?.email ?? 'Support@zillahomes.com';
+  const phoneHref = phone.replace(/[^\d+]/g, '');
+  const whatsAppHref = whatsApp.replace(/[^\d]/g, '');
+
 
   // ── Form fields ──
   const [heroSearch, setHeroSearch] = useState('');
@@ -137,39 +143,44 @@ export default function Hero() {
           {/* Main Content */}
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-5xl mx-auto space-y-4 md:space-y-6">
             <h1
-              className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-medium text-white tracking-tight leading-[1.2] md:leading-[1.1] px-2"
+              className="text-2xl sm:text-4xl md:text-6xl lg:text-6xl font-medium text-white tracking-tight leading-[1.2] md:leading-[1.1] px-2"
               dangerouslySetInnerHTML={{ __html: t('hero.title') }}
             />
-            <p className="text-sm sm:text-base md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed px-4 md:px-0 opacity-80 md:opacity-100">
+            <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-medium leading-relaxed px-4 md:px-0 opacity-80 md:opacity-100">
               {t('hero.subtitle')}
             </p>
 
             {/* Contact Row */}
             <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-8 pt-2 md:pt-4 px-2">
-              <div className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none">
+              <a href={`tel:${phoneHref}`} className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-white/10 backdrop-blur-md p-2.5 md:p-3 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                   <Image src="/icons/hero/phone.png" alt="Phone" width={32} height={32} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-white font-medium text-xs sm:text-sm md:text-lg">{contactInfo?.phone ?? '7070'}</span>
-              </div>
+                <span className="text-white font-medium text-xs sm:text-sm md:text-lg">{phone}</span>
+              </a>
 
               <div className="w-px h-6 bg-white/30 hidden md:block" />
 
-              <div className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none">
+              <a
+                href={whatsAppHref ? `https://wa.me/${whatsAppHref}` : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none"
+              >
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm p-2 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                   <Image src="/icons/hero/whats.png" alt="WhatsApp" width={48} height={48} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-white font-medium text-xs sm:text-sm md:text-lg">{contactInfo?.whatsApp ?? 'WhatsApp'}</span>
-              </div>
+                <span className="text-white font-medium text-xs sm:text-sm md:text-lg">{whatsApp}</span>
+              </a>
 
               <div className="w-px h-6 bg-white/30 hidden md:block" />
 
-              <div className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none">
+              <a href={`mailto:${email}`} className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none w-full sm:w-auto justify-center">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm p-2.5 md:p-3 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                   <Image src="/icons/hero/email.png" alt="Email" width={32} height={32} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-white font-medium text-xs sm:text-sm md:text-lg truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">{contactInfo?.email ?? 'Support@zillahomes.com'}</span>
-              </div>
+                <span className="text-white font-medium text-xs sm:text-sm md:text-lg break-all">{email}</span>
+              </a>
             </div>
           </motion.div>
 

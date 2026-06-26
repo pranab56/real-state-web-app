@@ -1,5 +1,6 @@
 'use client';
 
+import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Combobox } from '@/components/ui/combobox';
@@ -15,6 +16,7 @@ import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/feature
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { cn } from '@/lib/utils';
 import { baseURL } from '@/utils/BaseURL';
+import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
@@ -81,12 +83,12 @@ const DatePicker = ({
   const [open, setOpen] = useState(false);
   return (
     <div className={cn('space-y-1.5 sm:space-y-2 w-full', className)}>
-      <label className="text-[10px] sm:text-xs font-black w-full text-neutral-2 uppercase tracking-wider ml-1">{label}</label>
+      <label className="text-[10px] sm:text-xs font-medium w-full text-neutral-2 uppercase tracking-wider ml-1">{label}</label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger className="w-full">
           <button
             className={cn(
-              'w-full h-10 sm:h-12 bg-[#F6F6F6] border-none flex items-center justify-start text-left font-medium shadow-none hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
+              'w-full h-10 sm:h-12 bg-[#F6F6F6] border border-gray-200 flex items-center justify-start text-left font-medium shadow-none hover:border-primary/30 hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
               !date ? 'text-neutral-2' : 'text-neutral-1'
             )}
           >
@@ -138,6 +140,8 @@ export default function HotelDetailPage() {
   const [guestKey, setGuestKey] = useState('2');
   const [roomClass, setRoomClass] = useState('deluxe');
   const [bookingCurrency, setBookingCurrency] = useState<typeof CURRENCY_OPTIONS[number]>('USD');
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+  const [trigger, { isFetching: isFetchingRate }] = useLazyGetExchangeRatesQuery();
 
   const token = useSelector((state: RootState) => state.auth?.token);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -159,12 +163,41 @@ export default function HotelDetailPage() {
   const { data: similarApiData } = useGetAllListingsQuery({ category: 'accommodation', page: 1, limit: 3 });
   const h: Hotel | undefined = apiData?.data;
 
-  // Sync wishlist status from backend data
-  // We use useMemo to get the value directly from props/data to avoid useEffect setState
-  const initialWishlisted = h?.isWishlisted ?? false;
+  // Sync wishlist status from backend data once it loads (adjusted during render, not in an effect)
+  const [prevH, setPrevH] = useState(h);
+  if (h !== prevH) {
+    setPrevH(h);
+    if (h) setIsWishlisted(h.isWishlisted ?? false);
+  }
+
   useEffect(() => {
-    setIsWishlisted(initialWishlisted);
-  }, [initialWishlisted]);
+    const fetchRate = async () => {
+      try {
+        const res = await trigger('USD').unwrap();
+        const rate = res?.rates?.ETB;
+        if (rate) setExchangeRate(rate);
+      } catch (err) {
+        console.error('Failed to fetch exchange rate', err);
+      }
+    };
+    fetchRate();
+  }, [trigger]);
+
+  const images: string[] = h?.images ?? [];
+  const title: string = h?.title ?? h?.name ?? '';
+  const description: string = h?.description ?? '';
+  const price: number | undefined = h?.price;
+  const currency: string = h?.currency ?? 'ETB';
+
+  const nights = checkIn && checkOut ? Math.max(1, Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24))) : 0;
+  const totalPrice = price != null ? price * (nights || 1) : 0;
+
+  const getConvertedPrice = (amount: number) => {
+    if (bookingCurrency === 'ETB' && exchangeRate) {
+      return `ETB ${Math.round(amount * exchangeRate).toLocaleString()}`;
+    }
+    return `${currency} ${amount.toLocaleString()}`;
+  };
 
   const handleWishlist = async () => {
     if (!token) { toast.error('Please login to add to wishlist'); return; }
@@ -238,11 +271,6 @@ export default function HotelDetailPage() {
     );
   }
 
-  const images: string[] = h?.images ?? [];
-  const title: string = h?.title ?? h?.name ?? '';
-  const description: string = h?.description ?? '';
-  const price: number | undefined = h?.price;
-  const currency: string = h?.currency ?? 'ETB';
   const address = h?.address;
   const addressStr = [address?.street, address?.city, address?.country].filter(Boolean).join(', ');
   const amenities: string[] = h?.amenities ?? [];
@@ -277,7 +305,7 @@ export default function HotelDetailPage() {
                 {h.status}
               </span>
             )}
-            <h1 className="text-3xl md:text-5xl font-black text-neutral-1 tracking-tight">{title}</h1>
+            <h1 className="text-3xl md:text-5xl font-medium text-neutral-1 tracking-tight">{title}</h1>
             {rating > 0 && (
               <div className="flex items-center gap-2">
                 <div className="flex gap-0.5">
@@ -291,17 +319,20 @@ export default function HotelDetailPage() {
             {addressStr && (
               <div className="flex items-center gap-2">
                 <MapPin size={18} className="text-primary shrink-0" />
-                <span className="text-xs sm:text-sm font-extrabold text-neutral-2 opacity-80">{addressStr}</span>
+                <span className="text-xs sm:text-sm font-medium text-neutral-2 opacity-80">{addressStr}</span>
               </div>
             )}
           </div>
           <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-6 lg:text-right">
             {price != null && (
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-black text-neutral-1">
-                  {currency} {price.toLocaleString()}
-                  <span className="text-xs sm:text-sm text-neutral-2 font-medium opacity-60"> / night</span>
-                </h2>
+              <div className="flex items-center gap-4">
+                <div>
+                  <h2 className="text-3xl sm:text-4xl font-medium text-neutral-1">
+                    {currency} {price.toLocaleString()}
+                    <span className="text-xs sm:text-sm text-neutral-2 font-medium opacity-60"> / night</span>
+                  </h2>
+                </div>
+                <PriceConvertButton price={price} currency={currency} />
               </div>
             )}
             <div className="flex gap-2 sm:gap-3">
@@ -391,7 +422,7 @@ export default function HotelDetailPage() {
                           ) : (
                             <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center">
                               {initials !== '?' ? (
-                                <span className="text-primary font-bold text-sm">{initials}</span>
+                                <span className="text-primary font-medium text-sm">{initials}</span>
                               ) : (
                                 <User size={16} className="text-primary" />
                               )}
@@ -401,8 +432,8 @@ export default function HotelDetailPage() {
                         <div className="flex-1 min-w-0 space-y-1.5">
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-sm font-semibold text-neutral-1">{displayName}</span>
-                              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${ratingInfo.color}`}>
+                              <span className="text-sm font-medium text-neutral-1">{displayName}</span>
+                              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${ratingInfo.color}`}>
                                 {ratingInfo.label}
                               </span>
                             </div>
@@ -425,7 +456,7 @@ export default function HotelDetailPage() {
               {(ratingCount ?? reviews.length) > 2 && (
                 <Link
                   href={`/hotels/${id}/reviews`}
-                  className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 rounded-xl text-sm font-semibold text-neutral-1 hover:border-primary hover:text-primary transition-all"
+                  className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 rounded-xl text-sm font-medium text-neutral-1 hover:border-primary hover:text-primary transition-all"
                 >
                   See All {ratingCount} Reviews
                   <ChevronRight size={16} />
@@ -482,7 +513,7 @@ export default function HotelDetailPage() {
           {/* Booking Sidebar */}
           <aside className="space-y-8">
             <div className="bg-[#FAF6F2] rounded-lg p-6 sm:p-6 space-y-8 sm:space-y-10 border border-primary/5">
-              <h3 className="text-xl sm:text-2xl font-black text-neutral-1 flex items-center gap-3">
+              <h3 className="text-xl sm:text-2xl font-medium text-neutral-1 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg">
                   <Bookmark className="w-6 h-6" />
                 </div>
@@ -495,27 +526,29 @@ export default function HotelDetailPage() {
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
-                  <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Guests</label>
+                  <label className="text-[10px] sm:text-xs font-medium text-neutral-2 uppercase tracking-wider ml-1">Guests</label>
                   <Combobox
                     options={GUEST_OPTIONS}
                     value={guestKey}
                     onChange={setGuestKey}
                     placeholder="Select guests"
+                    className="border-gray-200 hover:border-primary/30"
                   />
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
-                  <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Room Type</label>
+                  <label className="text-[10px] sm:text-xs font-medium text-neutral-2 uppercase tracking-wider ml-1">Room Type</label>
                   <Combobox
                     options={ROOM_OPTIONS}
                     value={roomClass}
                     onChange={setRoomClass}
                     placeholder="Select room type"
+                    className="border-gray-200 hover:border-primary/30"
                   />
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">
-                  <label className="text-[10px] sm:text-xs font-black text-neutral-2 uppercase tracking-wider ml-1">Currency</label>
+                  <label className="text-[10px] sm:text-xs font-medium text-neutral-2 uppercase tracking-wider ml-1">Currency</label>
                   <div className="flex gap-3 sm:gap-4">
                     {CURRENCY_OPTIONS.map((opt) => (
                       <label
@@ -524,7 +557,7 @@ export default function HotelDetailPage() {
                           'flex-1 flex items-center justify-center gap-2 h-10 sm:h-12 rounded-lg border text-xs sm:text-sm font-medium cursor-pointer transition-all',
                           bookingCurrency === opt
                             ? 'bg-primary text-white border-primary'
-                            : 'bg-[#F6F6F6] text-neutral-2 border-transparent hover:border-primary/30'
+                            : 'bg-[#F6F6F6] text-neutral-2 border-gray-200 hover:border-primary/30'
                         )}
                       >
                         <input
@@ -543,20 +576,24 @@ export default function HotelDetailPage() {
 
                 {price != null && (
                   <div className="space-y-3 sm:space-y-4 pt-6 sm:pt-8 border-t border-primary/10">
-                    <div className="flex justify-between items-center text-xs sm:text-sm">
-                      <span className="text-neutral-2 font-extrabold">{currency} {price.toLocaleString()} / night</span>
+                    <div className="flex justify-between items-center text-xs sm:text-sm font-medium uppercase tracking-tight">
+                      <span className="text-neutral-2">{getConvertedPrice(price)} / night</span>
+                      {nights > 0 && <span className="text-neutral-2">{nights} night{nights > 1 ? 's' : ''}</span>}
                     </div>
-                    <div className="flex justify-between pt-4 sm:pt-6 border-t border-primary/10 text-lg sm:text-xl font-black tracking-tight">
-                      <span className="text-neutral-1">Price</span>
-                      <span className="text-primary">{currency} {price.toLocaleString()}</span>
+                    <div className="flex justify-between pt-4 sm:pt-6 border-t border-primary/10 text-lg sm:text-xl font-medium tracking-tight">
+                      <span className="text-neutral-1">Total Price</span>
+                      <span className="text-primary">{getConvertedPrice(totalPrice)}</span>
                     </div>
+                    {bookingCurrency === 'ETB' && isFetchingRate && (
+                      <p className="text-[10px] text-neutral-2 italic animate-pulse text-center">Updating exchange rate...</p>
+                    )}
                   </div>
                 )}
 
                 <Button
                   onClick={handleBook}
                   disabled={isBooking}
-                  className="w-full h-14 bg-primary hover:bg-primary text-white font-black rounded-xl transition-all active:scale-95 text-lg tracking-tighter cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full h-14 bg-primary hover:bg-primary text-white font-medium rounded-xl transition-all active:scale-95 text-base cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isBooking ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : 'Book This Hotel'}
                 </Button>
@@ -571,51 +608,56 @@ export default function HotelDetailPage() {
         <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-24 space-y-8 sm:space-y-12 bg-gray-50/50">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div className="space-y-3 sm:space-y-4 text-left">
-              <h2 className="text-3xl sm:text-4xl font-black text-neutral-1 tracking-tight">Top Destinations</h2>
+              <h2 className="text-3xl sm:text-4xl font-medium text-neutral-1 tracking-tight">Top Destinations</h2>
               <p className="text-sm sm:text-base text-neutral-2 font-medium">Explore hundreds of luxury stays across the globe.</p>
             </div>
             <Link href="/hotels">
               <Button variant="outline" className="h-10 sm:h-12 px-6 sm:px-8 rounded-lg font-medium border-gray-200 hover:bg-primary hover:text-white transition-all shadow-sm w-fit">View All</Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {similarList.map((hotel: Hotel, i: number) => (
               <motion.div
                 key={hotel._id ?? i}
-                className="group bg-white rounded-2xl overflow-hidden shadow-2xl shadow-black/[0.03] hover:shadow-primary/5 transition-all duration-700"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500"
               >
                 <Link href={`/hotels/${hotel._id ?? hotel.id}`}>
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image src={getImg(hotel.images?.[0])} alt={hotel.title ?? hotel.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                     {hotel.isVerified && (
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-[#2B9724] text-white text-[10px] font-black px-4 py-2 rounded-full uppercase shadow-xl tracking-widest">Verified</span>
+                      <span className="absolute top-4 left-4 bg-[#2B9724] text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg">Verified</span>
+                    )}
+                  </div>
+                </Link>
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="space-y-1.5">
+                    <Link href={`/hotels/${hotel._id ?? hotel.id}`} className="text-base sm:text-lg font-medium text-neutral-1 hover:text-primary transition-colors line-clamp-1 block">
+                      {hotel.title ?? hotel.name}
+                    </Link>
+                    {hotel.address && (
+                      <div className="flex items-center gap-1.5 text-neutral-2">
+                        <MapPin size={14} className="text-primary flex-shrink-0" />
+                        <p className="text-xs sm:text-sm font-medium line-clamp-1">{[hotel.address.street, hotel.address.city].filter(Boolean).join(', ')}</p>
                       </div>
                     )}
                   </div>
-                  <div className="p-6 sm:p-8 space-y-5 sm:space-y-6">
-                    <div className="space-y-2 sm:space-y-3">
-                      <h3 className="text-xl sm:text-2xl font-black text-neutral-1 group-hover:text-primary transition-colors leading-none tracking-tighter">
-                        {hotel.title ?? hotel.name}
-                      </h3>
-                      {hotel.address && (
-                        <div className="flex items-center gap-2 text-neutral-2 text-[9px] sm:text-[10px] font-black uppercase tracking-widest opacity-40">
-                          <MapPin size={12} className="text-primary flex-shrink-0 sm:w-3.5 sm:h-3.5" />
-                          <p>{[hotel.address.street, hotel.address.city].filter(Boolean).join(', ')}</p>
-                        </div>
-                      )}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-50 gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-lg sm:text-xl font-medium text-neutral-1">{hotel.currency ?? 'ETB'} {hotel.price?.toLocaleString() ?? ''}</span>
+                      <span className="text-xs text-neutral-2 font-medium">/ night</span>
+                      <PriceConvertButton price={hotel.price} currency={hotel.currency} />
                     </div>
-                    <div className="flex items-center justify-between pt-6 sm:pt-8 border-t border-gray-50">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-xl sm:text-2xl font-black text-neutral-1">{hotel.currency ?? 'ETB'} {hotel.price?.toLocaleString() ?? ''}</span>
-                        <span className="text-[9px] sm:text-[10px] text-neutral-2 font-medium opacity-40">/ night</span>
-                      </div>
-                      <Button size="sm" className="bg-primary px-4 sm:px-6 py-5 sm:py-6 rounded-lg font-black cursor-pointer hover:bg-primary/80 uppercase text-[9px] sm:text-[10px] tracking-widest transition-all shadow-lg shadow-primary/20">
+                    <Link href={`/hotels/${hotel._id ?? hotel.id}`}>
+                      <Button size="sm" className="bg-primary hover:bg-primary/90 px-4 sm:px-5 h-9 rounded-lg font-medium cursor-pointer text-xs sm:text-sm transition-all shadow-sm">
                         Book Now
                       </Button>
-                    </div>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               </motion.div>
             ))}
           </div>

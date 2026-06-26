@@ -15,7 +15,7 @@ export const manageHotelsApi = baseApi.injectEndpoints({
 
     updateProperty: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/properties/${id}`,
+        url: `/properties/accommodation/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -33,13 +33,11 @@ export const manageHotelsApi = baseApi.injectEndpoints({
 
     deleteProperty: builder.mutation({
       query: ({ propertyId }) => ({
-        url: `/properties/${propertyId}`,
+        url: `/properties/my-property/${propertyId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Property"],
     }),
-
-
   }),
 });
 

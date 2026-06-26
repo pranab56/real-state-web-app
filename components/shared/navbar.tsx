@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from '@/features/auth/authSlice';
 import { cn } from '@/lib/utils';
+import { RootState } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, ChevronDown, LogOut, Menu, User, UserCircle, X } from 'lucide-react';
 import Image from 'next/image';
@@ -18,7 +19,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../ui/button';
-import { RootState } from '@/types';
 
 const PROFILE_ROUTE: Record<string, string> = {
   customer: '/partner-dashboard',
@@ -104,20 +104,15 @@ export function Navbar() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-3 md:px-6',
-        showBackground ? 'bg-[#1E2024]/80 backdrop-blur-md py-2.5 md:py-3 shadow-xl' : 'bg-transparent py-4 md:py-6'
+        showBackground ? 'bg-[#1E2024]/80 backdrop-blur-md py-4 md:py-5 shadow-xl' : 'bg-transparent py-4 md:py-6'
       )}
     >
-      <div className="max-w-[1440px] mx-auto flex items-center justify-between relative z-10 w-full overflow-hidden">
+      <div className="container mx-auto flex items-center justify-between relative z-10 w-full overflow-hidden">
 
         {/* Logo */}
         <Link href="/" className="flex items-center shrink-0">
-          <div className="relative h-7 md:h-12 w-28 sm:w-32 md:w-48">
-            <div className="hidden md:block relative w-full h-full">
-              <Image src="/icons/logo.png" alt="Zila Homes" fill className="object-contain" priority />
-            </div>
-            <div className="block md:hidden relative w-full h-full">
-              <Image src="/icons/mobile-logo.png" alt="Zila Homes" fill className="object-contain" priority />
-            </div>
+          <div className="relative h-12 md:h-14 w-32 sm:w-36 md:w-56">
+            <Image src="/icons/logoOne.png" alt="Zila Homes" fill className="object-contain" priority />
           </div>
         </Link>
 
