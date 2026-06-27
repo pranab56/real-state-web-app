@@ -17,6 +17,7 @@ import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsA
 import { cn } from '@/lib/utils';
 import { baseURL } from '@/utils/BaseURL';
 import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
@@ -24,6 +25,7 @@ import {
   Calendar as CalendarIcon,
   ChevronRight,
   Heart,
+  Info,
   Loader2,
   MapPin,
   MessageSquare,
@@ -144,6 +146,8 @@ export default function HotelDetailPage() {
   const [trigger, { isFetching: isFetchingRate }] = useLazyGetExchangeRatesQuery();
 
   const token = useSelector((state: RootState) => state.auth?.token);
+  const user = useSelector((state: RootState) => state.auth?.user);
+  const isHost = user?.role === 'host';
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [reviewRating, setReviewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -209,12 +213,13 @@ export default function HotelDetailPage() {
     } catch (err) {
       const error = err as ApiError;
       setIsWishlisted(prev => !prev);
-      toast.error(error?.data?.message ?? 'Failed to update wishlist');
+      toast.error(getErrorMessage(error, 'Failed to update wishlist'));
     }
   };
 
   const handleBook = async () => {
     if (!token) { toast.error('Please login to book'); return; }
+    if (isHost) { toast.error('Host accounts cannot book stays. Please use a customer account.'); return; }
     if (!checkIn) { toast.error('Please select a check-in date'); return; }
     if (!checkOut) { toast.error('Please select a check-out date'); return; }
     const selectedGuests = GUEST_OPTIONS.find(o => o.value === guestKey)?.guests ?? { adults: 2, children: 0, pets: 0 };
@@ -233,7 +238,7 @@ export default function HotelDetailPage() {
       }
     } catch (err) {
       const error = err as ApiError;
-      toast.error(error?.data?.message || 'Failed to create reservation');
+      toast.error(getErrorMessage(error, 'Failed to create reservation'));
     }
   };
   const similarList: Hotel[] = similarApiData?.data ?? [];
@@ -251,6 +256,7 @@ export default function HotelDetailPage() {
 
   const onReplySubmit = async (data: ReplyFormValues) => {
     if (!token) { toast.error('Please login to leave a review'); return; }
+    if (isHost) { toast.error('Host accounts cannot leave reviews. Please use a customer account.'); return; }
     if (reviewRating === 0) { toast.error('Please select a rating'); return; }
     try {
       const res = await createReview({ property: id, rating: reviewRating, comment: data.comment }).unwrap();
@@ -259,7 +265,7 @@ export default function HotelDetailPage() {
       setReviewRating(0);
     } catch (err) {
       const error = err as ApiError;
-      toast.error(error?.data?.message || 'Failed to submit review');
+      toast.error(getErrorMessage(error, 'Failed to submit review'));
     }
   };
 
@@ -467,6 +473,12 @@ export default function HotelDetailPage() {
             {/* Leave A Reply */}
             <div className="space-y-8 bg-[#FDFDFD] p-10 rounded-3xl border border-gray-100">
               <h3 className="text-2xl font-medium text-neutral-1">Leave A Reply</h3>
+              {isHost && (
+                <div className="flex items-start gap-2.5 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl px-4 py-3">
+                  <Info size={16} className="mt-0.5 shrink-0" />
+                  <p>You&apos;re signed in with a host account. Switch to a customer account to leave a review.</p>
+                </div>
+              )}
               <form className="space-y-6" onSubmit={replyForm.handleSubmit(onReplySubmit)}>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-neutral-1 ml-1">Your Rating</label>
@@ -475,10 +487,11 @@ export default function HotelDetailPage() {
                       <button
                         key={star}
                         type="button"
+                        disabled={isHost}
                         onClick={() => setReviewRating(star)}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
-                        className="cursor-pointer p-0.5 transition-transform hover:scale-110"
+                        className="cursor-pointer p-0.5 transition-transform hover:scale-110 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:opacity-50"
                       >
                         <Star
                           size={28}
@@ -492,8 +505,9 @@ export default function HotelDetailPage() {
                   <label className="text-sm font-medium text-neutral-1 ml-1">Your Review</label>
                   <Textarea
                     placeholder="Write comments here..."
+                    disabled={isHost}
                     {...replyForm.register('comment')}
-                    className={`min-h-[150px] bg-[#F6F6F6] border-none rounded-lg p-6 font-medium resize-none shadow-none ${replyForm.formState.errors.comment ? 'ring-2 ring-red-500' : ''}`}
+                    className={`min-h-[150px] bg-[#F6F6F6] border-none rounded-lg p-6 font-medium resize-none shadow-none disabled:opacity-50 disabled:cursor-not-allowed ${replyForm.formState.errors.comment ? 'ring-2 ring-red-500' : ''}`}
                   />
                   {replyForm.formState.errors.comment && (
                     <p className="text-red-500 text-xs font-medium mt-1 ml-1">{replyForm.formState.errors.comment.message}</p>
@@ -501,10 +515,10 @@ export default function HotelDetailPage() {
                 </div>
                 <Button
                   type="submit"
-                  disabled={isSubmittingReview}
+                  disabled={isSubmittingReview || isHost}
                   className="h-12 px-10 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg shadow-lg shadow-primary/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
                 >
-                  {isSubmittingReview ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : 'Post Comment'}
+                  {isSubmittingReview ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : isHost ? 'Reviews Unavailable' : 'Post Comment'}
                 </Button>
               </form>
             </div>
@@ -519,6 +533,12 @@ export default function HotelDetailPage() {
                 </div>
                 Reserve Stay
               </h3>
+              {isHost && (
+                <div className="flex items-start gap-2.5 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl px-4 py-3">
+                  <Info size={16} className="mt-0.5 shrink-0" />
+                  <p>You&apos;re signed in with a host account. Switch to a customer account to book a stay.</p>
+                </div>
+              )}
               <div className="space-y-5 sm:space-y-6">
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   <DatePicker className="w-full" label="Check In" date={checkIn} setDate={setCheckIn} minDate={new Date()} />
@@ -592,10 +612,10 @@ export default function HotelDetailPage() {
 
                 <Button
                   onClick={handleBook}
-                  disabled={isBooking}
+                  disabled={isBooking || isHost}
                   className="w-full h-14 bg-primary hover:bg-primary text-white font-medium rounded-xl transition-all active:scale-95 text-base cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isBooking ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : 'Book This Hotel'}
+                  {isBooking ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : isHost ? 'Booking Unavailable' : 'Book This Hotel'}
                 </Button>
               </div>
             </div>

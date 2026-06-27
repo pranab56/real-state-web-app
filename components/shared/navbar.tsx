@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { logout } from '@/features/auth/authSlice';
+import { useGetAllNotificationQuery } from '@/features/notification/notificationApi';
 import { cn } from '@/lib/utils';
 import { RootState } from '@/types';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -37,6 +38,9 @@ export function Navbar() {
   const token = useSelector((state: RootState) => state.auth?.token);
   const user = useSelector((state: RootState) => state.auth?.user);
   const isLoggedIn = !!token;
+
+  const { data: notificationData } = useGetAllNotificationQuery({ page: 1 }, { skip: !isLoggedIn });
+  const unreadCount: number = notificationData?.data?.unreadCount ?? 0;
 
   const isHome = pathname === '/';
 
@@ -215,14 +219,18 @@ export function Navbar() {
           {isLoggedIn ? (
             <>
               {/* Notification Bell */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
-              >
-                <Bell size={18} className="text-white/80 md:w-5 md:h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-[#1E2024]" />
-              </motion.div>
+              <Link href="/notification">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
+                >
+                  <Bell size={18} className="text-white/80 md:w-5 md:h-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-[#1E2024]" />
+                  )}
+                </motion.div>
+              </Link>
 
               {/* Profile Dropdown */}
               <DropdownMenu>

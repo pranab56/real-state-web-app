@@ -101,7 +101,17 @@ export interface WishlistItem {
 
 export interface Reservation {
   _id: string;
+  uid?: string;
   property: Hotel;
+  customer?: {
+    _id?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    image?: string;
+    isVerified?: boolean;
+  };
   guests: {
     adults: number;
     children: number;
@@ -112,15 +122,23 @@ export interface Reservation {
   status: string;
   roomClass: string;
   pricing?: {
+    pricePerUnit?: number;
+    units?: number;
+    subtotal?: number;
+    serviceFee?: number;
+    discount?: number;
     total?: number;
     currency?: string;
+    isPaid?: boolean;
   };
+  createdAt?: string;
 }
 
 export interface ApiError {
   status?: number | string;
   data?: {
     message?: string;
+    errorMessages?: { path?: string; message: string }[];
   };
   message?: string;
 }

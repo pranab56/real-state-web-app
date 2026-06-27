@@ -68,7 +68,7 @@ export function Sidebar() {
       <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
         <Link href="/" className="flex items-center gap-2 group">
           <div className={`relative ${isCollapsed ? "w-[200px] h-[20px]" : "w-[200px] h-[50px]"} flex-shrink-0`}>
-            <Image src="/icons/logo.png" fill className="object-contain" alt="ZilaHomes" />
+            <Image src="/icons/logoOne.png" fill className="object-contain" alt="ZilaHomes" />
           </div>
 
         </Link>

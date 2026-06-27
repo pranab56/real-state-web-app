@@ -20,7 +20,6 @@ export const profileApi = baseApi.injectEndpoints({
       invalidatesTags: ["Profile"],
     }),
 
-
     changePassword: builder.mutation({
       query: (data) => ({
         url: `/auth/change-password`,
@@ -33,6 +32,22 @@ export const profileApi = baseApi.injectEndpoints({
       invalidatesTags: ["Profile"],
     }),
 
+    verificationKYC: builder.mutation({
+      query: (data) => ({
+        url: `/users/kyc`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Profile"],
+    }),
+
+    getMyKYC: builder.query({
+      query: () => ({
+        url: `/users/kyc/me`,
+        method: "GET",
+      }),
+      providesTags: ["Profile"],
+    }),
 
   }),
 });
@@ -40,5 +55,7 @@ export const profileApi = baseApi.injectEndpoints({
 export const {
   useGetProfileQuery,
   useUpdateProfileMutation,
-  useChangePasswordMutation
+  useChangePasswordMutation,
+  useVerificationKYCMutation,
+  useGetMyKYCQuery
 } = profileApi;

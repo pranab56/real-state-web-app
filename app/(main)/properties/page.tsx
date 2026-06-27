@@ -72,6 +72,11 @@ function PropertiesPageContent() {
   const [bedrooms, setBedrooms] = useState<number>(() => Number(sp.get('bedrooms') ?? 0));
   const [bathrooms, setBathrooms] = useState<number>(() => Number(sp.get('bathrooms') ?? 0));
   const [city, setCity] = useState(() => sp.get('city') ?? '');
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(() => {
+    const lat = sp.get('latitude');
+    const lng = sp.get('longitude');
+    return lat && lng ? { lat: Number(lat), lng: Number(lng) } : null;
+  });
 
   // debounce search
   useEffect(() => {
@@ -124,6 +129,7 @@ function PropertiesPageContent() {
     ...(bedrooms > 0 && { bedrooms }),
     ...(bathrooms > 0 && { bathrooms }),
     ...(city && { city }),
+    ...(coords && { latitude: coords.lat, longitude: coords.lng }),
   };
 
   const { data, isLoading, isFetching } = useGetAllListingsQuery(queryArgs);
@@ -174,12 +180,13 @@ function PropertiesPageContent() {
     setBedrooms(0);
     setBathrooms(0);
     setCity('');
+    setCoords(null);
     setPage(1);
   };
 
   const hasActiveFilters =
     searchInput || priceRange[0] > 0 || priceRange[1] < MAX_PRICE ||
-    areaRange[0] > 0 || areaRange[1] < MAX_AREA || structureType || bedrooms > 0 || bathrooms > 0 || city;
+    areaRange[0] > 0 || areaRange[1] < MAX_AREA || structureType || bedrooms > 0 || bathrooms > 0 || city || coords;
 
   return (
     <div className="min-h-screen bg-white">

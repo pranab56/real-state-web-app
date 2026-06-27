@@ -20,7 +20,6 @@ import {
   LayoutDashboard,
   Loader2,
   LogOut,
-  Star,
   User
 } from 'lucide-react';
 import Image from 'next/image';
@@ -49,9 +48,13 @@ const sidebarItems: SidebarItem[] = [
       { name: 'Add Hotel', href: '/hotels-partner-dashboard/manage-hotels/add' },
     ],
   },
+  {
+    name: 'Confrim Bookings',
+    href: '/hotels-partner-dashboard/bookings',
+    icon: Hotel,
+  },
   { name: 'Wishlist', href: '/hotels-partner-dashboard/wishlist', icon: Heart },
   { name: 'Payment History', href: '/hotels-partner-dashboard/payments', icon: FileText },
-  { name: 'Guest Reviews', href: '/hotels-partner-dashboard/reviews', icon: Star },
   { name: 'Profile', href: '/hotels-partner-dashboard/profile', icon: User },
 ];
 
@@ -85,7 +88,7 @@ export function HotelSidebar() {
       <div className={cn("p-6 flex items-center", isCollapsed ? "justify-center" : "")}>
         <Link href="/" className="flex items-center gap-2 group">
           <div className={`relative ${isCollapsed ? "w-[200px] h-[20px]" : "w-[200px] h-[50px]"} flex-shrink-0`}>
-            <Image src="/icons/logo.png" fill className="object-contain" alt="ZilaHomes" />
+            <Image src="/icons/logoOne.png" fill className="object-contain" alt="ZilaHomes" />
           </div>
         </Link>
       </div>

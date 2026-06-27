@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
+import { GooglePlaceResult, GooglePlacesInput } from '@/components/ui/google-places-input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useGetSettingsQuery } from '@/features/settings/settingsApi';
@@ -23,8 +24,6 @@ const ALL_STRUCTURE_TYPES = [
   'office', 'shop', 'warehouse', 'farmhouse',
   'hotel', 'resort', 'guest_house', 'treehouse', 'houseboat',
 ];
-const CITIES = ['Addis Ababa', 'Dire Dawa', 'Hawassa', 'Bahir Dar', 'Mekelle', 'Gondar', 'Adama'];
-
 const formatType = (t: string) =>
   t.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
@@ -38,7 +37,6 @@ const STAR_RATING_OPTIONS = [
   { value: '3', label: '3 Stars' },
 ];
 const STRUCTURE_TYPE_OPTIONS = ALL_STRUCTURE_TYPES.map((t) => ({ value: t, label: formatType(t) }));
-const CITY_OPTIONS = CITIES.map((c) => ({ value: c, label: c }));
 const BEDROOM_OPTIONS = [
   { value: '1', label: '1 Bedroom' },
   { value: '2', label: '2 Bedrooms' },
@@ -72,6 +70,7 @@ export default function Hero() {
 
   // ── Form fields ──
   const [heroSearch, setHeroSearch] = useState('');
+  const [heroCoords, setHeroCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [purpose, setPurpose] = useState('buy');
   const [structureType, setStructureType] = useState('');
   const [city, setCity] = useState('');
@@ -83,11 +82,28 @@ export default function Hero() {
 
 
   // ── Navigation logic ──
+  const handlePlaceSelect = (result: GooglePlaceResult) => {
+    setHeroSearch(result.address);
+    setHeroCoords({ lat: result.lat, lng: result.lng });
+    setCity(result.city ?? '');
+  };
+
+  const handleSearchTextChange = (text: string) => {
+    setHeroSearch(text);
+    setHeroCoords(null);
+    setCity('');
+  };
+
   const handleSearch = () => {
     setIsSearching(true);
     setTimeout(() => setIsSearching(false), 3000);
     const sp = new URLSearchParams();
-    if (heroSearch.trim()) sp.set('searchTerm', heroSearch.trim());
+    if (heroCoords) {
+      sp.set('latitude', String(heroCoords.lat));
+      sp.set('longitude', String(heroCoords.lng));
+    } else if (heroSearch.trim()) {
+      sp.set('searchTerm', heroSearch.trim());
+    }
     if (structureType && structureType !== 'all') sp.set('structureType', structureType);
     if (city && city !== 'all') sp.set('city', city);
     if (priceRange[0] > 0) sp.set('minPrice', String(priceRange[0]));
@@ -225,20 +241,17 @@ export default function Hero() {
 
               {/* Input Row */}
               <div className="flex flex-col xl:flex-row gap-3 md:gap-4">
-                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
 
-                  {/* Search Input */}
-                  <div className="relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors z-10" size={18} />
-                    <input
-                      type="text"
-                      value={heroSearch}
-                      onChange={(e) => setHeroSearch(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                      placeholder={t('hero.search')}
-                      className="w-full h-11 md:h-12 pl-11 pr-4 bg-[#F2F2F2] border-none rounded-[4px] text-gray-800 placeholder:text-gray-600 text-[13px] md:text-sm font-medium focus:ring-1 focus:ring-primary/20 outline-none"
-                    />
-                  </div>
+                  {/* Search Input — Google Places address autocomplete */}
+                  <GooglePlacesInput
+                    value={heroSearch}
+                    onPlaceSelectAction={handlePlaceSelect}
+                    onTextChange={handleSearchTextChange}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    placeholder={t('hero.search')}
+                    className="!h-11 md:!h-12 !pl-11 !bg-[#F2F2F2] !rounded-[4px] !text-gray-800 placeholder:!text-gray-600 !text-[13px] md:!text-sm focus:!ring-1"
+                  />
 
                   {/* Purpose (Buy / Rent) — real estate only */}
                   {showPropertyFilters ? (
@@ -267,17 +280,6 @@ export default function Hero() {
                     placeholder={showHotelFilters ? 'Select hotel type' : 'Select property'}
                     searchable
                     searchPlaceholder="Search types..."
-                    className="!bg-[#F2F2F2] !h-11 md:!h-12 !rounded-[4px]"
-                  />
-
-                  {/* City */}
-                  <Combobox
-                    options={CITY_OPTIONS}
-                    value={city}
-                    onChange={(v) => setCity(v)}
-                    placeholder="Select city"
-                    searchable
-                    searchPlaceholder="Search cities..."
                     className="!bg-[#F2F2F2] !h-11 md:!h-12 !rounded-[4px]"
                   />
                 </div>
@@ -402,9 +404,6 @@ export default function Hero() {
                           </div>
                         </div>
                       )}
-
-
-
                     </div>
                   </motion.div>
                 )}

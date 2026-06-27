@@ -20,6 +20,8 @@ export const listingsApi = baseApi.injectEndpoints({
         if (params.minArea != null && params.minArea > 0) sp.set('minArea', String(params.minArea));
         if (params.maxArea != null && params.maxArea > 0) sp.set('maxArea', String(params.maxArea));
         if (params.city) sp.set('address.city', params.city);
+        if (params.latitude != null) sp.set('latitude', String(params.latitude));
+        if (params.longitude != null) sp.set('longitude', String(params.longitude));
         const qs = sp.toString();
         return { url: `/properties${qs ? `?${qs}` : ''}`, method: 'GET' };
       },

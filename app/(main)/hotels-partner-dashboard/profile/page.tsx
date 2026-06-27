@@ -1,13 +1,21 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { useChangePasswordMutation, useGetProfileQuery, useUpdateProfileMutation } from '@/features/profile/profileApi';
+import {
+  useChangePasswordMutation,
+  useGetMyKYCQuery,
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useVerificationKYCMutation,
+} from '@/features/profile/profileApi';
+import { ApiError } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
-import { Camera, Eye, EyeOff, Loader2, Shield, User } from 'lucide-react';
+import { Camera, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck, Upload, User, X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { ApiError } from '@/types';
+
+const MAX_KYC_FILES = 5;
 
 const getImg = (path?: string) => {
   if (!path) return null;
@@ -20,11 +28,19 @@ export default function HotelsPartnerDashboardProfile() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const kycInputRef = useRef<HTMLInputElement>(null);
+  const [kycFiles, setKycFiles] = useState<File[]>([]);
+  const [kycPreviews, setKycPreviews] = useState<string[]>([]);
+
   const { data: profileData, isLoading: profileLoading } = useGetProfileQuery({});
+  const { data: kycData, isLoading: kycLoading } = useGetMyKYCQuery({});
   const [updateProfile, { isLoading: updateLoading }] = useUpdateProfileMutation();
   const [changePassword, { isLoading: changePassLoading }] = useChangePasswordMutation();
+  const [submitKYC, { isLoading: kycSubmitting }] = useVerificationKYCMutation();
 
   const profile = profileData?.data;
+  const verification = kycData?.data?.verification;
+  const kycDocuments: string[] = verification?.documents ?? [];
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -49,10 +65,10 @@ export default function HotelsPartnerDashboardProfile() {
       const newFirstName = profile.firstName ?? '';
       const newLastName = profile.lastName ?? '';
       const newPhone = profile.phone ?? '';
-      
-      if (formData.firstName !== newFirstName || 
-          formData.lastName !== newLastName || 
-          formData.phone !== newPhone) {
+
+      if (formData.firstName !== newFirstName ||
+        formData.lastName !== newLastName ||
+        formData.phone !== newPhone) {
         Promise.resolve().then(() => {
           setFormData({
             firstName: newFirstName,
@@ -94,6 +110,54 @@ export default function HotelsPartnerDashboardProfile() {
     }
   };
 
+  // revoke preview object URLs whenever the selection changes or the page unmounts
+  useEffect(() => {
+    return () => { kycPreviews.forEach((url) => URL.revokeObjectURL(url)); };
+  }, [kycPreviews]);
+
+  const handleKycFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    if (files.length > MAX_KYC_FILES) {
+      toast.error(`You can upload a maximum of ${MAX_KYC_FILES} images.`);
+      e.target.value = '';
+      return;
+    }
+    if (files.some((file) => !file.type.startsWith('image/'))) {
+      toast.error('Only image files are allowed.');
+      e.target.value = '';
+      return;
+    }
+    if (files.some((file) => file.size > 5 * 1024 * 1024)) {
+      toast.error('Each image must be under 5MB.');
+      e.target.value = '';
+      return;
+    }
+    setKycFiles(files);
+    setKycPreviews(files.map((file) => URL.createObjectURL(file)));
+    e.target.value = '';
+  };
+
+  const handleRemoveKycFile = (index: number) => {
+    setKycFiles((prev) => prev.filter((_, i) => i !== index));
+    setKycPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmitKyc = async () => {
+    if (kycFiles.length === 0) { toast.error('Please select at least one document to upload.'); return; }
+    try {
+      const fd = new FormData();
+      kycFiles.forEach((file) => fd.append('image', file));
+      const res = await submitKYC(fd).unwrap();
+      toast.success(res.message ?? 'Documents submitted for verification!');
+      setKycFiles([]);
+      setKycPreviews([]);
+    } catch (err) {
+      const error = err as ApiError;
+      toast.error(error?.data?.message ?? 'Failed to submit documents');
+    }
+  };
+
   const handleChangePassword = async () => {
     if (!passwords.currentPassword) { toast.error('Current password is required.'); return; }
     if (!passwords.newPassword || passwords.newPassword.length < 8) { toast.error('New password must be at least 8 characters.'); return; }
@@ -113,6 +177,23 @@ export default function HotelsPartnerDashboardProfile() {
   };
 
   const inputCls = 'bg-[#F5F5F5] border-none h-[52px] rounded-[10px] text-[15px] font-medium text-[#2C2E33] placeholder:text-[#A1A1A1] focus-visible:ring-1 focus-visible:ring-[#F1913D] px-4';
+
+  const kycStatusBadge = (() => {
+    switch (verification?.status) {
+      case 'verified':
+      case 'approved':
+        return <span className="text-[11px] font-semibold text-green-600 bg-green-50 px-2.5 py-1 rounded-full shrink-0">Verified</span>;
+      case 'pending':
+        return <span className="text-[11px] font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full shrink-0">Pending Review</span>;
+      case 'rejected':
+        return <span className="text-[11px] font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-full shrink-0">Rejected</span>;
+      default:
+        return <span className="text-[11px] font-semibold text-[#6C757D] bg-[#F5F5F5] px-2.5 py-1 rounded-full shrink-0">Not Submitted</span>;
+    }
+  })();
+
+  // Re-upload is only allowed before a submission has been reviewed; once verified or rejected, the documents are locked.
+  const canUploadKyc = !verification?.status || verification.status === 'pending';
 
   if (profileLoading) {
     return (
@@ -324,6 +405,138 @@ export default function HotelsPartnerDashboardProfile() {
             {changePassLoading ? <><Loader2 size={16} className="animate-spin" /> Changing...</> : 'Change Password'}
           </button>
         </div>
+      </div>
+
+      {/* KYC Verification */}
+      <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#F2F2F2] shadow-sm">
+        <div className="flex items-start justify-between gap-3 flex-wrap mb-2">
+          <h3 className="text-[15px] font-semibold text-[#2C2E33] flex items-center gap-2">
+            <IdCard size={15} className="text-[#F1913D]" /> KYC Verification
+          </h3>
+          {kycLoading ? null : kycStatusBadge}
+        </div>
+        <p className="text-[13px] text-[#6C757D] font-medium mb-6 max-w-2xl">
+          Verify your identity by uploading a clear photo of your National ID or Passport.
+        </p>
+
+        {kycLoading ? (
+          <div className="flex items-center justify-center py-10">
+            <div className="w-7 h-7 border-2 border-[#F1913D] border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <>
+            {/* Status notices */}
+            {verification?.status === 'rejected' && (
+              <div className="flex items-start gap-2.5 bg-red-50 text-red-600 text-[13px] font-medium rounded-xl px-4 py-3 mb-6">
+                <Info size={16} className="mt-0.5 shrink-0" />
+                <p>
+                  Your documents were rejected{verification?.reviewNotes ? `: ${verification.reviewNotes}` : '.'} Please upload valid documents to try again.
+                </p>
+              </div>
+            )}
+            {verification?.status === 'pending' && (
+              <div className="flex items-start gap-2.5 bg-orange-50 text-orange-600 text-[13px] font-medium rounded-xl px-4 py-3 mb-6">
+                <Clock size={16} className="mt-0.5 shrink-0" />
+                <p>Your documents are under review. We&apos;ll notify you once verification is complete.</p>
+              </div>
+            )}
+            {(verification?.status === 'verified' || verification?.status === 'approved') && (
+              <div className="flex items-start gap-2.5 bg-green-50 text-green-600 text-[13px] font-medium rounded-xl px-4 py-3 mb-6">
+                <ShieldCheck size={16} className="mt-0.5 shrink-0" />
+                <p>Your identity has been verified. Thank you for keeping your account secure.</p>
+              </div>
+            )}
+
+            {/* Already submitted documents */}
+            {kycDocuments.length > 0 && (
+              <div className="mb-6">
+                <p className="text-[14px] font-medium text-[#2C2E33] mb-3">
+                  Submitted Documents
+                  {verification?.submittedAt && (
+                    <span className="text-[12px] text-[#6C757D] font-medium"> · {new Date(verification.submittedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                  )}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                  {kycDocuments.map((doc, i) => (
+                    <a
+                      key={i}
+                      href={getImg(doc) ?? '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2] block group"
+                    >
+                      <Image src={getImg(doc) ?? ''} alt={`KYC document ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Upload new documents — only while not yet reviewed (no submission yet, or still pending) */}
+            {canUploadKyc ? (
+              <>
+                <div className="space-y-3">
+                  <p className="text-[14px] font-medium text-[#2C2E33]">
+                    {kycDocuments.length > 0 ? 'Re-upload Documents' : 'Upload Documents'}
+                  </p>
+
+                  {kycPreviews.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                      {kycPreviews.map((src, i) => (
+                        <div key={i} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2]">
+                          <Image src={src} alt={`Selected document ${i + 1}`} fill className="object-cover" unoptimized />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveKycFile(i)}
+                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors cursor-pointer"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => kycInputRef.current?.click()}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-dashed border-[#F1913D]/40 text-[#F1913D] font-medium text-[14px] px-5 py-3 rounded-[10px] hover:bg-[#F1913D]/5 transition-colors cursor-pointer"
+                  >
+                    <Upload size={16} /> Choose Images (NID / Passport)
+                  </button>
+                  <input
+                    ref={kycInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleKycFilesChange}
+                  />
+                  <p className="text-[12px] text-[#6C757D] font-medium">
+                    Accepted formats: JPG, PNG · Up to {MAX_KYC_FILES} images · Max 5MB each
+                  </p>
+                </div>
+
+                <div className="flex justify-end mt-8 pt-6 border-t border-[#F2F2F2]">
+                  <button
+                    type="button"
+                    onClick={handleSubmitKyc}
+                    disabled={kycSubmitting || kycFiles.length === 0}
+                    className="px-8 py-3 rounded-[10px] bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium text-[15px] shadow-sm transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {kycSubmitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : 'Submit for Verification'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p className="text-[13px] text-[#6C757D] font-medium">
+                {verification?.status === 'rejected'
+                  ? 'Document upload is locked for this submission. Please contact support if you believe this was a mistake.'
+                  : 'Your documents have been verified.'}
+              </p>
+            )}
+          </>
+        )}
       </div>
 
     </div>

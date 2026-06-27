@@ -8,11 +8,12 @@ import { ChevronLeft, ChevronRight, Eye, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetMyReservationQuery } from '../../../../features/reservation/page';
+import { useGetMyHotelBookingReservationQuery } from '../../../../features/hotelPartner/confrimBooking/confrimBookingApi';
 
-const ADMIN_NEXT_STATUSES: Record<string, { value: string; label: string }[]> = {
-  confirmed: [
-    { value: 'completed', label: 'Completed' },
+const HOST_NEXT_STATUSES: Record<string, { value: string; label: string }[]> = {
+  pending: [
+    { value: 'confirmed', label: 'Confirmed' },
+    { value: 'cancelled', label: 'Cancelled' },
   ],
 };
 
@@ -44,7 +45,7 @@ export default function PartnerDashboardBookings() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const userId = useSelector((state: RootState) => state.auth?.user?._id);
-  const { data, isLoading } = useGetMyReservationQuery({ page, userId }, { skip: !userId });
+  const { data, isLoading } = useGetMyHotelBookingReservationQuery({ page, userId }, { skip: !userId });
 
   const handleViewBooking = (booking: Reservation) => {
     setSelectedBooking(booking);
@@ -198,7 +199,7 @@ export default function PartnerDashboardBookings() {
         booking={selectedBooking}
         open={modalOpen}
         onOpenChangeAction={setModalOpen}
-        allowedNextStatuses={ADMIN_NEXT_STATUSES[selectedBooking?.status ?? ''] ?? []}
+        allowedNextStatuses={HOST_NEXT_STATUSES[selectedBooking?.status ?? ''] ?? []}
       />
     </div>
   );

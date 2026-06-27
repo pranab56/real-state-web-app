@@ -1,6 +1,7 @@
 'use client';
 
 import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
+import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface PriceConvertButtonProps {
@@ -25,7 +26,7 @@ export function PriceConvertButton({ price, currency }: PriceConvertButtonProps)
       const rate = res?.rates?.ETB;
       if (!rate) return;
       setConvertedText(`ETB ${Math.round(price * rate).toLocaleString()}`);
-      setTimeout(() => setConvertedText(null), 3000);
+      setTimeout(() => setConvertedText(null), 5000);
     } catch {
       // conversion is a non-critical enhancement — fail silently
     } finally {
@@ -38,9 +39,9 @@ export function PriceConvertButton({ price, currency }: PriceConvertButtonProps)
       type="button"
       onClick={handleConvert}
       disabled={isLoading}
-      className="shrink-0 h-7 px-2.5 rounded-full border border-primary/30 text-primary text-[10px] sm:text-[11px] font-medium hover:bg-primary hover:text-white transition-all disabled:opacity-60 cursor-pointer whitespace-nowrap"
+      className="shrink-0 inline-flex items-center justify-center min-w-[96px] h-7 px-2.5 rounded-full border border-primary/30 text-primary text-[10px] sm:text-[11px] font-medium hover:bg-primary hover:text-white transition-all disabled:opacity-60 cursor-pointer whitespace-nowrap"
     >
-      {isLoading ? '...' : convertedText ?? 'Convert ETB'}
+      {isLoading ? <Loader2 size={12} className="animate-spin" /> : convertedText ?? 'Convert ETB'}
     </button>
   );
 }
