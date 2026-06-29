@@ -4,20 +4,22 @@ import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Combobox } from '@/components/ui/combobox';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Textarea } from '@/components/ui/textarea';
 import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/listings/listingsApi';
 import { useCreateReservationMutation } from '@/features/reservation/page';
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { cn } from '@/lib/utils';
+import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
@@ -40,9 +42,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ApiError, Hotel, Review, RootState } from '@/types';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200';
 
@@ -218,7 +218,7 @@ export default function HotelDetailPage() {
   };
 
   const handleBook = async () => {
-    if (!token) { toast.error('Please login to book'); return; }
+    if (!token) { toast.error('Please login to book'); return router.push('/login'); }
     if (isHost) { toast.error('Host accounts cannot book stays. Please use a customer account.'); return; }
     if (!checkIn) { toast.error('Please select a check-in date'); return; }
     if (!checkOut) { toast.error('Please select a check-out date'); return; }
