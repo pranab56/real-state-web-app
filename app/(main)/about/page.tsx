@@ -13,6 +13,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 interface InfoCardProps {
@@ -21,9 +22,10 @@ interface InfoCardProps {
   description: string;
   dark?: boolean;
   hasButton?: boolean;
+  href?: string;
 }
 
-const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = false }: InfoCardProps) => {
+const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = false, href }: InfoCardProps) => {
   const { t } = useTranslation('common');
   return (
     <motion.div
@@ -39,10 +41,12 @@ const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = fa
         <h3 className="text-xl font-medium text-neutral-1">{title}</h3>
         <p className="text-sm text-neutral-2 leading-relaxed font-medium">{description}</p>
       </div>
-      {hasButton && (
-        <Button className="bg-[#2D2E32] hover:bg-[#1E1F22] text-white font-medium h-11 px-8 rounded-lg">
-          {t('about.help.learn_more')}
-        </Button>
+      {hasButton && href && (
+        <Link href={href}>
+          <Button className="bg-[#2D2E32] hover:bg-[#1E1F22] text-white font-medium h-11 px-8 rounded-lg cursor-pointer transition-colors">
+            {t('about.help.learn_more')}
+          </Button>
+        </Link>
       )}
     </motion.div>
   );
@@ -157,18 +161,21 @@ export default function AboutPage() {
             title={t('about.help.buy')}
             description={t('about.help.desc')}
             hasButton
+            href="/properties"
           />
           <InfoCard
             icon={Key}
             title={t('about.help.rent')}
             description={t('about.help.desc')}
             hasButton
+            href="/properties"
           />
           <InfoCard
             icon={Tag}
             title={t('about.help.sell')}
             description={t('about.help.desc')}
             hasButton
+            href="/register"
           />
         </div>
       </section>

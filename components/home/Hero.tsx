@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 const MAX_PRICE = 500000;
 const MAX_AREA = 10000;
 
-type MainTab = 'real_estate' | 'hotels' | 'guesthouses' | 'transportation' | 'legal';
+type MainTab = 'real_estate' | 'hotels' | 'guesthouses' | 'transportation' | 'legal' | 'blog';
 
 const ALL_STRUCTURE_TYPES = [
   'house', 'apartment', 'villa', 'penthouse',
@@ -127,6 +127,9 @@ export default function Hero() {
       case 'legal':
         router.push('/poa');
         break;
+      case 'blog':
+        router.push('/blog');
+        break;
       default:
         router.push(`/properties${query}`);
     }
@@ -138,6 +141,7 @@ export default function Hero() {
     { key: 'guesthouses', label: t('hero.guesthouses') },
     { key: 'transportation', label: t('hero.transportation'), directRoute: '/transportation' },
     { key: 'legal', label: t('hero.legal'), directRoute: '/poa' },
+    { key: 'blog', label: t('hero.blog'), directRoute: '/blog' },
   ];
 
   const isDirectTab = activeMainTab === 'transportation' || activeMainTab === 'legal';

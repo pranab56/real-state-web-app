@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { ApiError } from '../../types';
 
 function Logo() {
   return (
@@ -37,8 +38,12 @@ export default function Footer() {
       toast.success(res.message ?? 'Subscribed successfully!');
       setEmail('');
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      toast.error(error?.data?.message ?? 'Failed to subscribe');
+      const error = err as ApiError;
+      toast.error(
+        error.data?.errorMessages?.[0]?.message ??
+        error.data?.message ??
+        "Something went wrong"
+      );
     }
   };
 

@@ -4,13 +4,26 @@ import { useCreatePropertyMutation, useGetAllPropertyQuery, useUpdatePropertyMut
 import { Hotel, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from "framer-motion";
-import { CloudUpload, Loader2, MapPin, X } from 'lucide-react';
+import { ChevronLeft, CloudUpload, Loader2, MapPin, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import * as z from 'zod';
 import { Label } from '../../../../../components/ui/label';
+
+const addHotelSchema = z.object({
+  title: z.string().trim().min(1, 'Hotel title is required'),
+  structureType: z.string().trim().min(1, 'Structure type is required'),
+  price: z.coerce.number().positive('Valid price is required'),
+  description: z.string().trim().min(1, 'Description is required'),
+  amenities: z.array(z.string()).min(1, 'Please select at least one amenity'),
+  street: z.string().trim().min(1, 'Please select a valid address from the suggestions'),
+  city: z.string().trim().min(1, 'Please select a valid address from the suggestions'),
+  country: z.string().trim().min(1, 'Please select a valid address from the suggestions'),
+});
+type AddHotelErrors = Partial<Record<keyof z.infer<typeof addHotelSchema> | 'images', string>>;
 
 const getImg = (path: string) => (path.startsWith('http') ? path : `${baseURL}${path}`);
 
@@ -118,6 +131,7 @@ export default function AddHotelPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+  const [errors, setErrors] = useState<AddHotelErrors>({});
 
   // Prefill the form once the matching property has loaded
   useEffect(() => {
@@ -155,6 +169,7 @@ export default function AddHotelPage() {
     if (oversized) { setImageError('Each image must be under 10MB.'); return; }
     setImageError('');
     setImages(prev => [...prev, ...files.map(file => ({ file, preview: URL.createObjectURL(file) }))]);
+    setErrors(prev => ({ ...prev, images: undefined }));
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -167,10 +182,20 @@ export default function AddHotelPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) { toast.error('Title is required'); return; }
-    if (!price || isNaN(Number(price))) { toast.error('Valid price is required'); return; }
-    if (images.length === 0 && existingImages.length === 0) { toast.error('Please upload at least one image'); return; }
-    if (!street || !city || !country) { toast.error('Please select a valid address from the suggestions'); return; }
+
+    const result = addHotelSchema.safeParse({ title, structureType, price, description, amenities, street, city, country });
+    const fieldErrors: AddHotelErrors = {};
+    if (!result.success) {
+      result.error.issues.forEach(issue => { fieldErrors[issue.path[0] as keyof AddHotelErrors] = issue.message; });
+    }
+    if (images.length === 0 && existingImages.length === 0) {
+      fieldErrors.images = 'Please upload at least one image';
+    }
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors(fieldErrors);
+      return;
+    }
+    setErrors({});
 
     try {
       const fd = new FormData();
@@ -193,8 +218,9 @@ export default function AddHotelPage() {
 
       // Location coordinates structure
       if (latitude !== null && longitude !== null) {
-        fd.append('location[coordinates][0]', String(latitude));
-        fd.append('location[coordinates][1]', String(longitude));
+        // GeoJSON Point requires [longitude, latitude] order, not [latitude, longitude]
+        fd.append('location[coordinates][0]', String(longitude));
+        fd.append('location[coordinates][1]', String(latitude));
       }
 
       // New images — backend has no field for specifying which existing images
@@ -217,6 +243,7 @@ export default function AddHotelPage() {
     const val = e.target.value;
     setAddressInput(val);
     setSuggestions([]);
+    setErrors(prev => ({ ...prev, street: undefined, city: undefined, country: undefined }));
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (val.trim().length < 3) { setShowDropdown(false); return; }
@@ -267,6 +294,7 @@ export default function AddHotelPage() {
     setAddressInput(item.display_name);
     setSuggestions([]);
     setShowDropdown(false);
+    setErrors(prev => ({ ...prev, street: undefined, city: undefined, country: undefined }));
   };
 
   const clearAddress = () => {
@@ -294,6 +322,16 @@ export default function AddHotelPage() {
 
   return (
     <div className="bg-white rounded-sm p-5 md:p-8 border border-[#F2F2F2] shadow-sm">
+      {isEditMode && (
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 -ml-2 text-[#6C757D] hover:text-[#F1913D] font-medium text-[14px] mb-4 cursor-pointer transition-colors"
+        >
+          <ChevronLeft size={18} />
+          Back
+        </button>
+      )}
       <h1 className="text-[20px] font-semibold text-[#2C2E33] mb-6">{isEditMode ? 'Edit Hotel' : 'Add New Hotel'}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -304,50 +342,58 @@ export default function AddHotelPage() {
           <input
             type="text"
             value={title}
-            onChange={e => setTitle(e.target.value)}
+            onChange={e => { setTitle(e.target.value); setErrors(prev => ({ ...prev, title: undefined })); }}
             placeholder="e.g. Grand Plaza Resort & Spa"
-            className={inputCls}
+            className={`${inputCls} ${errors.title ? 'ring-2 ring-red-500' : ''}`}
           />
+          {errors.title && <p className="text-red-500 text-[13px] font-medium mt-1">{errors.title}</p>}
         </div>
 
         {/* Structure Type & Price */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className={labelCls}>Structure Type</label>
-            <select value={structureType} onChange={e => setStructureType(e.target.value)} className={selectCls}>
+            <label className={labelCls}>Structure Type <span className="text-red-400">*</span></label>
+            <select
+              value={structureType}
+              onChange={e => { setStructureType(e.target.value); setErrors(prev => ({ ...prev, structureType: undefined })); }}
+              className={`${selectCls} ${errors.structureType ? 'ring-2 ring-red-500' : ''}`}
+            >
               {STRUCTURE_TYPES.map(t => (
                 <option key={t} value={t} className="capitalize">{t.replace('_', ' ')}</option>
               ))}
             </select>
+            {errors.structureType && <p className="text-red-500 text-[13px] font-medium mt-1">{errors.structureType}</p>}
           </div>
           <div>
             <label className={labelCls}>Price (per night) <span className="text-red-400">*</span></label>
             <input
               type="number"
               value={price}
-              onChange={e => setPrice(e.target.value)}
+              onChange={e => { setPrice(e.target.value); setErrors(prev => ({ ...prev, price: undefined })); }}
               placeholder="e.g. 42"
               min="0"
-              className={inputCls}
+              className={`${inputCls} ${errors.price ? 'ring-2 ring-red-500' : ''}`}
             />
+            {errors.price && <p className="text-red-500 text-[13px] font-medium mt-1">{errors.price}</p>}
           </div>
         </div>
 
         {/* Description */}
         <div>
-          <label className={labelCls}>Description</label>
+          <label className={labelCls}>Description <span className="text-red-400">*</span></label>
           <textarea
             rows={4}
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={e => { setDescription(e.target.value); setErrors(prev => ({ ...prev, description: undefined })); }}
             placeholder="Tell guests what makes your hotel unique..."
-            className="w-full bg-[#F5F5F5] rounded-[10px] p-4 text-[14px] text-[#2C2E33] placeholder:text-[#6C757D] border-none outline-none resize-none focus:ring-1 focus:ring-[#F1913D]"
+            className={`w-full bg-[#F5F5F5] rounded-[10px] p-4 text-[14px] text-[#2C2E33] placeholder:text-[#6C757D] border-none outline-none resize-none focus:ring-1 focus:ring-[#F1913D] ${errors.description ? 'ring-2 ring-red-500' : ''}`}
           />
+          {errors.description && <p className="text-red-500 text-[13px] font-medium mt-1">{errors.description}</p>}
         </div>
 
         {/* Amenities */}
         <div>
-          <label className={labelCls}>Amenities</label>
+          <label className={labelCls}>Amenities <span className="text-red-400">*</span></label>
           <div className="flex flex-wrap gap-2">
             {AMENITIES_LIST.map(item => {
               const selected = amenities.includes(item);
@@ -355,7 +401,7 @@ export default function AddHotelPage() {
                 <button
                   key={item}
                   type="button"
-                  onClick={() => toggleAmenity(item)}
+                  onClick={() => { toggleAmenity(item); setErrors(prev => ({ ...prev, amenities: undefined })); }}
                   className={`text-[13px] font-medium px-3 py-1.5 rounded-full border transition-colors cursor-pointer ${selected
                     ? 'bg-[#F1913D] text-white border-[#F1913D]'
                     : 'bg-[#F5F5F5] text-[#6C757D] border-[#F2F2F2] hover:border-[#F1913D] hover:text-[#F1913D]'
@@ -366,6 +412,7 @@ export default function AddHotelPage() {
               );
             })}
           </div>
+          {errors.amenities && <p className="text-red-500 text-[13px] font-medium mt-1">{errors.amenities}</p>}
         </div>
 
         {/* Address */}
@@ -387,7 +434,7 @@ export default function AddHotelPage() {
                   onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
                   placeholder="Type a city, street or area…"
                   autoComplete="off"
-                  className="w-full h-11 rounded-lg border text-sm pl-9 pr-10 outline-none focus:ring-1 focus:ring-[#F1913D] focus:border-[#F1913D] transition-all"
+                  className={`w-full h-11 rounded-lg border text-sm pl-9 pr-10 outline-none focus:ring-1 focus:ring-[#F1913D] focus:border-[#F1913D] transition-all ${(errors.street || errors.city || errors.country) ? 'ring-2 ring-red-500' : ''}`}
                   style={inputStyle}
                 />
                 {addressInput && (
@@ -420,6 +467,9 @@ export default function AddHotelPage() {
                 </div>
               )}
             </div>
+            {(errors.street || errors.city || errors.country) && (
+              <p className="text-red-500 text-[13px] font-medium mt-1">{errors.street || errors.city || errors.country}</p>
+            )}
           </Field>
 
           {/* Parsed address shown after selection */}
@@ -453,7 +503,7 @@ export default function AddHotelPage() {
 
         {/* Image Upload */}
         <div>
-          <label className={labelCls}>Upload Images</label>
+          <label className={labelCls}>Upload Images <span className="text-red-400">*</span></label>
           <input
             ref={fileInputRef}
             type="file"
@@ -464,7 +514,7 @@ export default function AddHotelPage() {
           />
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="w-full bg-[#F5F5F5] rounded-[10px] py-10 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed border-[#E5E5E5] hover:border-[#F1913D] group"
+            className={`w-full bg-[#F5F5F5] rounded-[10px] py-10 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors border-2 border-dashed group ${errors.images ? 'border-red-500' : 'border-[#E5E5E5] hover:border-[#F1913D]'}`}
           >
             <div className="w-14 h-14 bg-[#FFF4ED] group-hover:bg-[#F1913D]/15 rounded-2xl flex items-center justify-center mb-2 transition-colors">
               <CloudUpload className="text-[#F1913D]" size={28} strokeWidth={1.5} />
@@ -473,6 +523,7 @@ export default function AddHotelPage() {
             <p className="text-[12px] text-[#6C757D] mt-1">PNG, JPG, WEBP up to 10MB each · Multiple allowed</p>
           </div>
           {imageError && <p className="text-red-500 text-[13px] font-medium mt-2">{imageError}</p>}
+          {errors.images && <p className="text-red-500 text-[13px] font-medium mt-2">{errors.images}</p>}
           {existingImages.length > 0 && (
             <>
               <p className="text-[12px] text-[#6C757D] mt-3 mb-1">Current images (removing individual images isn&apos;t supported yet)</p>

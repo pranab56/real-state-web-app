@@ -4,6 +4,7 @@ import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Combobox } from '@/components/ui/combobox';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Popover,
   PopoverContent,
@@ -14,6 +15,7 @@ import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/lis
 import { useCreateReservationMutation } from '@/features/reservation/page';
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { cn } from '@/lib/utils';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
@@ -26,6 +28,7 @@ import {
   Bookmark,
   Calendar as CalendarIcon,
   ChevronRight,
+  Grid2x2,
   Heart,
   Info,
   Loader2,
@@ -75,12 +78,14 @@ const DatePicker = ({
   setDate,
   className,
   minDate,
+  error,
 }: {
   label: string;
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
   className?: string;
   minDate?: Date;
+  error?: string;
 }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -90,7 +95,8 @@ const DatePicker = ({
         <PopoverTrigger className="w-full">
           <button
             className={cn(
-              'w-full h-10 sm:h-12 bg-[#F6F6F6] border border-gray-200 flex items-center justify-start text-left font-medium shadow-none hover:border-primary/30 hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
+              'w-full h-10 sm:h-12 bg-[#F6F6F6] border flex items-center justify-start text-left font-medium shadow-none hover:border-primary/30 hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
+              error ? 'border-red-500' : 'border-gray-200',
               !date ? 'text-neutral-2' : 'text-neutral-1'
             )}
           >
@@ -108,6 +114,7 @@ const DatePicker = ({
           />
         </PopoverContent>
       </Popover>
+      {error && <p className="text-red-500 text-xs font-medium ml-1">{error}</p>}
     </div>
   );
 };
@@ -139,6 +146,7 @@ export default function HotelDetailPage() {
 
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
+  const [bookingErrors, setBookingErrors] = useState<{ checkIn?: string; checkOut?: string }>({});
   const [guestKey, setGuestKey] = useState('2');
   const [roomClass, setRoomClass] = useState('deluxe');
   const [bookingCurrency, setBookingCurrency] = useState<typeof CURRENCY_OPTIONS[number]>('USD');
@@ -148,7 +156,9 @@ export default function HotelDetailPage() {
   const token = useSelector((state: RootState) => state.auth?.token);
   const user = useSelector((state: RootState) => state.auth?.user);
   const isHost = user?.role === 'host';
+  const { requireAuth } = useAuthGuard();
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [reviewRating, setReviewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [toggleWishlist] = useCreateWishlistToggleMutation();
@@ -204,7 +214,7 @@ export default function HotelDetailPage() {
   };
 
   const handleWishlist = async () => {
-    if (!token) { toast.error('Please login to add to wishlist'); return; }
+    if (!requireAuth('Login required. Please log in to add to your wishlist.')) return;
     setIsWishlisted(prev => !prev);
     try {
       const res = await toggleWishlist({ property: id }).unwrap();
@@ -218,10 +228,16 @@ export default function HotelDetailPage() {
   };
 
   const handleBook = async () => {
-    if (!token) { toast.error('Please login to book'); return router.push('/login'); }
+    if (!requireAuth('Login required. Please log in to book a stay.')) return;
     if (isHost) { toast.error('Host accounts cannot book stays. Please use a customer account.'); return; }
-    if (!checkIn) { toast.error('Please select a check-in date'); return; }
-    if (!checkOut) { toast.error('Please select a check-out date'); return; }
+
+    const nextErrors: { checkIn?: string; checkOut?: string } = {};
+    if (!checkIn) nextErrors.checkIn = 'Please select a check-in date';
+    if (!checkOut) nextErrors.checkOut = 'Please select a check-out date';
+    if (Object.keys(nextErrors).length > 0) { setBookingErrors(nextErrors); return; }
+    if (!checkIn || !checkOut) return;
+    setBookingErrors({});
+
     const selectedGuests = GUEST_OPTIONS.find(o => o.value === guestKey)?.guests ?? { adults: 2, children: 0, pets: 0 };
     try {
       const res = await createReservation({
@@ -287,7 +303,7 @@ export default function HotelDetailPage() {
     <div className="min-h-screen bg-white pt-20 md:pt-28 font-sans">
       {/* Gallery */}
       <section className="container mx-auto px-4 sm:px-6 pt-4 md:pt-12">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 h-auto md:h-[500px]">
+        <div className="relative grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 h-auto md:h-[500px]">
           <div className="md:col-span-8 relative aspect-[4/3] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-xl">
             <Image src={getImg(images[0])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
           </div>
@@ -299,8 +315,32 @@ export default function HotelDetailPage() {
               <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
           </div>
+          {images.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllPhotos(true)}
+              className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 inline-flex items-center gap-2 bg-white text-neutral-1 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg shadow-lg hover:bg-neutral-1 hover:text-white transition-all cursor-pointer"
+            >
+              <Grid2x2 size={16} />
+              View all {images.length} photos
+            </button>
+          )}
         </div>
       </section>
+
+      {/* All Photos Modal */}
+      <Dialog open={showAllPhotos} onOpenChange={setShowAllPhotos}>
+        <DialogContent className="max-w-4xl sm:max-w-4xl max-h-[88vh] overflow-y-auto">
+          <DialogTitle>{title} · {images.length} photo{images.length !== 1 ? 's' : ''}</DialogTitle>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+            {images.map((img, idx) => (
+              <div key={idx} className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                <Image src={getImg(img)} alt={`${title} photo ${idx + 1}`} fill className="object-cover" />
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Hotel Info & Booking */}
       <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -541,8 +581,22 @@ export default function HotelDetailPage() {
               )}
               <div className="space-y-5 sm:space-y-6">
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                  <DatePicker className="w-full" label="Check In" date={checkIn} setDate={setCheckIn} minDate={new Date()} />
-                  <DatePicker className="w-full" label="Check Out" date={checkOut} setDate={setCheckOut} minDate={checkIn ?? new Date()} />
+                  <DatePicker
+                    className="w-full"
+                    label="Check In"
+                    date={checkIn}
+                    setDate={(d) => { setCheckIn(d); setBookingErrors(prev => ({ ...prev, checkIn: undefined })); }}
+                    minDate={new Date()}
+                    error={bookingErrors.checkIn}
+                  />
+                  <DatePicker
+                    className="w-full"
+                    label="Check Out"
+                    date={checkOut}
+                    setDate={(d) => { setCheckOut(d); setBookingErrors(prev => ({ ...prev, checkOut: undefined })); }}
+                    minDate={checkIn ?? new Date()}
+                    error={bookingErrors.checkOut}
+                  />
                 </div>
 
                 <div className="space-y-1.5 sm:space-y-2">

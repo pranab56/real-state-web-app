@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from '@/features/auth/authSlice';
 import { useGetAllNotificationQuery } from '@/features/notification/notificationApi';
+import { useGetProfileQuery } from '@/features/profile/profileApi';
 import { cn } from '@/lib/utils';
 import { RootState } from '@/types';
+import { baseURL } from '@/utils/BaseURL';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, ChevronDown, LogOut, Menu, User, UserCircle, X } from 'lucide-react';
 import Image from 'next/image';
@@ -26,6 +28,12 @@ const PROFILE_ROUTE: Record<string, string> = {
   host: '/hotels-partner-dashboard',
 };
 
+const getImg = (path?: string) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${baseURL}${path}`;
+};
+
 export function Navbar() {
   const { t, i18n } = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
@@ -34,6 +42,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
+  
 
   const token = useSelector((state: RootState) => state.auth?.token);
   const user = useSelector((state: RootState) => state.auth?.user);
@@ -41,6 +50,15 @@ export function Navbar() {
 
   const { data: notificationData } = useGetAllNotificationQuery({ page: 1 }, { skip: !isLoggedIn });
   const unreadCount: number = notificationData?.data?.unreadCount ?? 0;
+
+  const { data: profileData } = useGetProfileQuery({}, { skip: !isLoggedIn });
+  const profile = profileData?.data;
+  const firstName = profile?.firstName ?? user?.firstName ?? '';
+  const lastName = profile?.lastName ?? user?.lastName ?? '';
+  const displayName = `${firstName} ${lastName}`.trim() || profile?.email || user?.email || 'My Account';
+  const displayRole = profile?.role ?? user?.role ?? '';
+  const avatarSrc = getImg(profile?.image);
+  const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || 'U';
 
   const isHome = pathname === '/';
 
@@ -234,15 +252,33 @@ export function Navbar() {
 
               {/* Profile Dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger className="w-9 h-9 md:w-10 md:h-10 rounded-sm bg-primary/80 backdrop-blur-md border border-primary/40 flex items-center justify-center cursor-pointer hover:bg-primary transition-all shadow-lg shrink-0 outline-none">
-                  <UserCircle size={20} className="text-white md:w-6 md:h-6" />
+                <DropdownMenuTrigger className="w-9 h-9 md:w-10 md:h-10 rounded-sm bg-primary/80 backdrop-blur-md border border-primary/40 flex items-center justify-center cursor-pointer hover:bg-primary transition-all shadow-lg shrink-0 outline-none overflow-hidden relative">
+                  {avatarSrc ? (
+                    <Image src={avatarSrc} alt={displayName} fill className="object-cover" />
+                  ) : (
+                    <UserCircle size={20} className="text-white md:w-6 md:h-6" />
+                  )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
                   sideOffset={15}
-                  className="bg-[#EAEAEA] border-none text-neutral-1 rounded-[15px] p-1 min-w-[180px] shadow-2xl relative overflow-visible"
+                  className="bg-[#EAEAEA] border-none text-neutral-1 rounded-[15px] p-1 min-w-[220px] shadow-2xl relative overflow-visible"
                 >
                   <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#EAEAEA] rotate-45" />
+                  <div className="flex items-center gap-3 px-3 pt-2.5 pb-3">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden bg-primary/15 flex items-center justify-center shrink-0">
+                      {avatarSrc ? (
+                        <Image src={avatarSrc} alt={displayName} fill className="object-cover" />
+                      ) : (
+                        <span className="text-primary font-bold text-sm">{initials}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-neutral-1 truncate">{displayName}</p>
+                      {displayRole && <p className="text-xs text-neutral-2 capitalize">{displayRole}</p>}
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator className="bg-black/10 my-0.5" />
                   <div className="flex flex-col gap-1 relative z-10">
                     <DropdownMenuItem className="focus:bg-transparent p-0">
                       <Link
@@ -377,6 +413,19 @@ export function Navbar() {
               {/* Mobile Auth Section */}
               {isLoggedIn ? (
                 <div className="mt-2 pt-4 border-t border-white/10 flex flex-col gap-3">
+                  <div className="flex items-center gap-3 py-2 px-5">
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-primary/20 flex items-center justify-center shrink-0">
+                      {avatarSrc ? (
+                        <Image src={avatarSrc} alt={displayName} fill className="object-cover" />
+                      ) : (
+                        <span className="text-primary font-bold text-xs">{initials}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-white truncate">{displayName}</p>
+                      {displayRole && <p className="text-xs text-white/50 capitalize">{displayRole}</p>}
+                    </div>
+                  </div>
                   <Link
                     href={(user?.role && PROFILE_ROUTE[user.role]) || '/profile'}
                     onClick={() => setIsOpen(false)}

@@ -18,6 +18,10 @@ const DEFAULT_AMENITIES = ['Free Wi-Fi', 'Air Conditioning', 'Smart TV', 'Room S
 export default function AddRoomPage() {
   const router = useRouter();
 
+  // --- Room name ---
+  const [roomName, setRoomName] = useState('');
+  const [roomNameError, setRoomNameError] = useState('');
+
   // --- Image upload state ---
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<{ file: File; preview: string }[]>([]);
@@ -65,19 +69,29 @@ export default function AddRoomPage() {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!roomName.trim()) { setRoomNameError('Room name is required'); return; }
+    setRoomNameError('');
+    router.back();
+  };
+
   return (
     <div className="container bg-white rounded-lg p-5 border border-[#F2F2F2] shadow-sm">
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
 
         {/* Room Name */}
         <div className="space-y-3">
           <label className="text-[14px] font-medium text-[#2C2E33]">Room Name</label>
           <input
             type="text"
+            value={roomName}
+            onChange={e => { setRoomName(e.target.value); setRoomNameError(''); }}
             placeholder="e.g. Presidential Ocean Suite"
-            className="w-full h-12 bg-[#F5F5F5] rounded-[10px] px-4 text-[14px] text-[#2C2E33] placeholder:text-[#6C757D] border-none outline-none focus:ring-1 focus:ring-[#F1913D]"
+            className={`w-full h-12 bg-[#F5F5F5] rounded-[10px] px-4 text-[14px] text-[#2C2E33] placeholder:text-[#6C757D] border-none outline-none focus:ring-1 focus:ring-[#F1913D] ${roomNameError ? 'ring-2 ring-red-500' : ''}`}
           />
+          {roomNameError && <p className="text-red-500 text-[13px] font-medium mt-1">{roomNameError}</p>}
         </div>
 
         {/* Room Type & Base Price */}

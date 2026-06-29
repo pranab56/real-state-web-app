@@ -7,12 +7,49 @@ import { Textarea } from '@/components/ui/textarea';
 import { Camera } from 'lucide-react';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
+import * as z from 'zod';
 
 const inputStyle = "h-[46px] bg-[#F4F5F7] border-0 rounded-[8px] text-[#2C2E33] text-[15px] px-4 focus-visible:ring-1 focus-visible:ring-[#F1913D] shadow-none font-medium transition-all";
+
+const profileSchema = z.object({
+  firstName: z.string().trim().min(1, 'First name is required'),
+  lastName: z.string().trim().min(1, 'Last name is required'),
+  email: z.string().trim().min(1, 'Email is required').email('Invalid email address'),
+  phone: z.string().trim().min(1, 'Phone number is required'),
+});
+type ProfileErrors = Partial<Record<keyof z.infer<typeof profileSchema>, string>>;
 
 export default function TransportProfilePage() {
   const [profileImage, setProfileImage] = useState<string>("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [formData, setFormData] = useState({
+    firstName: 'Rasel',
+    lastName: 'Parvez',
+    email: 'rasel@example.com',
+    phone: '01721879586',
+    designation: 'General Manager',
+  });
+  const [errors, setErrors] = useState<ProfileErrors>({});
+
+  const handleFieldChange = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(p => ({ ...p, [field]: e.target.value }));
+    if (field in errors) setErrors(p => ({ ...p, [field]: undefined }));
+  };
+
+  const handleSave = () => {
+    const result = profileSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: ProfileErrors = {};
+      result.error.issues.forEach(issue => { fieldErrors[issue.path[0] as keyof ProfileErrors] = issue.message; });
+      setErrors(fieldErrors);
+      toast.error('Please fix the highlighted fields.');
+      return;
+    }
+    setErrors({});
+    toast.success('Profile changes saved.');
+  };
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -75,27 +112,48 @@ export default function TransportProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 pt-2">
           <div className="space-y-3">
             <Label className="text-[14px] font-medium text-[#2C2E33]">First Name</Label>
-            <Input defaultValue="Rasel" className={inputStyle} />
+            <Input
+              value={formData.firstName}
+              onChange={handleFieldChange('firstName')}
+              className={`${inputStyle} ${errors.firstName ? 'ring-2 ring-red-500' : ''}`}
+            />
+            {errors.firstName && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{errors.firstName}</p>}
           </div>
           <div className="space-y-3">
             <Label className="text-[14px] font-medium text-[#2C2E33]">Last Name</Label>
-            <Input defaultValue="Parvez" className={inputStyle} />
+            <Input
+              value={formData.lastName}
+              onChange={handleFieldChange('lastName')}
+              className={`${inputStyle} ${errors.lastName ? 'ring-2 ring-red-500' : ''}`}
+            />
+            {errors.lastName && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{errors.lastName}</p>}
           </div>
         </div>
 
         <div className="space-y-3 mt-6">
           <Label className="text-[14px] font-medium text-[#2C2E33]">Email Address</Label>
-          <Input defaultValue="rasel@example.com" className={inputStyle} />
+          <Input
+            type="email"
+            value={formData.email}
+            onChange={handleFieldChange('email')}
+            className={`${inputStyle} ${errors.email ? 'ring-2 ring-red-500' : ''}`}
+          />
+          {errors.email && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{errors.email}</p>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 mt-6">
           <div className="space-y-3">
             <Label className="text-[14px] font-medium text-[#2C2E33]">Phone Number</Label>
-            <Input defaultValue="01721879586" className={inputStyle} />
+            <Input
+              value={formData.phone}
+              onChange={handleFieldChange('phone')}
+              className={`${inputStyle} ${errors.phone ? 'ring-2 ring-red-500' : ''}`}
+            />
+            {errors.phone && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{errors.phone}</p>}
           </div>
           <div className="space-y-3">
             <Label className="text-[14px] font-medium text-[#2C2E33]">Designation</Label>
-            <Input defaultValue="General Manager" className={inputStyle} />
+            <Input value={formData.designation} onChange={handleFieldChange('designation')} className={inputStyle} />
           </div>
         </div>
       </div>
@@ -138,7 +196,10 @@ export default function TransportProfilePage() {
         <Button variant="outline" className="h-[50px] px-10 bg-[#F4F5F7] hover:bg-gray-200 border-0 text-[#2C2E33] font-medium text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer">
           Cancel
         </Button>
-        <Button className="h-[50px] px-10 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer transition-transform active:scale-95">
+        <Button
+          onClick={handleSave}
+          className="h-[50px] px-10 bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium text-[15px] rounded-lg shadow-none flex-1 sm:flex-none cursor-pointer transition-transform active:scale-95"
+        >
           Save Changes
         </Button>
       </div>

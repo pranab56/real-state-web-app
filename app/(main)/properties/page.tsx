@@ -23,11 +23,15 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const LIMIT = 6;
+const LIMIT = 10;
 const MAX_PRICE = 500000;
 const MAX_AREA = 10000;
 const TYPE_VISIBLE_LIMIT = 6;
 const FEATURED_VISIBLE_LIMIT = 4;
+const BEDROOM_VISIBLE_LIMIT = 4;
+const BATHROOM_VISIBLE_LIMIT = 4;
+const BEDROOM_OPTIONS = [0, 1, 2, 3, 4, 5];
+const BATHROOM_OPTIONS = [0, 1, 2, 3, 4];
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 
@@ -52,6 +56,8 @@ function PropertiesPageContent() {
   const sp = useSearchParams();
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
   const [showAllTypes, setShowAllTypes] = useState(false);
+  const [showAllBedrooms, setShowAllBedrooms] = useState(false);
+  const [showAllBathrooms, setShowAllBathrooms] = useState(false);
 
   // ── Pagination & search — initialise from URL params ──
   const [page, setPage] = useState(1);
@@ -276,7 +282,7 @@ function PropertiesPageContent() {
                   <button
                     key={type}
                     onClick={() => handleStructureTypeChange(type)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${structureType === type
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border cursor-pointer ${structureType === type
                       ? 'bg-primary text-white border-primary'
                       : 'bg-[#F7F7F7] text-neutral-2 border-transparent hover:border-primary/30 hover:text-primary'
                       }`}
@@ -299,11 +305,11 @@ function PropertiesPageContent() {
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">Bedrooms</h3>
               <div className="flex gap-2 flex-wrap">
-                {[0, 1, 2, 3, 4, 5].map((n) => (
+                {(showAllBedrooms ? BEDROOM_OPTIONS : BEDROOM_OPTIONS.slice(0, BEDROOM_VISIBLE_LIMIT)).map((n) => (
                   <button
                     key={n}
                     onClick={() => handleBedroomsChange(n)}
-                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-all border ${bedrooms === n
+                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-all border cursor-pointer ${bedrooms === n
                       ? 'bg-primary text-white border-primary'
                       : 'bg-[#F7F7F7] text-neutral-2 border-transparent hover:border-primary/30'
                       }`}
@@ -311,6 +317,14 @@ function PropertiesPageContent() {
                     {n === 0 ? 'Any' : n}
                   </button>
                 ))}
+                {BEDROOM_OPTIONS.length > BEDROOM_VISIBLE_LIMIT && (
+                  <button
+                    onClick={() => setShowAllBedrooms((prev) => !prev)}
+                    className="px-3 h-10 rounded-lg text-xs font-medium transition-all border border-dashed border-primary/40 text-primary hover:bg-primary/5 cursor-pointer"
+                  >
+                    {showAllBedrooms ? 'Show Less' : `+${BEDROOM_OPTIONS.length - BEDROOM_VISIBLE_LIMIT} More`}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -318,11 +332,11 @@ function PropertiesPageContent() {
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">Bathrooms</h3>
               <div className="flex gap-2 flex-wrap">
-                {[0, 1, 2, 3, 4].map((n) => (
+                {(showAllBathrooms ? BATHROOM_OPTIONS : BATHROOM_OPTIONS.slice(0, BATHROOM_VISIBLE_LIMIT)).map((n) => (
                   <button
                     key={n}
                     onClick={() => handleBathroomsChange(n)}
-                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-all border ${bathrooms === n
+                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-all border cursor-pointer ${bathrooms === n
                       ? 'bg-primary text-white border-primary'
                       : 'bg-[#F7F7F7] text-neutral-2 border-transparent hover:border-primary/30'
                       }`}
@@ -330,6 +344,14 @@ function PropertiesPageContent() {
                     {n === 0 ? 'Any' : n}
                   </button>
                 ))}
+                {BATHROOM_OPTIONS.length > BATHROOM_VISIBLE_LIMIT && (
+                  <button
+                    onClick={() => setShowAllBathrooms((prev) => !prev)}
+                    className="px-3 h-10 rounded-lg text-xs font-medium transition-all border border-dashed border-primary/40 text-primary hover:bg-primary/5 cursor-pointer"
+                  >
+                    {showAllBathrooms ? 'Show Less' : `+${BATHROOM_OPTIONS.length - BATHROOM_VISIBLE_LIMIT} More`}
+                  </button>
+                )}
               </div>
             </div>
 

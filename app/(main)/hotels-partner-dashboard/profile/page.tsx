@@ -14,8 +14,25 @@ import { Camera, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck,
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import * as z from 'zod';
 
 const MAX_KYC_FILES = 5;
+
+const profileSchema = z.object({
+  firstName: z.string().trim().min(1, 'First name is required'),
+  lastName: z.string().trim().min(1, 'Last name is required'),
+});
+type ProfileErrors = Partial<Record<keyof z.infer<typeof profileSchema>, string>>;
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(8, 'New password must be at least 8 characters'),
+  confirmPassword: z.string().min(1, 'Please confirm your new password'),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+});
+type PasswordErrors = Partial<Record<keyof z.infer<typeof passwordSchema>, string>>;
 
 const getImg = (path?: string) => {
   if (!path) return null;
@@ -60,25 +77,24 @@ export default function HotelsPartnerDashboardProfile() {
     confirm: false,
   });
 
-  useEffect(() => {
-    if (profile) {
-      const newFirstName = profile.firstName ?? '';
-      const newLastName = profile.lastName ?? '';
-      const newPhone = profile.phone ?? '';
+  const [profileErrors, setProfileErrors] = useState<ProfileErrors>({});
+  const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({});
 
-      if (formData.firstName !== newFirstName ||
-        formData.lastName !== newLastName ||
-        formData.phone !== newPhone) {
-        Promise.resolve().then(() => {
-          setFormData({
-            firstName: newFirstName,
-            lastName: newLastName,
-            phone: newPhone,
-          });
+  // Prefill the form once the profile loads — guarded by a ref so it doesn't
+  // keep overwriting in-progress edits on every keystroke re-render.
+  const prefilledRef = useRef(false);
+  useEffect(() => {
+    if (profile && !prefilledRef.current) {
+      prefilledRef.current = true;
+      Promise.resolve().then(() => {
+        setFormData({
+          firstName: profile.firstName ?? '',
+          lastName: profile.lastName ?? '',
+          phone: profile.phone ?? '',
         });
-      }
+      });
     }
-  }, [profile, formData]);
+  }, [profile]);
 
   const avatarSrc = previewUrl ?? getImg(profile?.image);
   const initials = `${profile?.firstName?.[0] ?? ''}${profile?.lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -93,8 +109,14 @@ export default function HotelsPartnerDashboardProfile() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!formData.firstName.trim()) { toast.error('First name is required.'); return; }
-    if (!formData.lastName.trim()) { toast.error('Last name is required.'); return; }
+    const result = profileSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: ProfileErrors = {};
+      result.error.issues.forEach(issue => { fieldErrors[issue.path[0] as keyof ProfileErrors] = issue.message; });
+      setProfileErrors(fieldErrors);
+      return;
+    }
+    setProfileErrors({});
     try {
       const fd = new FormData();
       fd.append('firstName', formData.firstName.trim());
@@ -159,9 +181,14 @@ export default function HotelsPartnerDashboardProfile() {
   };
 
   const handleChangePassword = async () => {
-    if (!passwords.currentPassword) { toast.error('Current password is required.'); return; }
-    if (!passwords.newPassword || passwords.newPassword.length < 8) { toast.error('New password must be at least 8 characters.'); return; }
-    if (passwords.newPassword !== passwords.confirmPassword) { toast.error('Passwords do not match.'); return; }
+    const result = passwordSchema.safeParse(passwords);
+    if (!result.success) {
+      const fieldErrors: PasswordErrors = {};
+      result.error.issues.forEach(issue => { fieldErrors[issue.path[0] as keyof PasswordErrors] = issue.message; });
+      setPasswordErrors(fieldErrors);
+      return;
+    }
+    setPasswordErrors({});
     try {
       const res = await changePassword({
         currentPassword: passwords.currentPassword,
@@ -192,8 +219,9 @@ export default function HotelsPartnerDashboardProfile() {
     }
   })();
 
-  // Re-upload is only allowed before a submission has been reviewed; once verified or rejected, the documents are locked.
-  const canUploadKyc = !verification?.status || verification.status === 'pending';
+  // Upload is allowed when nothing has been submitted yet, or the last submission was rejected.
+  // While pending review or already verified, the upload action is hidden.
+  const canUploadKyc = !verification?.status || verification.status === 'rejected';
 
   if (profileLoading) {
     return (
@@ -280,19 +308,21 @@ export default function HotelsPartnerDashboardProfile() {
             <label className="text-[14px] font-medium text-[#2C2E33]">First Name <span className="text-red-400">*</span></label>
             <Input
               value={formData.firstName}
-              onChange={e => setFormData(p => ({ ...p, firstName: e.target.value }))}
+              onChange={e => { setFormData(p => ({ ...p, firstName: e.target.value })); setProfileErrors(p => ({ ...p, firstName: undefined })); }}
               placeholder="First name"
-              className={inputCls}
+              className={`${inputCls} ${profileErrors.firstName ? 'ring-2 ring-red-500' : ''}`}
             />
+            {profileErrors.firstName && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{profileErrors.firstName}</p>}
           </div>
           <div className="space-y-2">
             <label className="text-[14px] font-medium text-[#2C2E33]">Last Name <span className="text-red-400">*</span></label>
             <Input
               value={formData.lastName}
-              onChange={e => setFormData(p => ({ ...p, lastName: e.target.value }))}
+              onChange={e => { setFormData(p => ({ ...p, lastName: e.target.value })); setProfileErrors(p => ({ ...p, lastName: undefined })); }}
               placeholder="Last name"
-              className={inputCls}
+              className={`${inputCls} ${profileErrors.lastName ? 'ring-2 ring-red-500' : ''}`}
             />
+            {profileErrors.lastName && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{profileErrors.lastName}</p>}
           </div>
           <div className="space-y-2">
             <label className="text-[14px] font-medium text-[#2C2E33]">Email Address</label>
@@ -327,87 +357,7 @@ export default function HotelsPartnerDashboardProfile() {
         </div>
       </div>
 
-      {/* Change Password */}
-      <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#F2F2F2] shadow-sm">
-        <h3 className="text-[15px] font-semibold text-[#2C2E33] mb-6 flex items-center gap-2">
-          <Shield size={15} className="text-[#F1913D]" /> Change Password
-        </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-[14px] font-medium text-[#2C2E33]">Current Password</label>
-            <div className="relative">
-              <Input
-                type={showPass.current ? 'text' : 'password'}
-                value={passwords.currentPassword}
-                onChange={e => setPasswords(p => ({ ...p, currentPassword: e.target.value }))}
-                placeholder="Enter current password"
-                className={`${inputCls} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(p => ({ ...p, current: !p.current }))}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#6C757D] cursor-pointer"
-              >
-                {showPass.current ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[14px] font-medium text-[#2C2E33]">New Password</label>
-            <div className="relative">
-              <Input
-                type={showPass.newPass ? 'text' : 'password'}
-                value={passwords.newPassword}
-                onChange={e => setPasswords(p => ({ ...p, newPassword: e.target.value }))}
-                placeholder="Enter new password"
-                className={`${inputCls} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(p => ({ ...p, newPass: !p.newPass }))}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#6C757D] cursor-pointer"
-              >
-                {showPass.newPass ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[14px] font-medium text-[#2C2E33]">Confirm Password</label>
-            <div className="relative">
-              <Input
-                type={showPass.confirm ? 'text' : 'password'}
-                value={passwords.confirmPassword}
-                onChange={e => setPasswords(p => ({ ...p, confirmPassword: e.target.value }))}
-                placeholder="Confirm new password"
-                className={`${inputCls} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(p => ({ ...p, confirm: !p.confirm }))}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#6C757D] cursor-pointer"
-              >
-                {showPass.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end mt-8 pt-6 border-t border-[#F2F2F2]">
-          <button
-            type="button"
-            onClick={handleChangePassword}
-            disabled={changePassLoading}
-            className="px-8 py-3 rounded-[10px] bg-[#2C2E33] hover:bg-[#1E2024] text-white font-medium text-[15px] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {changePassLoading ? <><Loader2 size={16} className="animate-spin" /> Changing...</> : 'Change Password'}
-          </button>
-        </div>
-      </div>
-
-      {/* KYC Verification */}
       <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#F2F2F2] shadow-sm">
         <div className="flex items-start justify-between gap-3 flex-wrap mb-2">
           <h3 className="text-[15px] font-semibold text-[#2C2E33] flex items-center gap-2">
@@ -429,21 +379,25 @@ export default function HotelsPartnerDashboardProfile() {
             {verification?.status === 'rejected' && (
               <div className="flex items-start gap-2.5 bg-red-50 text-red-600 text-[13px] font-medium rounded-xl px-4 py-3 mb-6">
                 <Info size={16} className="mt-0.5 shrink-0" />
-                <p>
-                  Your documents were rejected{verification?.reviewNotes ? `: ${verification.reviewNotes}` : '.'} Please upload valid documents to try again.
-                </p>
+                <div className="space-y-0.5">
+                  <p>Your KYC documents were rejected.</p>
+                  {verification?.reviewNotes && (
+                    <p className="text-red-500/90">Reason: {verification.reviewNotes}</p>
+                  )}
+                  <p>Please upload valid documents to try again.</p>
+                </div>
               </div>
             )}
             {verification?.status === 'pending' && (
               <div className="flex items-start gap-2.5 bg-orange-50 text-orange-600 text-[13px] font-medium rounded-xl px-4 py-3 mb-6">
                 <Clock size={16} className="mt-0.5 shrink-0" />
-                <p>Your documents are under review. We&apos;ll notify you once verification is complete.</p>
+                <p>Your documents are under admin review.</p>
               </div>
             )}
             {(verification?.status === 'verified' || verification?.status === 'approved') && (
               <div className="flex items-start gap-2.5 bg-green-50 text-green-600 text-[13px] font-medium rounded-xl px-4 py-3 mb-6">
                 <ShieldCheck size={16} className="mt-0.5 shrink-0" />
-                <p>Your identity has been verified. Thank you for keeping your account secure.</p>
+                <p>Your KYC has been verified successfully.</p>
               </div>
             )}
 
@@ -472,8 +426,8 @@ export default function HotelsPartnerDashboardProfile() {
               </div>
             )}
 
-            {/* Upload new documents — only while not yet reviewed (no submission yet, or still pending) */}
-            {canUploadKyc ? (
+            {/* Upload new documents — only when nothing submitted yet, or the last submission was rejected */}
+            {canUploadKyc && (
               <>
                 <div className="space-y-3">
                   <p className="text-[14px] font-medium text-[#2C2E33]">
@@ -528,15 +482,95 @@ export default function HotelsPartnerDashboardProfile() {
                   </button>
                 </div>
               </>
-            ) : (
-              <p className="text-[13px] text-[#6C757D] font-medium">
-                {verification?.status === 'rejected'
-                  ? 'Document upload is locked for this submission. Please contact support if you believe this was a mistake.'
-                  : 'Your documents have been verified.'}
-              </p>
             )}
           </>
         )}
+      </div>
+
+
+
+
+      {/* Change Password */}
+      <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#F2F2F2] shadow-sm">
+        <h3 className="text-[15px] font-semibold text-[#2C2E33] mb-6 flex items-center gap-2">
+          <Shield size={15} className="text-[#F1913D]" /> Change Password
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-[14px] font-medium text-[#2C2E33]">Current Password</label>
+            <div className="relative">
+              <Input
+                type={showPass.current ? 'text' : 'password'}
+                value={passwords.currentPassword}
+                onChange={e => { setPasswords(p => ({ ...p, currentPassword: e.target.value })); setPasswordErrors(p => ({ ...p, currentPassword: undefined })); }}
+                placeholder="Enter current password"
+                className={`${inputCls} pr-12 ${passwordErrors.currentPassword ? 'ring-2 ring-red-500' : ''}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(p => ({ ...p, current: !p.current }))}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#6C757D] cursor-pointer"
+              >
+                {showPass.current ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {passwordErrors.currentPassword && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{passwordErrors.currentPassword}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[14px] font-medium text-[#2C2E33]">New Password</label>
+            <div className="relative">
+              <Input
+                type={showPass.newPass ? 'text' : 'password'}
+                value={passwords.newPassword}
+                onChange={e => { setPasswords(p => ({ ...p, newPassword: e.target.value })); setPasswordErrors(p => ({ ...p, newPassword: undefined })); }}
+                placeholder="Enter new password"
+                className={`${inputCls} pr-12 ${passwordErrors.newPassword ? 'ring-2 ring-red-500' : ''}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(p => ({ ...p, newPass: !p.newPass }))}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#6C757D] cursor-pointer"
+              >
+                {showPass.newPass ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {passwordErrors.newPassword && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{passwordErrors.newPassword}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[14px] font-medium text-[#2C2E33]">Confirm Password</label>
+            <div className="relative">
+              <Input
+                type={showPass.confirm ? 'text' : 'password'}
+                value={passwords.confirmPassword}
+                onChange={e => { setPasswords(p => ({ ...p, confirmPassword: e.target.value })); setPasswordErrors(p => ({ ...p, confirmPassword: undefined })); }}
+                placeholder="Confirm new password"
+                className={`${inputCls} pr-12 ${passwordErrors.confirmPassword ? 'ring-2 ring-red-500' : ''}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(p => ({ ...p, confirm: !p.confirm }))}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A1A1A1] hover:text-[#6C757D] cursor-pointer"
+              >
+                {showPass.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {passwordErrors.confirmPassword && <p className="text-red-500 text-xs font-medium mt-1 ml-1">{passwordErrors.confirmPassword}</p>}
+          </div>
+        </div>
+
+        <div className="flex justify-end mt-8 pt-6 border-t border-[#F2F2F2]">
+          <button
+            type="button"
+            onClick={handleChangePassword}
+            disabled={changePassLoading}
+            className="px-8 py-3 rounded-[10px] bg-[#2C2E33] hover:bg-[#1E2024] text-white font-medium text-[15px] transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {changePassLoading ? <><Loader2 size={16} className="animate-spin" /> Changing...</> : 'Change Password'}
+          </button>
+        </div>
       </div>
 
     </div>

@@ -39,7 +39,7 @@ export function PriceConvertButton({ price, currency }: PriceConvertButtonProps)
       type="button"
       onClick={handleConvert}
       disabled={isLoading}
-      className="shrink-0 inline-flex items-center justify-center min-w-[96px] h-7 px-2.5 rounded-full border border-primary/30 text-primary text-[10px] sm:text-[11px] font-medium hover:bg-primary hover:text-white transition-all disabled:opacity-60 cursor-pointer whitespace-nowrap"
+      className="shrink-0 inline-flex items-center justify-center min-w-[96px] h-7 px-2.5 rounded-full bg-primary text-white text-[10px] sm:text-[11px] font-medium shadow-sm hover:bg-primary/90 transition-all disabled:opacity-60 cursor-pointer whitespace-nowrap"
     >
       {isLoading ? <Loader2 size={12} className="animate-spin" /> : convertedText ?? 'Convert ETB'}
     </button>

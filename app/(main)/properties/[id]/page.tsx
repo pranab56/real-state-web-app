@@ -9,6 +9,7 @@ import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/lis
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { logout } from '@/features/auth/authSlice';
+import { isTokenExpired, useAuthGuard } from '@/hooks/use-auth-guard';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -41,17 +42,6 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
-
-const isTokenExpired = (token?: string | null) => {
-  if (!token) return true;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    if (!payload?.exp) return false;
-    return payload.exp * 1000 < Date.now();
-  } catch {
-    return true;
-  }
-};
 
 const getImg = (path?: string) => {
   if (!path) return FALLBACK_IMG;
@@ -102,6 +92,7 @@ export default function PropertyDetailPage() {
   const dispatch = useDispatch();
 
   const token = useSelector((state: RootState) => state.auth?.token);
+  const { requireAuth } = useAuthGuard();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [playVideo, setPlayVideo] = useState(false);
   const [reviewRating, setReviewRating] = useState(0);
@@ -151,8 +142,7 @@ export default function PropertyDetailPage() {
   }, [p?.isWishlisted, isWishlisted]);
 
   const handleWishlist = async () => {
-    if (!token) { toast.error('Please login to add to wishlist'); return; }
-    if (tokenExpired) { redirectToLogin(); return; }
+    if (!requireAuth('Login required. Please log in to add to your wishlist.')) return;
     setIsWishlisted(prev => !prev);
     try {
       const res = await toggleWishlist({ property: id }).unwrap();
@@ -193,8 +183,7 @@ export default function PropertyDetailPage() {
     }
   };
   const onReplySubmit = async (data: ReplyFormValues) => {
-    if (!token) { toast.error('Please login to leave a review'); return; }
-    if (tokenExpired) { redirectToLogin(); return; }
+    if (!requireAuth('Login required. Please log in to leave a review.')) return;
     if (reviewRating === 0) { toast.error('Please select a rating'); return; }
     try {
       const res = await createReview({ property: id, rating: reviewRating, comment: data.comment }).unwrap();

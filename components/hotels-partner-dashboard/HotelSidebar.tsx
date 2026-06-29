@@ -20,6 +20,7 @@ import {
   LayoutDashboard,
   Loader2,
   LogOut,
+  Ticket,
   User
 } from 'lucide-react';
 import Image from 'next/image';
@@ -49,9 +50,9 @@ const sidebarItems: SidebarItem[] = [
     ],
   },
   {
-    name: 'Confrim Bookings',
+    name: 'Bookings',
     href: '/hotels-partner-dashboard/bookings',
-    icon: Hotel,
+    icon: Ticket,
   },
   { name: 'Wishlist', href: '/hotels-partner-dashboard/wishlist', icon: Heart },
   { name: 'Payment History', href: '/hotels-partner-dashboard/payments', icon: FileText },

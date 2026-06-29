@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import {
@@ -23,9 +24,8 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import { Hotel, RootState } from '@/types';
+import { Hotel } from '@/types';
 
 const LIMIT = 6;
 const MAX_PRICE = 50000;
@@ -51,13 +51,13 @@ const getImg = (path?: string) => {
 function HotelsPageContent() {
   const { t } = useTranslation('common');
   const sp = useSearchParams();
-  const token = useSelector((state: RootState) => state.auth?.token);
+  const { requireAuth } = useAuthGuard();
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
   const [toggleWishlist] = useCreateWishlistToggleMutation();
   const [showAllTypes, setShowAllTypes] = useState(false);
 
   const handleWishlist = async (id: string) => {
-    if (!token) { toast.error('Please login to add to wishlist'); return; }
+    if (!requireAuth('Login required. Please log in to add to your wishlist.')) return;
     setWishlisted(prev => {
       const s = new Set(prev);
       if (s.has(id)) s.delete(id);

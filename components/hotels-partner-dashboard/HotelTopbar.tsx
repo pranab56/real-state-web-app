@@ -1,11 +1,29 @@
 'use client';
 
+import { useGetProfileQuery } from '@/features/profile/profileApi';
 import { useSidebar } from '@/hooks/use-sidebar';
+import { baseURL } from '@/utils/BaseURL';
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+const ROLE_LABELS: Record<string, string> = { host: 'Hotel Partner', customer: 'Customer' };
+
+const getImg = (path?: string) => {
+  if (!path) return null;
+  return path.startsWith('http') ? path : `${baseURL}${path}`;
+};
 
 export function HotelTopbar() {
   const { toggleSidebar } = useSidebar();
+  const router = useRouter();
+  const { data: profileData } = useGetProfileQuery({});
+  const profile = profileData?.data;
+
+  const fullName = `${profile?.firstName ?? ''} ${profile?.lastName ?? ''}`.trim() || 'My Account';
+  const roleLabel = ROLE_LABELS[profile?.role ?? ''] ?? profile?.role ?? '';
+  const initials = `${profile?.firstName?.[0] ?? ''}${profile?.lastName?.[0] ?? ''}`.toUpperCase() || '?';
+  const avatarSrc = getImg(profile?.image);
 
   return (
     <header className="bg-white px-8 py-5 flex items-center justify-between border-b border-[#F2F2F2]">
@@ -22,19 +40,17 @@ export function HotelTopbar() {
       </div>
 
       {/* Right side - Profile */}
-      <div className="flex items-center gap-3">
+      <div onClick={() => router.push('/hotels-partner-dashboard/profile')} className="flex items-center gap-3 cursor-pointer">
         <div className="text-right flex flex-col items-end">
-          <span className="text-[15px] font-medium text-[#2C2E33] leading-none">Rasel Parvez</span>
-          <span className="text-[13px] text-[#6C757D] font-medium leading-[1.2]">Hotel Partner</span>
+          <span className="text-[15px] font-medium text-[#2C2E33] leading-none">{fullName}</span>
+          <span className="text-[13px] text-[#6C757D] font-medium leading-[1.2]">{roleLabel}</span>
         </div>
-        <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm ring-1 ring-[#F2F2F2]">
-          <Image
-            src="https://t3.ftcdn.net/jpg/11/77/92/36/360_F_1177923605_h0NQzz0ACrHfVwq6As64sWQPNnyHcObm.jpg"
-            alt="Profile Avatar"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
+        <div className="h-10 w-10 rounded-full bg-primary/10 overflow-hidden border-2 border-white shadow-sm ring-1 ring-[#F2F2F2] flex items-center justify-center relative shrink-0">
+          {avatarSrc ? (
+            <Image src={avatarSrc} alt={fullName} fill className="object-cover" />
+          ) : (
+            <span className="text-primary font-bold text-sm">{initials}</span>
+          )}
         </div>
       </div>
     </header>

@@ -11,9 +11,18 @@ export const paymentApi = baseApi.injectEndpoints({
       providesTags: ["Transaction"],
 
     }),
+
+    getHostTransaction: builder.query({
+      query: ({ page }) => ({
+        url: `/transactions/host-transactions?page=${page}`,
+        method: "GET",
+      }),
+      providesTags: ["Transaction"],
+    }),
   }),
 });
 // Export hooks
 export const {
-  useGetAllTransectionQuery
+  useGetAllTransectionQuery,
+  useGetHostTransactionQuery
 } = paymentApi;
