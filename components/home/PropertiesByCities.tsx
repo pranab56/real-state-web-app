@@ -1,13 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Building2, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
+import { Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
-import { Autoplay, Navigation } from 'swiper/modules';
+import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useGetTopCitisQuery } from '../../features/listings/listingsApi';
 
@@ -17,12 +17,12 @@ export default function PropertiesByCities() {
 
   const { data } = useGetTopCitisQuery({});
   const cities: { city: string; count: number }[] = data?.data ?? [];
-  
+
 
   return (
     <section className="bg-white pb-2 overflow-hidden">
       {/* Promo Banner Slider */}
-      <Swiper
+      {/* <Swiper
         modules={[Autoplay]}
         autoplay={{
           delay: 3000,
@@ -78,7 +78,7 @@ export default function PropertiesByCities() {
             </div>
           </div>
         </SwiperSlide>
-      </Swiper>
+      </Swiper> */}
 
       <div className="container mx-auto px-4 md:px-0 py-12 md:py-32 text-center">
         {/* Section Header */}

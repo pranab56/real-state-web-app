@@ -85,7 +85,7 @@ export default function FeaturedVerifiedProperties() {
   };
 
   return (
-    <section className="py-12 md:py-2 bg-white">
+    <section className="py-12 md:py-2 bg-white sm:mb-20 mb-5">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
         <div className="text-center mb-10 md:mb-16 space-y-3 md:space-y-4 px-2 md:px-0">

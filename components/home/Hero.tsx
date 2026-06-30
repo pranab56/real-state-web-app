@@ -195,7 +195,7 @@ export default function Hero() {
 
               <div className="w-px h-6 bg-white/30 hidden md:block" />
 
-              <a href={`mailto:${email}`} className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none w-full sm:w-auto justify-center">
+              <a href={`mailto:${email}?subject=Inquiry - ZilaHomes`} className="flex items-center gap-2 md:gap-3 group cursor-pointer bg-white/5 md:bg-transparent p-1.5 md:p-0 rounded border border-white/10 md:border-none w-full sm:w-auto justify-center">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm p-2.5 md:p-3 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform shrink-0">
                   <Image src="/icons/hero/email.png" alt="Email" width={32} height={32} className="w-full h-full object-contain" />
                 </div>
