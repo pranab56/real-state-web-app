@@ -4,23 +4,20 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Check, FileText, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 
 export default function BuyingProperty() {
-  const { t } = useTranslation('common');
-
   const features = [
     {
-      title: t('buying.f1_title'),
-      description: t('buying.f1_desc')
+      title: 'Power of Attorney Services',
+      description: 'Authorize a trusted representative to buy, sell, or manage property and business matters on your behalf.'
     },
     {
-      title: t('buying.f2_title'),
-      description: t('buying.f2_desc')
+      title: 'Legal Verification',
+      description: 'Ensure property ownership, title deeds, and documentation are legally verified.'
     },
     {
-      title: t('buying.f3_title'),
-      description: t('buying.f3_desc')
+      title: 'Document Assistance',
+      description: 'Get help preparing POA documents, legal paperwork, and registration support.'
     }
   ];
 
@@ -37,9 +34,9 @@ export default function BuyingProperty() {
             className="space-y-6 md:space-y-8 text-center lg:text-left"
           >
             <div className="space-y-3 md:space-y-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: t('buying.title') }} />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: 'Buying Property From <br class="hidden md:block" /> Abroad?' }} />
               <p className="text-sm md:text-base text-neutral-2 font-medium max-w-lg mx-auto lg:mx-0">
-                {t('buying.subtitle')}
+                Zila Legal helps diaspora buyers complete property transactions securely through Power of Attorney and verified legal partners.
               </p>
             </div>
 
@@ -63,7 +60,7 @@ export default function BuyingProperty() {
               href="/poa"
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium h-12 px-8 rounded-sm shadow-xl shadow-primary/20 transition-all"
             >
-              {t('buying.poa_certified')}
+              POA Certified
               <ArrowRight size={16} />
             </Link>
           </motion.div>
@@ -98,8 +95,8 @@ export default function BuyingProperty() {
                   <ShieldCheck size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[8px] md:text-[10px] font-medium text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.status')}</p>
-                  <p className="text-[10px] sm:text-[12px] md:text-sm font-medium text-neutral-1 leading-tight">{t('buying.verified')}</p>
+                  <p className="text-[8px] md:text-[10px] font-medium text-neutral-2 uppercase tracking-widest leading-none mb-1">Status</p>
+                  <p className="text-[10px] sm:text-[12px] md:text-sm font-medium text-neutral-1 leading-tight">Verified</p>
                 </div>
               </motion.div>
 
@@ -114,8 +111,8 @@ export default function BuyingProperty() {
                   <FileText size={20} className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <p className="text-[8px] md:text-[10px] font-medium text-neutral-2 uppercase tracking-widest leading-none mb-1">{t('buying.doc')}</p>
-                  <p className="text-[10px] sm:text-[12px] md:text-sm font-medium text-neutral-1 leading-tight">{t('buying.poa_certified')}</p>
+                  <p className="text-[8px] md:text-[10px] font-medium text-neutral-2 uppercase tracking-widest leading-none mb-1">Doc</p>
+                  <p className="text-[10px] sm:text-[12px] md:text-sm font-medium text-neutral-1 leading-tight">POA Certified</p>
                 </div>
               </motion.div>
             </div>

@@ -12,7 +12,6 @@ import { Loader2, Search, X } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const MAX_PRICE = 500000;
 const MAX_AREA = 10000;
@@ -51,7 +50,6 @@ const BATHROOM_OPTIONS = [
 ];
 
 export default function Hero() {
-  const { t } = useTranslation();
   const router = useRouter();
 
   // ── Tab state ──
@@ -136,12 +134,12 @@ export default function Hero() {
   };
 
   const mainTabs: { key: MainTab; label: string; directRoute?: string }[] = [
-    { key: 'real_estate', label: t('hero.real_estate') },
-    { key: 'hotels', label: t('hero.hotels') },
-    { key: 'guesthouses', label: t('hero.guesthouses') },
-    { key: 'transportation', label: t('hero.transportation'), directRoute: '/transportation' },
-    { key: 'legal', label: t('hero.legal'), directRoute: '/poa' },
-    { key: 'blog', label: t('hero.blog'), directRoute: '/blog' },
+    { key: 'real_estate', label: 'Real Estate' },
+    { key: 'hotels', label: 'Hotels' },
+    { key: 'guesthouses', label: 'Guesthouses' },
+    { key: 'transportation', label: 'Transportation', directRoute: '/transportation' },
+    { key: 'legal', label: 'POA/Legal', directRoute: '/poa' },
+    { key: 'blog', label: 'Blog', directRoute: '/blog' },
   ];
 
   const isDirectTab = activeMainTab === 'transportation' || activeMainTab === 'legal';
@@ -164,10 +162,10 @@ export default function Hero() {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-5xl mx-auto space-y-4 md:space-y-6">
             <h1
               className="text-2xl sm:text-4xl md:text-6xl lg:text-6xl font-medium text-white tracking-tight leading-[1.2] md:leading-[1.1] px-2"
-              dangerouslySetInnerHTML={{ __html: t('hero.title') }}
+              dangerouslySetInnerHTML={{ __html: 'Find Verified Properties, Hotels, Transportation & <br class="hidden md:block" />  POA Services Across Ethiopia' }}
             />
             <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-medium leading-relaxed px-4 md:px-0 opacity-80 md:opacity-100">
-              {t('hero.subtitle')}
+              Every listing and service provider undergoes a verification process before being published—helping you connect with trusted opportunities, avoid uncertainty, and make decisions with confidence.
             </p>
 
             {/* Contact Row */}
@@ -300,7 +298,7 @@ export default function Hero() {
                   >
                     {showAdvanced ? <X size={20} /> : (
                       <>
-                        <span className="font-medium hidden md:inline text-sm">{t('hero.advanced')}</span>
+                        <span className="font-medium hidden md:inline text-sm">Advanced</span>
                         <span className="md:hidden flex flex-col gap-0.5">
                           <div className="w-4 h-0.5 bg-white" />
                           <div className="w-4 h-0.5 bg-white" />
@@ -317,7 +315,7 @@ export default function Hero() {
                     {isSearching ? (
                       <><Loader2 size={18} className="animate-spin md:size-[20px]" /><span className="font-medium text-[13px] md:text-base">Searching...</span></>
                     ) : (
-                      <><span className="font-medium text-[13px] md:text-base">{t('hero.search')}</span><Search size={18} className="md:size-[20px]" /></>
+                      <><span className="font-medium text-[13px] md:text-base">Search Now</span><Search size={18} className="md:size-[20px]" /></>
                     )}
                   </Button>
                 </div>
@@ -338,7 +336,7 @@ export default function Hero() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                         <div className="space-y-4 md:space-y-6">
                           <div className="flex justify-between items-center text-[12px] md:text-sm font-medium">
-                            <span className="text-gray-800">{t('hero.price_range')}</span>
+                            <span className="text-gray-800">Price Range from</span>
                             <span className="text-primary uppercase tracking-wider">
                               ETB {priceRange[0].toLocaleString()} – ETB {priceRange[1].toLocaleString()}
                             </span>
@@ -354,7 +352,7 @@ export default function Hero() {
                         </div>
                         <div className="space-y-4 md:space-y-6">
                           <div className="flex justify-between items-center text-[12px] md:text-sm font-medium">
-                            <span className="text-gray-800">{t('hero.size_range')}</span>
+                            <span className="text-gray-800">Size Range from</span>
                             <span className="text-primary uppercase tracking-wider">
                               {sizeRange[0].toLocaleString()} – {sizeRange[1].toLocaleString()} SqFt
                             </span>
@@ -374,7 +372,7 @@ export default function Hero() {
                       {showPropertyFilters && (
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                           <div className="space-y-1 md:space-y-2">
-                            <Label className="text-xs md:text-sm font-medium text-gray-800">{t('hero.bedrooms')}</Label>
+                            <Label className="text-xs md:text-sm font-medium text-gray-800">Bedrooms</Label>
                             <Combobox
                               options={BEDROOM_OPTIONS}
                               value={bedrooms}
@@ -385,7 +383,7 @@ export default function Hero() {
                           </div>
 
                           <div className="space-y-1 md:space-y-2">
-                            <Label className="text-xs md:text-sm font-medium text-gray-800">{t('hero.bathrooms')}</Label>
+                            <Label className="text-xs md:text-sm font-medium text-gray-800">Bathrooms</Label>
                             <Combobox
                               options={BATHROOM_OPTIONS}
                               value={bathrooms}

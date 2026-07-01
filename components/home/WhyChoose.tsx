@@ -3,25 +3,22 @@
 import { motion } from 'framer-motion';
 import { Globe2, ShieldCheck, Users } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 
 export default function WhyChoose() {
-  const { t } = useTranslation('common');
-
   const benefits = [
     {
-      title: t('why.benefits.secure_title'),
-      description: t('why.benefits.secure_desc'),
+      title: 'Secure Transactions',
+      description: 'End-to-end encryption and bank-grade security protocols for all your legal documents and private data.',
       icon: <ShieldCheck className="w-16 h-16 text-primary" />
     },
     {
-      title: t('why.benefits.partners_title'),
-      description: t('why.benefits.partners_desc'),
+      title: 'Verified Partners',
+      description: 'Direct access to our hand-vetted network of top-tier legal professionals and qualified solicitors.',
       icon: <Users className="w-16 h-16 text-primary" />
     },
     {
-      title: t('why.benefits.remote_title'),
-      description: t('why.benefits.remote_desc'),
+      title: 'Remote Management',
+      description: 'Complete control over your international assets from anywhere in the world without the need for travel.',
       icon: <Globe2 className="w-16 h-16 text-primary" />
     }
   ];
@@ -37,7 +34,7 @@ export default function WhyChoose() {
             viewport={{ once: true }}
             className="text-2xl md:text-4xl font-medium text-neutral-1 leading-tight"
           >
-            {t('why.title')}
+            Why Choose Zila Legal?
           </motion.h2>
           <motion.p
             whileInView={{ opacity: 1, y: 0 }}
@@ -45,7 +42,7 @@ export default function WhyChoose() {
             transition={{ delay: 0.1 }}
             className="text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto font-medium"
           >
-            {t('why.subtitle')}
+            Secure and reliable legal services tailored for the global diaspora, ensuring your investments are protected across borders.
           </motion.p>
         </div>
 

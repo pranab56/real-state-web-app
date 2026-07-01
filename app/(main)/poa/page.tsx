@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 // ── Shared field height ──
@@ -86,7 +85,6 @@ const ProcessStep = ({ title, description }: { title: string; description: strin
 );
 
 export default function POAPage() {
-  const { t } = useTranslation('common');
   const [createPoa, { isLoading }] = useCreatePoaMutation();
 
   const [name, setName] = useState('');
@@ -132,10 +130,10 @@ export default function POAPage() {
           >
             <h1
               className="text-3xl md:text-4xl font-black text-neutral-1 uppercase leading-tight tracking-tight"
-              dangerouslySetInnerHTML={{ __html: t('poa.title') }}
+              dangerouslySetInnerHTML={{ __html: 'Legal & Power of <br class="hidden md:block" /> Attorney (POA) Services' }}
             />
             <p className="text-sm md:text-lg text-neutral-2 max-w-xl font-medium leading-relaxed">
-              {t('poa.subtitle')}
+              Secure Property Transactions in Ethiopia. We represent buyers abroad to ensure safe, legal, and transparent investments through professional Power of Attorney management.
             </p>
             <Button
               onClick={() =>
@@ -143,7 +141,7 @@ export default function POAPage() {
               }
               className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-all cursor-pointer text-sm md:text-base"
             >
-              {t('poa.request_assistance')}
+              Request Legal Assistance
             </Button>
           </motion.div>
           <motion.div
@@ -153,7 +151,7 @@ export default function POAPage() {
           >
             <Image
               src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=1200&h=800&fit=crop"
-              alt={t('poa.hero_img_alt')}
+              alt="Legal Background"
               width={1200}
               height={800}
               className="object-cover"
@@ -165,13 +163,13 @@ export default function POAPage() {
       {/* ── Why Use ZilaHomes POA? ── */}
       <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
         <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">{t('poa.why_title')}</h2>
-          <p className="text-neutral-2">{t('poa.why_subtitle')}</p>
+          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">Why Use ZilaHomes POA?</h2>
+          <p className="text-neutral-2">We bridge the gap between your location abroad and the Ethiopian property market with ironclad legal protection.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <FeatureCard icon={Search} title={t('poa.features.verify_title')} description={t('poa.features.verify_desc')} />
-          <FeatureCard icon={FileText} title={t('poa.features.manage_title')} description={t('poa.features.manage_desc')} />
-          <FeatureCard icon={ShieldCheck} title={t('poa.features.protect_title')} description={t('poa.features.protect_desc')} />
+          <FeatureCard icon={Search} title="Verify Ownership" description="Rigorous checks of land titles, historical records, and official registry to prevent fraud and disputes." />
+          <FeatureCard icon={FileText} title="Manage Agreements" description="Expert handling of sales and purchase contracts, ensuring terms are favorable and legally binding in Ethiopia." />
+          <FeatureCard icon={ShieldCheck} title="Protect Investment" description="Ensuring your funds are held securely and property rights are transferred only when all conditions are met." />
         </div>
       </section>
 
@@ -179,7 +177,7 @@ export default function POAPage() {
       <section className="bg-[#1E2024] py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
           <div className="text-center font-medium">
-            <h2 className="text-2xl md:text-4xl text-white tracking-tight">{t('poa.process.title')}</h2>
+            <h2 className="text-2xl md:text-4xl text-white tracking-tight">Our 4-Step Secure Process</h2>
           </div>
           <motion.div
             initial="hidden"
@@ -188,10 +186,10 @@ export default function POAPage() {
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            <ProcessStep title={t('poa.process.step1_title')} description={t('poa.process.step1_desc')} />
-            <ProcessStep title={t('poa.process.step2_title')} description={t('poa.process.step2_desc')} />
-            <ProcessStep title={t('poa.process.step3_title')} description={t('poa.process.step3_desc')} />
-            <ProcessStep title={t('poa.process.step4_title')} description={t('poa.process.step4_desc')} />
+            <ProcessStep title="Property Selection" description="Choose from our verified listings or bring your own property for assessment." />
+            <ProcessStep title="Legal Verification" description="Our legal team conducts a full title search and due diligence at the sub-city land registry." />
+            <ProcessStep title="POA Authorization" description="Authorize ZilaHomes as your legal representative through the Ethiopian Embassy or Ministry of Foreign Affairs." />
+            <ProcessStep title="Secure Transaction" description="Finalize the purchase, manage payments via escrow, and receive the title deed in your name." />
           </motion.div>
         </div>
       </section>
@@ -204,7 +202,7 @@ export default function POAPage() {
           <div className="lg:w-1/2 relative min-h-[250px] md:min-h-[400px]">
             <Image
               src="/images/poa.png"
-              alt={t('poa.consultation_img_alt')}
+              alt="Consultation"
               fill
               className="object-cover brightness-[0.9]"
             />
@@ -213,8 +211,8 @@ export default function POAPage() {
           {/* Form panel */}
           <div className="lg:w-1/2 p-8 md:p-10 lg:p-16 space-y-8 bg-white">
             <div className="space-y-3">
-              <h2 className="text-2xl md:text-3xl font-medium text-neutral-1">{t('poa.consultation.title')}</h2>
-              <p className="text-sm text-neutral-2 font-medium leading-relaxed">{t('poa.consultation.subtitle')}</p>
+              <h2 className="text-2xl md:text-3xl font-medium text-neutral-1">Request a Legal Consultation</h2>
+              <p className="text-sm text-neutral-2 font-medium leading-relaxed">Speak with our legal experts to understand how we can represent your interests in Ethiopia.</p>
             </div>
 
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
@@ -222,12 +220,12 @@ export default function POAPage() {
               {/* Name */}
               <div>
                 <label className="block text-sm font-semibold text-neutral-1 mb-1.5">
-                  {t('poa.consultation.name')}
+                  Full Name
                 </label>
                 <input
                   value={name}
                   onChange={(e) => { setName(e.target.value); clearErr('name'); }}
-                  placeholder={t('poa.consultation.name_placeholder')}
+                  placeholder="John Doe"
                   className={inputCls(errors.name)}
                 />
                 <FieldError msg={errors.name} />
@@ -236,13 +234,13 @@ export default function POAPage() {
               {/* Email */}
               <div>
                 <label className="block text-sm font-semibold text-neutral-1 mb-1.5">
-                  {t('poa.consultation.email')}
+                  Email Address
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); clearErr('email'); }}
-                  placeholder={t('poa.consultation.email_placeholder')}
+                  placeholder="john@example.com"
                   className={inputCls(errors.email)}
                 />
                 <FieldError msg={errors.email} />
@@ -251,12 +249,12 @@ export default function POAPage() {
               {/* Phone */}
               <div>
                 <label className="block text-sm font-semibold text-neutral-1 mb-1.5">
-                  {t('poa.consultation.phone')}
+                  Phone Number
                 </label>
                 <input
                   value={phone}
                   onChange={(e) => { setPhone(e.target.value); clearErr('phone'); }}
-                  placeholder={t('poa.consultation.phone_placeholder')}
+                  placeholder="+1 (234) 567-8900"
                   className={inputCls(errors.phone)}
                 />
                 <FieldError msg={errors.phone} />
@@ -265,12 +263,12 @@ export default function POAPage() {
               {/* Message */}
               <div>
                 <label className="block text-sm font-semibold text-neutral-1 mb-1.5">
-                  {t('poa.consultation.message')}
+                  Message
                 </label>
                 <textarea
                   value={message}
                   onChange={(e) => { setMessage(e.target.value); clearErr('message'); }}
-                  placeholder={t('poa.consultation.message_placeholder')}
+                  placeholder="Tell us about your property interests..."
                   rows={4}
                   className={cn(
                     'w-full rounded-lg px-5 py-3 text-neutral-1 font-medium text-sm outline-none transition-all resize-none border',
@@ -290,7 +288,7 @@ export default function POAPage() {
                   'w-full bg-primary cursor-pointer hover:bg-primary/90 text-white font-medium rounded-lg transition-transform active:scale-[0.98] disabled:opacity-70 border-none text-sm'
                 )}
               >
-                {isLoading ? 'Submitting...' : t('poa.consultation.submit')}
+                {isLoading ? 'Submitting...' : 'Request Consultation'}
               </Button>
             </form>
           </div>
@@ -301,13 +299,13 @@ export default function POAPage() {
       <section className="bg-orange-50/20 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
           <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-            <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">{t('why.title')}</h2>
-            <p className="text-neutral-2">{t('why.subtitle')}</p>
+            <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">Why Choose Zila Legal?</h2>
+            <p className="text-neutral-2">We provide unmatched trust and transparency in every transaction.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard light icon={Lock} title={t('why.benefits.secure_title')} description={t('why.benefits.secure_desc')} />
-            <FeatureCard light icon={UserCheck} title={t('why.benefits.partners_title')} description={t('why.benefits.partners_desc')} />
-            <FeatureCard light icon={Globe} title={t('why.benefits.remote_title')} description={t('why.benefits.remote_desc')} />
+            <FeatureCard light icon={Lock} title="Secure Transactions" description="Every transaction on our platform is backed by legal verification and secure payment processes." />
+            <FeatureCard light icon={UserCheck} title="Verified Partners" description="All our agents and property partners are thoroughly vetted to ensure you work with trusted professionals." />
+            <FeatureCard light icon={Globe} title="Remote Management" description="Manage your property investments from anywhere in the world with our digital-first platform and POA services." />
           </div>
         </div>
       </section>

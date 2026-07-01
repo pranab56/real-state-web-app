@@ -15,7 +15,6 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 const MAX_VISIBLE = 6;
@@ -46,18 +45,12 @@ function PropertyCardSkeleton() {
 }
 
 export default function FeaturedVerifiedProperties() {
-  const { t } = useTranslation('common');
-
   const { data, isLoading } = useGetAllListingsQuery({ category: 'listing', limit: MAX_VISIBLE, isVerified: true, isFeatured: true });
   const allProperties: Hotel[] = data?.data ?? [];
   const total: number = data?.pagination?.total ?? 0;
   const showSeeMore = total > MAX_VISIBLE;
 
-  const categories = [
-    t('featured.categories.all'),
-    t('featured.categories.rent'),
-    t('featured.categories.sale'),
-  ];
+  const categories = ['All', 'For Rent', 'For Sale'];
   const [activeTab, setActiveTab] = useState(categories[0]);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
@@ -70,17 +63,17 @@ export default function FeaturedVerifiedProperties() {
 
   const filteredProperties = allProperties.filter((p: Hotel) => {
     const purpose = p.listing?.purpose ?? '';
-    if (activeTab === t('featured.categories.all')) return true;
-    if (activeTab === t('featured.categories.rent')) return purpose === 'for_rent';
-    if (activeTab === t('featured.categories.sale')) return purpose === 'for_sale';
+    if (activeTab === 'All') return true;
+    if (activeTab === 'For Rent') return purpose === 'for_rent';
+    if (activeTab === 'For Sale') return purpose === 'for_sale';
     return true;
   });
 
   const showSkeleton = isLoading || isFilterLoading;
 
   const getPurposeLabel = (purpose: string) => {
-    if (purpose === 'for_rent') return t('featured.categories.rent');
-    if (purpose === 'for_sale') return t('featured.categories.sale');
+    if (purpose === 'for_rent') return 'For Rent';
+    if (purpose === 'for_sale') return 'For Sale';
     return purpose;
   };
 
@@ -95,7 +88,7 @@ export default function FeaturedVerifiedProperties() {
             viewport={{ once: true }}
             className="text-[28px] sm:text-3xl md:text-5xl font-medium text-neutral-1 leading-[1.2] md:leading-tight"
           >
-            {t('featured.title')}
+            Featured Verified Properties
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -104,7 +97,7 @@ export default function FeaturedVerifiedProperties() {
             transition={{ delay: 0.1 }}
             className="text-[13px] sm:text-sm md:text-lg text-neutral-2 max-w-2xl mx-auto leading-relaxed"
           >
-            {t('featured.subtitle')}
+            Explore our hand-picked selection of verified properties tailored to your needs.
           </motion.p>
         </div>
 
@@ -135,8 +128,8 @@ export default function FeaturedVerifiedProperties() {
         {/* Empty state */}
         {!showSkeleton && filteredProperties.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 md:py-24 text-center gap-2">
-            <p className="text-neutral-1 font-medium text-base md:text-lg">{t('featured.empty.title', 'No properties available')}</p>
-            <p className="text-neutral-2 text-sm md:text-base">{t('featured.empty.subtitle', 'Check back later for new listings.')}</p>
+            <p className="text-neutral-1 font-medium text-base md:text-lg">No properties available</p>
+            <p className="text-neutral-2 text-sm md:text-base">Check back later for new listings.</p>
           </div>
         )}
 
@@ -175,7 +168,7 @@ export default function FeaturedVerifiedProperties() {
                           <div className="absolute top-3 left-3 md:top-4 md:left-4 flex gap-2">
                             {property.isVerified && (
                               <span className="bg-[#2B9724] text-white text-[9px] md:text-[10px] font-medium px-2.5 md:px-3 py-1 rounded-full">
-                                {t('featured.property.verified')}
+                                Zila Verified
                               </span>
                             )}
                             {purpose && (
@@ -207,21 +200,21 @@ export default function FeaturedVerifiedProperties() {
                               <Bed size={15} className="md:size-[18px] text-primary shrink-0" />
                               <div className="flex flex-col md:flex-row md:gap-1">
                                 <span className="text-[11px] md:text-sm font-medium text-neutral-1">{property.listing?.bedrooms ?? 0}</span>
-                                <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">{t('featured.property.beds')}</span>
+                                <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Beds</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-1.5 md:gap-2.5">
                               <Bath size={15} className="md:size-[18px] text-primary shrink-0" />
                               <div className="flex flex-col md:flex-row md:gap-1">
                                 <span className="text-[11px] md:text-sm font-medium text-neutral-1">{property.listing?.bathrooms ?? 0}</span>
-                                <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">{t('featured.property.baths')}</span>
+                                <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Baths</span>
                               </div>
                             </div>
                             <div className="flex items-center gap-1.5 md:gap-2.5">
                               <Maximize2 size={15} className="md:size-[18px] text-primary shrink-0" />
                               <div className="flex flex-col md:flex-row md:gap-1">
                                 <span className="text-[11px] md:text-sm font-medium text-neutral-1">{property.listing?.totalArea ?? 0}</span>
-                                <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">{t('featured.property.sqft')}</span>
+                                <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Sqft</span>
                               </div>
                             </div>
                           </div>
@@ -240,7 +233,7 @@ export default function FeaturedVerifiedProperties() {
           <div className="flex justify-center mt-12 md:mt-20">
             <Link href="/properties">
               <button className="px-8 py-3 rounded-lg border border-primary text-primary font-medium hover:bg-primary hover:text-white transition-all cursor-pointer">
-                {t('featured.see_more', 'See More')}
+                See More
               </button>
             </Link>
           </div>

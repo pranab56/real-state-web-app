@@ -1,4 +1,4 @@
-import { I18nProvider } from "@/components/providers/i18n-provider";
+import { GoogleTranslateProvider } from "@/components/ui/google-translate";
 import { ReduxProvider } from "@/components/providers/redux-provider";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -29,11 +29,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-white text-black selection:bg-zinc-100">
         <ReduxProvider>
-          <I18nProvider>
-            {/* <LenisProvider> */}
-            {children}
-            {/* </LenisProvider> */}
-          </I18nProvider>
+          <GoogleTranslateProvider />
+          {/* <LenisProvider> */}
+          {children}
+          {/* </LenisProvider> */}
           <Toaster richColors position="top-right" />
         </ReduxProvider>
       </body>

@@ -19,7 +19,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useTranslation } from "react-i18next";
+import { changeGoogleLanguage } from '@/components/ui/google-translate';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../ui/button';
 
@@ -35,7 +35,6 @@ const getImg = (path?: string) => {
 };
 
 export function Navbar() {
-  const { t, i18n } = useTranslation('common');
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -74,9 +73,9 @@ export function Navbar() {
   };
 
   const menuItems = [
-    { name: t('navbar.home'), href: '/' },
+    { name: 'Home', href: '/' },
     {
-      name: t('navbar.properties'),
+      name: 'Properties',
       href: '#',
       hasDropdown: true,
       subItems: [
@@ -85,14 +84,14 @@ export function Navbar() {
         { name: 'Transportation', href: '/transportation' },
       ]
     },
-    { name: t('navbar.blog'), href: '/blog' },
-    { name: t('navbar.poa'), href: '/poa' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'POA', href: '/poa' },
     {
-      name: t('navbar.company'),
+      name: 'Company',
       href: '#',
       hasDropdown: true,
       subItems: [
-        { name: t('navbar.about'), href: '/about' },
+        { name: 'About Us', href: '/about' },
         { name: 'Terms of Service', href: '/terms' },
         { name: 'Privacy Policy', href: '/privacy' },
       ]
@@ -106,10 +105,12 @@ export function Navbar() {
     { name: 'RU', fullName: 'Русский', flag: '/icons/flags/ru.png', code: 'ru' },
   ];
 
-  const selectedLang = languages.find(l => l.code === i18n.language) || languages[0];
+  const [selectedLangCode, setSelectedLangCode] = useState('en');
+  const selectedLang = languages.find(l => l.code === selectedLangCode) || languages[0];
 
   const handleLanguageChange = (lang: typeof languages[0]) => {
-    i18n.changeLanguage(lang.code);
+    setSelectedLangCode(lang.code);
+    changeGoogleLanguage(lang.code);
   };
 
   const showBackground = !isHome || scrolled || isOpen;

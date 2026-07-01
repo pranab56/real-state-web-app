@@ -9,7 +9,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { BlogPost } from '@/types';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&h=800&fit=crop';
@@ -31,7 +30,6 @@ const getReadTime = (content: string) => {
 };
 
 export default function BlogDetailPage() {
-  const { t } = useTranslation('common');
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
@@ -246,7 +244,7 @@ export default function BlogDetailPage() {
 
             {/* Search */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-sm">
-              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">{t('blog.search_title')}</h3>
+              <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Search Blog</h3>
               <div className="relative">
                 <Input
                   value={searchInput}
@@ -256,7 +254,7 @@ export default function BlogDetailPage() {
                       router.push(`/blog?search=${encodeURIComponent(searchInput.trim())}`);
                     }
                   }}
-                  placeholder={t('blog.search_placeholder')}
+                  placeholder="Search Now"
                   className="h-11 bg-[#F7F7F7] border-none rounded-xl pl-10 pr-10 text-neutral-1 font-medium text-sm"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-2/60 w-4 h-4 pointer-events-none" />
@@ -290,7 +288,7 @@ export default function BlogDetailPage() {
             {/* Categories */}
             {categories.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-sm">
-                <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">{t('blog.categories')}</h3>
+                <h3 className="text-sm font-bold text-neutral-1 uppercase tracking-wider">Categories</h3>
                 <div className="space-y-1">
                   {categories.map((cat: string) => (
                     <Link

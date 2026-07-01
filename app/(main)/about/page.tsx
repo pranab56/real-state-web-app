@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 
 interface InfoCardProps {
   icon: React.ElementType;
@@ -26,7 +25,6 @@ interface InfoCardProps {
 }
 
 const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = false, href }: InfoCardProps) => {
-  const { t } = useTranslation('common');
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -44,7 +42,7 @@ const InfoCard = ({ icon: Icon, title, description, dark = false, hasButton = fa
       {hasButton && href && (
         <Link href={href}>
           <Button className="bg-[#2D2E32] hover:bg-[#1E1F22] text-white font-medium h-11 px-8 rounded-lg cursor-pointer transition-colors">
-            {t('about.help.learn_more')}
+            Learn More
           </Button>
         </Link>
       )}
@@ -60,8 +58,6 @@ const ServiceStep = ({ title, description }: { title: string, description: strin
 );
 
 export default function AboutPage() {
-  const { t } = useTranslation('common');
-
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -74,13 +70,13 @@ export default function AboutPage() {
           >
             <h1
               className="text-xl md:text-4xl font-black text-neutral-1 leading-tight tracking-tight uppercase"
-              dangerouslySetInnerHTML={{ __html: t('about.hero_title') }}
+              dangerouslySetInnerHTML={{ __html: 'About ZilaHomes - Helping <br class="hidden md:block" /> You Find Trusted Properties <br class="hidden md:block" /> and Services Across Ethiopia' }}
             />
             <p className="sm:text-lg text-sm text-neutral-2 max-w-xl font-medium leading-relaxed">
-              {t('about.hero_subtitle')}
+              Simplifying your search for excellence in the Ethiopian real estate market. We bridge the gap between dream homes and reality.
             </p>
             <Button className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 cursor-pointer text-white font-medium rounded-lg shadow-lg shadow-primary/20 transition-all">
-              {t('about.explore_btn')}
+              Explore Listings
             </Button>
           </motion.div>
           <motion.div
@@ -90,7 +86,7 @@ export default function AboutPage() {
           >
             <Image
               src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&h=800&fit=crop"
-              alt={t('about.hero_img_alt')}
+              alt="Modern House"
               width={1200}
               height={800}
               className="object-cover"
@@ -101,17 +97,17 @@ export default function AboutPage() {
 
       {/* Mission & Vision Section */}
       <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
-        <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 text-center tracking-tight">{t('about.mission_vision_title')}</h2>
+        <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 text-center tracking-tight">Our Mission &amp; Vision</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           <InfoCard
             icon={Target}
-            title={t('about.mission_title')}
-            description={t('about.mission_desc')}
+            title="Our Mission"
+            description="To simplify property discovery through transparency and innovation, making premium real estate accessible to everyone in Ethiopia."
           />
           <InfoCard
             icon={Eye}
-            title={t('about.vision_title')}
-            description={t('about.vision_desc')}
+            title="Our Vision"
+            description="To become Ethiopia's most trusted platform for real estate, hospitality, and legal services, empowering buyers, sellers, and investors."
           />
         </div>
       </section>
@@ -119,7 +115,7 @@ export default function AboutPage() {
       {/* What We Do Section */}
       <section className="bg-[#1E2024] py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
-          <h2 className="text-2xl md:text-4xl font-medium text-white text-center tracking-tight">{t('about.what_we_do')}</h2>
+          <h2 className="text-2xl md:text-4xl font-medium text-white text-center tracking-tight">What We Do</h2>
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -130,20 +126,20 @@ export default function AboutPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             <ServiceStep
-              title={t('about.services.properties')}
-              description={t('about.services.properties_desc')}
+              title="Property Listings"
+              description="Browse verified residential and commercial properties for sale or rent across Ethiopia's top cities."
             />
             <ServiceStep
-              title={t('about.services.hotels')}
-              description={t('about.services.hotels_desc')}
+              title="Hotels & Hospitality"
+              description="Discover and book hotels and guesthouses with confidence through our curated listings."
             />
             <ServiceStep
-              title={t('about.services.transport')}
-              description={t('about.services.transport_desc')}
+              title="Transportation"
+              description="Book premium airport pickup, drop-off, and private transportation services with ease."
             />
             <ServiceStep
-              title={t('about.services.legal')}
-              description={t('about.services.legal_desc')}
+              title="Legal & POA Services"
+              description="Navigate property transactions confidently with our Power of Attorney and legal assistance services."
             />
           </motion.div>
         </div>
@@ -152,28 +148,28 @@ export default function AboutPage() {
       {/* How Can We Help You? Section */}
       <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-10 md:space-y-16">
         <div className="text-center space-y-3 md:space-y-4 max-w-2xl mx-auto">
-          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">{t('about.help.title')}</h2>
-          <p className="text-neutral-2 font-medium italic">{t('about.help.subtitle')}</p>
+          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">How Can We Help You?</h2>
+          <p className="text-neutral-2 font-medium italic">Whether you're buying, renting, or selling — we've got you covered.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <InfoCard
             icon={Home}
-            title={t('about.help.buy')}
-            description={t('about.help.desc')}
+            title="Buy a Home"
+            description="Find your dream home from our extensive list of verified properties across Ethiopia's major cities."
             hasButton
             href="/properties"
           />
           <InfoCard
             icon={Key}
-            title={t('about.help.rent')}
-            description={t('about.help.desc')}
+            title="Rent a Home"
+            description="Explore affordable rental properties with flexible terms and verified listings for a hassle-free experience."
             hasButton
             href="/properties"
           />
           <InfoCard
             icon={Tag}
-            title={t('about.help.sell')}
-            description={t('about.help.desc')}
+            title="Sell a Home"
+            description="List your property with us and reach thousands of potential buyers and renters across Ethiopia."
             hasButton
             href="/register"
           />
@@ -184,8 +180,8 @@ export default function AboutPage() {
       <section className="bg-orange-50/20 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 space-y-10 md:space-y-16">
           <div className="text-center space-y-3 md:space-y-4 max-w-3xl mx-auto font-medium">
-            <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">{t('why.title')}</h2>
-            <p className="text-neutral-2">{t('why.subtitle')}</p>
+            <h2 className="text-2xl md:text-4xl font-medium text-neutral-1 tracking-tight">Why Choose Zila Legal?</h2>
+            <p className="text-neutral-2">We provide unmatched trust and transparency in every transaction.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
@@ -197,8 +193,8 @@ export default function AboutPage() {
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <Lock size={32} />
               </div>
-              <h3 className="text-xl font-medium text-neutral-1">{t('why.benefits.secure_title')}</h3>
-              <p className="text-sm text-neutral-2 leading-relaxed font-medium">{t('why.benefits.secure_desc')}</p>
+              <h3 className="text-xl font-medium text-neutral-1">Secure Transactions</h3>
+              <p className="text-sm text-neutral-2 leading-relaxed font-medium">Every transaction on our platform is backed by legal verification and secure payment processes.</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -210,8 +206,8 @@ export default function AboutPage() {
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <UserCheck size={32} />
               </div>
-              <h3 className="text-xl font-medium text-neutral-1">{t('why.benefits.partners_title')}</h3>
-              <p className="text-sm text-neutral-2 leading-relaxed font-medium">{t('why.benefits.partners_desc')}</p>
+              <h3 className="text-xl font-medium text-neutral-1">Verified Partners</h3>
+              <p className="text-sm text-neutral-2 leading-relaxed font-medium">All our agents and property partners are thoroughly vetted to ensure you work with trusted professionals.</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -223,8 +219,8 @@ export default function AboutPage() {
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                 <Globe size={32} />
               </div>
-              <h3 className="text-xl font-medium text-neutral-1">{t('why.benefits.remote_title')}</h3>
-              <p className="text-sm text-neutral-2 leading-relaxed font-medium">{t('why.benefits.remote_desc')}</p>
+              <h3 className="text-xl font-medium text-neutral-1">Remote Management</h3>
+              <p className="text-sm text-neutral-2 leading-relaxed font-medium">Manage your property investments from anywhere in the world with our digital-first platform and POA services.</p>
             </motion.div>
           </div>
         </div>

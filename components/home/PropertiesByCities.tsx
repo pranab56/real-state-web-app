@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
@@ -13,8 +12,6 @@ import { useGetTopCitisQuery } from '../../features/listings/listingsApi';
 
 
 export default function PropertiesByCities() {
-  const { t } = useTranslation('common');
-
   const { data } = useGetTopCitisQuery({});
   const cities: { city: string; count: number }[] = data?.data ?? [];
 
@@ -89,8 +86,8 @@ export default function PropertiesByCities() {
           transition={{ duration: 0.8 }}
           className="mb-8 md:mb-16 space-y-2 md:space-y-4"
         >
-          <h2 className="text-3xl md:text-5xl font-medium text-neutral-1 tracking-tight">{t('cities.title')}</h2>
-          <p className="text-sm md:text-lg text-neutral-2 font-medium">{t('cities.subtitle')}</p>
+          <h2 className="text-3xl md:text-5xl font-medium text-neutral-1 tracking-tight">Properties By Cities</h2>
+          <p className="text-sm md:text-lg text-neutral-2 font-medium">Display your properties by city or area.</p>
         </motion.div>
 
         {/* Swiper Slider */}
@@ -129,7 +126,7 @@ export default function PropertiesByCities() {
                         {city.city}
                       </h5>
                       <p className="text-[10px] md:text-sm text-neutral-2 font-medium mt-0.5 md:mt-1">
-                        {t('cities.properties_count', { count: city.count })}
+                        {`${city.count} Properties`}
                       </p>
                     </div>
                   </motion.div>

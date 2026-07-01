@@ -23,7 +23,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Hotel } from '@/types';
 
@@ -49,7 +48,6 @@ const getImg = (path?: string) => {
 };
 
 function HotelsPageContent() {
-  const { t } = useTranslation('common');
   const sp = useSearchParams();
   const { requireAuth } = useAuthGuard();
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
@@ -200,12 +198,12 @@ function HotelsPageContent() {
         <div className="container mx-auto px-6 relative z-10 text-center md:text-left">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-4 md:space-y-6">
             <div className="flex items-center justify-center md:justify-start gap-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-white/60">
-              <Link href="/" className="hover:text-primary transition-colors">{t('listing.hero.home')}</Link>
+              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
               <ChevronRight size={10} />
               <span className="text-white">Hotels</span>
             </div>
-            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: t('hotels.hero.title') }} />
-            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed mx-auto md:mx-0">{t('hotels.hero.subtitle')}</p>
+            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: 'Listing <span class="text-primary">Hotels</span>' }} />
+            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed mx-auto md:mx-0">Find the perfect place to stay from our curated collection of verified hotels and guest houses across Ethiopia.</p>
           </motion.div>
         </div>
       </section>
@@ -214,7 +212,7 @@ function HotelsPageContent() {
 
         {/* Mobile filter toggle */}
         <button onClick={() => setShowFilters(!showFilters)} className="lg:hidden w-full mb-8 h-12 px-5 bg-white border border-gray-100 rounded-xl flex items-center justify-between font-medium text-neutral-1 active:scale-95 transition-all">
-          <div className="flex items-center gap-3"><Search size={18} className="text-primary" /><span className="text-sm">{t('hotels.sidebar.filter_search')}</span></div>
+          <div className="flex items-center gap-3"><Search size={18} className="text-primary" /><span className="text-sm">Filter Search</span></div>
           <motion.div animate={{ rotate: showFilters ? 90 : 0 }}><ChevronRight size={16} /></motion.div>
         </button>
 
@@ -224,7 +222,7 @@ function HotelsPageContent() {
 
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl font-medium text-neutral-1">{t('hotels.sidebar.filters')}</h2>
+              <h2 className="text-lg sm:text-xl font-medium text-neutral-1">Filters</h2>
               {hasActiveFilters && (
                 <button onClick={clearAllFilters} className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors">
                   <X size={14} /> Clear All
@@ -237,7 +235,7 @@ function HotelsPageContent() {
               <input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={t('hotels.sidebar.filter_search')}
+                placeholder="Filter Search"
                 className="w-full h-12 bg-[#F7F7F7] border-none rounded-sm pl-12 pr-4 text-neutral-1 font-medium text-sm outline-none focus:ring-2 focus:ring-primary/20"
               />
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-2" size={18} />
@@ -273,7 +271,7 @@ function HotelsPageContent() {
             {/* Price Range */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium text-neutral-1 text-sm sm:text-base">{t('listing.sidebar.price_range')}</h3>
+                <h3 className="font-medium text-neutral-1 text-sm sm:text-base">Price Range from</h3>
                 <span className="text-xs font-medium text-primary">
                   {priceRange[0].toLocaleString()} – {priceRange[1].toLocaleString()} ETB
                 </span>
@@ -305,7 +303,7 @@ function HotelsPageContent() {
 
             {/* Star Rating */}
             <div className="space-y-4">
-              <h3 className="font-medium text-neutral-1 text-sm sm:text-base">{t('hotels.sidebar.rating')}</h3>
+              <h3 className="font-medium text-neutral-1 text-sm sm:text-base">Hotel Rating</h3>
               <div className="space-y-3">
                 {[5, 4, 3, 2].map((star) => (
                   <div
@@ -325,7 +323,7 @@ function HotelsPageContent() {
                         {[...Array(5 - star)].map((_, i) => <Star key={i} size={14} className="text-gray-200" />)}
                       </div>
                     </div>
-                    <span className="text-xs sm:text-sm text-neutral-1 font-medium">{star} {t('hotels.sidebar.stars')}</span>
+                    <span className="text-xs sm:text-sm text-neutral-1 font-medium">{star} Stars</span>
                   </div>
                 ))}
               </div>
@@ -333,7 +331,7 @@ function HotelsPageContent() {
 
             {/* Available now */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-              <span className="font-medium text-neutral-1 text-sm sm:text-base">{t('hotels.sidebar.available')}</span>
+              <span className="font-medium text-neutral-1 text-sm sm:text-base">Available Only</span>
               <Switch
                 checked={availableOnly}
                 onCheckedChange={setAvailableOnly}
@@ -349,7 +347,7 @@ function HotelsPageContent() {
             {isLoading || isFetching ? (
               <span className="text-neutral-2 font-medium text-sm flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading...</span>
             ) : (
-              <span className="text-neutral-2 font-medium text-xs sm:text-base" dangerouslySetInnerHTML={{ __html: t('hotels.main.showing', { start: showing.start, end: showing.end, total }) }} />
+              <span className="text-neutral-2 font-medium text-xs sm:text-base" dangerouslySetInnerHTML={{ __html: `Showing <span class="text-neutral-1 font-medium">${showing.start}-${showing.end}</span> of <span class="text-neutral-1 font-medium">${total} Hotels</span>` }} />
             )}
             {hasActiveFilters && (
               <button onClick={clearAllFilters} className="text-xs text-neutral-2 hover:text-primary font-medium flex items-center gap-1 transition-colors">
@@ -422,12 +420,12 @@ function HotelsPageContent() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-baseline gap-1">
                               <span className="text-2xl sm:text-3xl font-extrabold text-neutral-1">{hotel.currency ?? 'ETB'} {hotel.price?.toLocaleString() ?? ''}</span>
-                              <span className="text-neutral-2 text-xs sm:text-sm font-medium">{t('hotels.main.per_night')}</span>
+                              <span className="text-neutral-2 text-xs sm:text-sm font-medium">/ night</span>
                             </div>
                             <PriceConvertButton price={hotel.price} currency={hotel.currency} />
                           </div>
                           <Link href={`/hotels/${hotel._id ?? hotel.id}`}>
-                            <Button className="w-full bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-medium h-10 sm:h-12 px-4 sm:px-6 rounded-sm transition-all active:scale-95 text-sm sm:text-base border-none">{t('hotels.main.book_now')}</Button>
+                            <Button className="w-full bg-[#F1913D] cursor-pointer hover:bg-[#F1913D]/90 text-white font-medium h-10 sm:h-12 px-4 sm:px-6 rounded-sm transition-all active:scale-95 text-sm sm:text-base border-none">Book Now</Button>
                           </Link>
                         </div>
                       </div>
@@ -442,7 +440,7 @@ function HotelsPageContent() {
           {!isLoading && totalPages > 1 && (
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-8 pb-12">
               <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 px-3 sm:px-4 rounded-sm border border-gray-100 text-neutral-2 hover:text-primary hover:border-primary cursor-pointer transition-all font-medium text-xs sm:text-sm disabled:opacity-40 disabled:cursor-not-allowed">
-                <ChevronLeft size={16} /><span className="hidden sm:inline">{t('listing.main.previous')}</span>
+                <ChevronLeft size={16} /><span className="hidden sm:inline">Previous</span>
               </button>
               <div className="flex items-center gap-1 sm:gap-2">
                 {pageNumbers().map((p, idx) =>
@@ -454,7 +452,7 @@ function HotelsPageContent() {
                 )}
               </div>
               <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 px-3 sm:px-4 rounded-sm border border-gray-100 text-neutral-2 hover:text-primary hover:border-primary cursor-pointer transition-all font-medium text-xs sm:text-sm disabled:opacity-40 disabled:cursor-not-allowed">
-                <span className="hidden sm:inline">{t('listing.main.next')}</span><ChevronRight size={16} />
+                <span className="hidden sm:inline">Next</span><ChevronRight size={16} />
               </button>
             </div>
           )}

@@ -3,31 +3,28 @@
 import { motion } from 'framer-motion';
 import { Building2, Home as HomeIcon, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 
 export default function HelpSection() {
-  const { t } = useTranslation('common');
-
   const services = [
     {
-      title: t('help.services.buy_title'),
-      description: t('help.services.desc'),
+      title: 'Buy a Home',
+      description: "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
       icon: <Building2 className="w-16 h-16 text-primary" />,
-      btnText: t('help.services.learn_more'),
+      btnText: 'Learn More',
       href: '/properties'
     },
     {
-      title: t('help.services.rent_title'),
-      description: t('help.services.desc'),
+      title: 'Rent a Home',
+      description: "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
       icon: <HomeIcon className="w-16 h-16 text-primary" />,
-      btnText: t('help.services.learn_more'),
+      btnText: 'Learn More',
       href: '/properties'
     },
     {
-      title: t('help.services.sell_title'),
-      description: t('help.services.desc'),
+      title: 'Sell a Home',
+      description: "Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.",
       icon: <Search className="w-16 h-16 text-primary" />,
-      btnText: t('help.services.learn_more'),
+      btnText: 'Learn More',
       href: '/register'
     }
   ];
@@ -43,7 +40,7 @@ export default function HelpSection() {
             viewport={{ once: true }}
             className="text-2xl md:text-4xl font-medium text-neutral-1"
           >
-            {t('help.title')}
+            How Can We Help You?
           </motion.h2>
           <motion.p
 
@@ -52,7 +49,7 @@ export default function HelpSection() {
             transition={{ delay: 0.1 }}
             className="text-sm md:text-base text-neutral-2 max-w-2xl mx-auto"
           >
-            {t('help.subtitle')}
+            Thousands of luxury home enthusiasts just like you visit our website.
           </motion.p>
         </div>
 

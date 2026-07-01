@@ -9,7 +9,6 @@ import { ApiError } from '@/types';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 // ── All fields share this height ──
@@ -137,7 +136,6 @@ function runValidation(f: {
 }
 
 export default function TransportationPage() {
-  const { t } = useTranslation('common');
   const [createTransportation, { isLoading }] = useCreateTransportationMutation();
 
   const [customerName, setCustomerName] = useState('');
@@ -215,7 +213,7 @@ export default function TransportationPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl md:text-5xl font-medium text-white leading-tight"
-            dangerouslySetInnerHTML={{ __html: t('transportation.hero.title') }}
+            dangerouslySetInnerHTML={{ __html: 'Book Premium Airport Pickup & Drop-Off <br class="hidden md:block"/> Services & Private Transportation' }}
           />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -223,7 +221,7 @@ export default function TransportationPage() {
             transition={{ delay: 0.1 }}
             className="text-sm md:text-lg text-white/80 font-medium max-w-2xl mx-auto px-4"
           >
-            {t('transportation.hero.subtitle')}
+            Reliable airport pickup, drop-off, and private transportation services across Ethiopia.
           </motion.p>
         </div>
       </div>
@@ -245,12 +243,12 @@ export default function TransportationPage() {
               </h3>
 
               <Field>
-                <FormLabel htmlFor="customerName">{t('transportation.form.requester_name')}</FormLabel>
+                <FormLabel htmlFor="customerName">Requester's Full Name</FormLabel>
                 <input
                   id="customerName"
                   value={customerName}
                   onChange={(e) => { setCustomerName(e.target.value); clearErr('customerName'); }}
-                  placeholder={t('transportation.form.requester_placeholder')}
+                  placeholder="Hermela Araya"
                   className={inputCls(errors.customerName)}
                 />
                 <FieldError msg={errors.customerName} />
@@ -258,25 +256,25 @@ export default function TransportationPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field>
-                  <FormLabel htmlFor="customerPhone">{t('transportation.form.phone_number')}</FormLabel>
+                  <FormLabel htmlFor="customerPhone">Phone Number</FormLabel>
                   <input
                     id="customerPhone"
                     value={customerPhone}
                     onChange={(e) => { setCustomerPhone(e.target.value); clearErr('customerPhone'); }}
-                    placeholder={t('transportation.form.phone_placeholder')}
+                    placeholder="+251 9xx xxx xxxx"
                     className={inputCls(errors.customerPhone)}
                   />
                   <FieldError msg={errors.customerPhone} />
                 </Field>
 
                 <Field>
-                  <FormLabel htmlFor="customerEmail">{t('transportation.form.email_address')}</FormLabel>
+                  <FormLabel htmlFor="customerEmail">Email Address</FormLabel>
                   <input
                     id="customerEmail"
                     type="email"
                     value={customerEmail}
                     onChange={(e) => { setCustomerEmail(e.target.value); clearErr('customerEmail'); }}
-                    placeholder={t('transportation.form.email_placeholder')}
+                    placeholder="Enter your email address"
                     className={inputCls(errors.customerEmail)}
                   />
                   <FieldError msg={errors.customerEmail} />
@@ -292,7 +290,7 @@ export default function TransportationPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field>
-                  <FormLabel>{t('transportation.form.service_type')}</FormLabel>
+                  <FormLabel>Service Type</FormLabel>
                   <Combobox
                     options={SERVICE_OPTIONS}
                     value={serviceType}
@@ -305,7 +303,7 @@ export default function TransportationPage() {
                 </Field>
 
                 <Field>
-                  <FormLabel>{t('transportation.form.vehicle_type')}</FormLabel>
+                  <FormLabel>Vehicle Type</FormLabel>
                   <Combobox
                     options={VEHICLE_OPTIONS}
                     value={vehicleType}
@@ -335,7 +333,7 @@ export default function TransportationPage() {
               </Field>
 
               <Field>
-                <FormLabel>{t('transportation.form.dropoff_location')}</FormLabel>
+                <FormLabel>Drop-off Location</FormLabel>
                 <GooglePlacesInput
                   placeholder="Search drop-off location (city, airport, street…)"
                   value={dropoff.address}
@@ -375,7 +373,7 @@ export default function TransportationPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field>
-                  <FormLabel>{t('transportation.form.passengers')}</FormLabel>
+                  <FormLabel>Number of Passengers</FormLabel>
                   <Combobox
                     options={PASSENGER_OPTIONS}
                     value={passengers}
@@ -386,7 +384,7 @@ export default function TransportationPage() {
                 </Field>
 
                 <Field>
-                  <FormLabel>{t('transportation.form.luggage')}</FormLabel>
+                  <FormLabel>Number of Luggage</FormLabel>
                   <Combobox
                     options={LUGGAGE_OPTIONS}
                     value={luggage}
@@ -399,13 +397,13 @@ export default function TransportationPage() {
 
               <Field>
                 <FormLabel htmlFor="flightNumber" optional>
-                  {t('transportation.form.flight_number')}
+                  Flight Number
                 </FormLabel>
                 <input
                   id="flightNumber"
                   value={flightNumber}
                   onChange={(e) => setFlightNumber(e.target.value)}
-                  placeholder={t('transportation.form.flight_placeholder')}
+                  placeholder="e.g. ET 500"
                   className={inputCls()}
                 />
               </Field>
@@ -418,13 +416,13 @@ export default function TransportationPage() {
               </h3>
               <Field>
                 <FormLabel htmlFor="passengerName" optional>
-                  {t('transportation.form.passenger_name')}
+                  Passenger Name
                 </FormLabel>
                 <input
                   id="passengerName"
                   value={passengerName}
                   onChange={(e) => setPassengerName(e.target.value)}
-                  placeholder={t('transportation.form.passenger_placeholder')}
+                  placeholder="e.g. Name of person being picked up"
                   className={inputCls()}
                 />
               </Field>
@@ -440,10 +438,10 @@ export default function TransportationPage() {
                   'w-full bg-primary hover:bg-primary/90 text-white font-medium rounded-lg text-sm transition-transform cursor-pointer active:scale-[0.98] disabled:opacity-70 border-none'
                 )}
               >
-                {isLoading ? 'Booking...' : t('transportation.form.confirm_button')}
+                {isLoading ? 'Booking...' : 'Confirm Booking'}
               </Button>
               <p className="text-xs text-neutral-2 font-medium opacity-60">
-                {t('transportation.form.footer_note')}
+                Price includes tax and gratuity. Free cancellation up to 24h before.
               </p>
             </div>
 

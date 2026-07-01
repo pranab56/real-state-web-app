@@ -9,7 +9,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { BlogPost } from '@/types';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&h=800&fit=crop';
@@ -36,7 +35,6 @@ const getReadTime = (content: string) => {
 };
 
 function BlogContent() {
-  const { t } = useTranslation('common');
   const searchParams = useSearchParams();
 
   const [searchInput, setSearchInput] = useState(searchParams.get('search') ?? '');
@@ -81,12 +79,12 @@ function BlogContent() {
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-4 md:space-y-6">
             <div className="flex items-center gap-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-white/60">
-              <Link href="/" className="hover:text-primary transition-colors">{t('blog.hero.home')}</Link>
+              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
               <ChevronRight size={10} />
-              <span className="text-white">{t('blog.title')}</span>
+              <span className="text-white">Blog</span>
             </div>
-            <h1 className="text-3xl md:text-6xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: t('blog.hero.title') }} />
-            <p className="text-sm md:text-lg text-white/70 max-w-2xl font-medium leading-relaxed">{t('blog.hero.subtitle')}</p>
+            <h1 className="text-3xl md:text-6xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: 'Insights, Tips & <span class="text-primary">Market Trends</span>' }} />
+            <p className="text-sm md:text-lg text-white/70 max-w-2xl font-medium leading-relaxed">Stay informed with expert insights, market trends, and tips on real estate, hotels, and transportation across Ethiopia.</p>
             {filtered.length > 0 && (
               <p className="text-xs md:text-sm text-white/50 font-medium pt-1">
                 {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
@@ -190,7 +188,7 @@ function BlogContent() {
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-sm font-medium text-primary group-hover:gap-3 transition-all">
-                        {t('blog.read_more')} <ArrowRight size={15} />
+                        Read More <ArrowRight size={15} />
                       </div>
                     </div>
                   </div>
@@ -249,7 +247,7 @@ function BlogContent() {
                             {getExcerpt(post.content)}
                           </p>
                           <div className="flex items-center gap-1.5 text-sm font-medium text-primary group-hover:gap-2.5 transition-all mt-auto pt-1">
-                            {t('blog.read_more')} <ArrowRight size={14} />
+                            Read More <ArrowRight size={14} />
                           </div>
                         </div>
                       </Link>
@@ -267,12 +265,12 @@ function BlogContent() {
 
             {/* Search */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-sm">
-              <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">{t('blog.search_title')}</h3>
+              <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">Search Blog</h3>
               <div className="relative">
                 <Input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder={t('blog.search_placeholder')}
+                  placeholder="Search Now"
                   className="h-11 bg-[#F7F7F7] border-none rounded-xl pl-10 pr-10 text-neutral-1 font-medium text-sm"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-2/60 w-4 h-4 pointer-events-none" />
@@ -295,7 +293,7 @@ function BlogContent() {
             {/* Categories */}
             {categories.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4 shadow-sm">
-                <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">{t('blog.categories')}</h3>
+                <h3 className="text-sm font-medium text-neutral-1 uppercase tracking-wider">Categories</h3>
                 <div className="space-y-1">
                   <button
                     onClick={() => setActiveCategory('')}

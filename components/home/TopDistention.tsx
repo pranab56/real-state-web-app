@@ -8,7 +8,6 @@ import { MapPin, Star } from 'lucide-react';
 import { Hotel } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 import { useGetAllListingsQuery } from '../../features/listings/listingsApi';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800&h=600&fit=crop';
@@ -21,8 +20,6 @@ const getImg = (path?: string) => {
 };
 
 export default function TopDistention() {
-  const { t } = useTranslation('common');
-
   const { data } = useGetAllListingsQuery({ category: 'accommodation', limit: MAX_VISIBLE });
   const destinations: Hotel[] = data?.data ?? [];
   const total: number = data?.pagination?.total ?? 0;
@@ -40,7 +37,7 @@ export default function TopDistention() {
               viewport={{ once: true }}
               className="text-2xl md:text-4xl font-medium text-neutral-1"
             >
-              {t('top_dest.title')}
+              Top Destinations
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -49,7 +46,7 @@ export default function TopDistention() {
               transition={{ delay: 0.1 }}
               className="text-sm md:text-lg text-neutral-2 font-medium"
             >
-              {t('top_dest.subtitle')}
+              We have hundreds of place for you to choose from.
             </motion.p>
           </div>
         </div>
@@ -105,13 +102,13 @@ export default function TopDistention() {
                         <span className="text-2xl md:text-3xl font-medium text-primary">
                           {dest.currency} {dest.price?.toLocaleString()}
                         </span>
-                        <span className="text-xs md:text-sm text-neutral-2 font-medium">{t('top_dest.per_night')}</span>
+                        <span className="text-xs md:text-sm text-neutral-2 font-medium">/ night</span>
                       </div>
                       <PriceConvertButton price={dest.price} currency={dest.currency} />
                     </div>
                     <Link href={`/hotels/${dest._id}`}>
                       <Button className="bg-[#F1913D] hover:bg-[#F1913D]/90 text-white font-medium px-6 md:px-8 py-5 cursor-pointer md:py-6 rounded-sm transition-all text-sm md:text-base">
-                        {t('top_dest.book_now')}
+                        Book Now
                       </Button>
                     </Link>
                   </div>
@@ -126,7 +123,7 @@ export default function TopDistention() {
           <div className="flex justify-center mt-12">
             <Link href="/hotels">
               <button className="px-8 py-3 rounded-lg border border-primary text-primary font-medium hover:bg-primary hover:text-white transition-all cursor-pointer">
-                {t('top_dest.see_more', 'See More')}
+                See More
               </button>
             </Link>
           </div>

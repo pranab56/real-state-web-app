@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Clock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 import { useGetAllBlogsQuery } from '../../features/blog/blogsApi';
 
 const getImg = (path?: string) => {
@@ -17,7 +16,6 @@ const getImg = (path?: string) => {
 };
 
 export default function InsightOpinionSection() {
-  const { t } = useTranslation('common');
   const { data } = useGetAllBlogsQuery({ page: 1 });
   const blogs: BlogPost[] = (data?.data ?? []).slice(0, 3);
 
@@ -31,8 +29,8 @@ export default function InsightOpinionSection() {
           viewport={{ once: true }}
           className="space-y-2 md:space-y-4 mb-10 md:mb-16"
         >
-          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1">{t('insights.title')}</h2>
-          <p className="text-sm md:text-lg text-neutral-2 font-medium">{t('insights.subtitle')}</p>
+          <h2 className="text-2xl md:text-4xl font-medium text-neutral-1">Insight & Opinion</h2>
+          <p className="text-sm md:text-lg text-neutral-2 font-medium">Thousands of luxury home enthusiasts just like you visit our website.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
@@ -72,7 +70,7 @@ export default function InsightOpinionSection() {
                   </h3>
                 </Link>
                 <Link href={`/blog/${blog._id}`} className="flex items-center gap-2 mt-3 text-primary font-medium hover:gap-4 transition-all cursor-pointer text-sm md:text-base">
-                  {t('insights.read_more')}
+                  Read More
                   <div className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-primary flex items-center justify-center">
                     <ArrowRight size={12} className="md:size-[14px]" />
                   </div>

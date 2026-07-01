@@ -4,15 +4,40 @@ import { useGetDisclaimersQuery } from '@/features/disclaimers/disclaimersApi';
 import { motion } from 'framer-motion';
 import { ChevronRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric',
   });
 
+const PRIVACY_SECTIONS = [
+  {
+    title: 'Information Collection',
+    content: 'We collect personal information that you provide to us, such as your name, contact details, and property preferences.',
+  },
+  {
+    title: 'How We Use Your Information',
+    content: 'Your information is used to provide and improve our services, communicate with you, and ensure a secure transaction experience.',
+  },
+  {
+    title: 'Information Sharing',
+    content: 'We do not sell your personal information. We may share data with verified partners only to facilitate your requested services.',
+  },
+  {
+    title: 'Data Security',
+    content: 'We implement industry-standard security measures to protect your data from unauthorized access, disclosure, or modification.',
+  },
+  {
+    title: 'Your Rights',
+    content: 'You have the right to access, update, or delete your personal information at any time through your account settings.',
+  },
+  {
+    title: 'Updates to This Policy',
+    content: 'We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new policy on this page.',
+  },
+];
+
 export default function PrivacyPage() {
-  const { t } = useTranslation('common');
   const { data, isLoading } = useGetDisclaimersQuery('privacy_policy');
   const policy = data?.data;
 
@@ -22,13 +47,13 @@ export default function PrivacyPage() {
       <section className="bg-[#FAF6F2] py-16 md:py-24 text-center mt-8 md:mt-12">
         <div className="container mx-auto px-4 md:px-6 space-y-3 md:space-y-4">
           <div className="flex items-center justify-center gap-2 text-sm font-medium">
-            <Link href="/" className="text-primary hover:underline">{t('privacy.breadcrumb_company')}</Link>
+            <Link href="/" className="text-primary hover:underline">Company</Link>
             <ChevronRight size={14} className="text-neutral-2" />
-            <span className="text-neutral-2">{t('privacy.breadcrumb_privacy')}</span>
+            <span className="text-neutral-2">Privacy Policy</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-medium text-neutral-1">{t('privacy.title')}</h1>
+          <h1 className="text-3xl md:text-5xl font-medium text-neutral-1">Privacy &amp; Policy</h1>
           <p className="text-neutral-2 text-sm md:text-base font-medium max-w-lg mx-auto opacity-70">
-            {t('privacy.subtitle')}
+            Your privacy is important to us. Learn how we handle your data.
           </p>
           {policy?.updatedAt && (
             <p className="text-xs text-neutral-2 opacity-60 font-medium">
@@ -51,15 +76,14 @@ export default function PrivacyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            {t('privacy.sections', { returnObjects: true }) instanceof Array ?
-              (t('privacy.sections', { returnObjects: true }) as Array<{ title: string; content: string }>).map((section, idx) => (
-                <div key={idx} className="mb-8">
-                  <h2 className="text-xl md:text-2xl font-medium text-neutral-1 mb-4">{section.title}</h2>
-                  <p className="text-neutral-2 leading-relaxed text-sm lg:text-base font-medium opacity-80 whitespace-pre-line">
-                    {section.content}
-                  </p>
-                </div>
-              )) : <p className="text-neutral-2 text-center font-medium">Content not available.</p>}
+            {PRIVACY_SECTIONS.map((section, idx) => (
+              <div key={idx} className="mb-8">
+                <h2 className="text-xl md:text-2xl font-medium text-neutral-1 mb-4">{section.title}</h2>
+                <p className="text-neutral-2 leading-relaxed text-sm lg:text-base font-medium opacity-80 whitespace-pre-line">
+                  {section.content}
+                </p>
+              </div>
+            ))}
           </motion.div>
         )}
 

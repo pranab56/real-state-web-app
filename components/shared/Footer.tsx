@@ -8,7 +8,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { ApiError } from '../../types';
 
@@ -26,7 +25,6 @@ function Logo() {
 }
 
 export default function Footer() {
-  const { t } = useTranslation('common');
   const pathname = usePathname();
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -67,33 +65,33 @@ export default function Footer() {
           <div className="md:col-span-4 flex flex-col items-center md:items-start gap-6 md:gap-10 text-center md:text-left">
             <Logo />
             <p className="text-[#A1A1A1] text-base md:text-lg leading-relaxed max-w-sm">
-              {t('footer.tagline')}
+              Premium real estate and travel solutions for the modern explorer. From villas to private jets, we handle it all.
             </p>
           </div>
 
           {/* Links Columns */}
           <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-medium">{t('footer.company')}</h3>
+            <h3 className="text-lg md:text-xl font-medium">Company</h3>
             <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
-              <Link href="/properties" className="hover:text-white transition-colors">{t('navbar.properties')}</Link>
-              <Link href="/hotels" className="hover:text-white transition-colors">{t('navbar.hotels')}</Link>
-              <Link href="/transportation" className="hover:text-white transition-colors">{t('navbar.transportation')}</Link>
-              <Link href="/about" className="hover:text-white transition-colors">{t('navbar.about')}</Link>
+              <Link href="/properties" className="hover:text-white transition-colors">Properties</Link>
+              <Link href="/hotels" className="hover:text-white transition-colors">Hotels</Link>
+              <Link href="/transportation" className="hover:text-white transition-colors">Transportation</Link>
+              <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
             </div>
           </div>
 
           <div className="md:col-span-2 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-medium">{t('footer.legal')}</h3>
+            <h3 className="text-lg md:text-xl font-medium">Legal</h3>
             <div className="flex flex-col gap-3 md:gap-5 text-[#A1A1A1] text-sm md:text-base">
-              <Link href="/terms" className="hover:text-white transition-colors">{t('terms.title')}</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">{t('privacy.title')}</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy & Policy</Link>
             </div>
           </div>
 
           {/* Newsletter Column */}
           <div className="md:col-span-4 flex flex-col items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
-            <h3 className="text-lg md:text-xl font-medium">{t('footer.newsletter')}</h3>
-            <p className="text-[#A1A1A1] text-sm md:text-base">{t('footer.newsletter_desc')}</p>
+            <h3 className="text-lg md:text-xl font-medium">Newsletter</h3>
+            <p className="text-[#A1A1A1] text-sm md:text-base">Sign Up to receive the latest articles</p>
             <div className="flex flex-col gap-3 md:gap-4 w-full max-w-sm">
               <div className="flex flex-col gap-1">
                 <Input
@@ -101,7 +99,7 @@ export default function Footer() {
                   value={email}
                   onChange={e => { setEmail(e.target.value); setEmailError(''); }}
                   onKeyDown={e => e.key === 'Enter' && handleSubscribe()}
-                  placeholder={t('footer.newsletter_placeholder')}
+                  placeholder="Your email address here..."
                   className={`h-12 md:h-14 bg-[#2C2E33] placeholder:text-white/60 text-white rounded-xl px-4 text-sm md:text-base focus-visible:ring-1 focus-visible:ring-primary ${emailError ? 'border border-red-400' : 'border border-white/60'}`}
                 />
                 {emailError && <p className="text-red-400 text-xs font-medium px-1">{emailError}</p>}
@@ -112,7 +110,7 @@ export default function Footer() {
                 disabled={isLoading}
                 className="h-12 md:h-14 text-white font-medium cursor-pointer text-base md:text-lg rounded-xl transition-all shadow-lg w-full disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLoading ? <><Loader2 size={18} className="animate-spin" /> Subscribing...</> : t('footer.subscribe')}
+                {isLoading ? <><Loader2 size={18} className="animate-spin" /> Subscribing...</> : 'Subscribe'}
               </Button>
             </div>
           </div>
@@ -121,9 +119,9 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="mt-12 md:mt-20 pt-8 md:pt-10 border-t border-white/10 text-center">
           <p className="text-[#A1A1A1] text-xs md:text-base flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5">
-            <span>{t('footer.rights')}</span>
+            <span>© 2025 Zila Homes. All rights reserved.</span>
             <span className="hidden md:inline">•</span>
-            <span>{t('footer.certified')}</span>
+            <span>SOC2 Type II Certified.</span>
           </p>
         </div>
       </div>

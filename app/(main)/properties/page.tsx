@@ -21,7 +21,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const LIMIT = 10;
 const MAX_PRICE = 500000;
@@ -52,7 +51,6 @@ const getImg = (path?: string) => {
 
 
 function PropertiesPageContent() {
-  const { t } = useTranslation('common');
   const sp = useSearchParams();
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
   const [showAllTypes, setShowAllTypes] = useState(false);
@@ -267,12 +265,12 @@ function PropertiesPageContent() {
         <div className="container mx-auto px-6 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="space-y-4 md:space-y-6">
             <div className="flex items-center gap-2 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-white/60">
-              <Link href="/" className="hover:text-primary transition-colors">{t('listing.hero.home')}</Link>
+              <Link href="/" className="hover:text-primary transition-colors">Home</Link>
               <ChevronRight size={10} />
-              <span className="text-white">{t('listing.hero.properties')}</span>
+              <span className="text-white">Properties</span>
             </div>
-            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: t('listing.hero.title') }} />
-            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed">{t('listing.hero.subtitle')}</p>
+            <h1 className="text-4xl md:text-7xl font-black text-white leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: 'Listing <span class="text-primary">Property</span>' }} />
+            <p className="text-sm md:text-xl text-white/70 max-w-2xl font-medium leading-relaxed">Discover your perfect match from our exclusive collection of verified premium properties across Ethiopia.</p>
           </motion.div>
         </div>
       </section>
@@ -284,7 +282,7 @@ function PropertiesPageContent() {
 
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-medium text-neutral-1">{t('listing.sidebar.search_title')}</h2>
+              <h2 className="text-xl font-medium text-neutral-1">Property Search</h2>
               {hasActiveFilters && (
                 <button onClick={clearAllFilters} className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors">
                   <X size={14} /> Clear All
@@ -306,7 +304,7 @@ function PropertiesPageContent() {
             {/* Price Range */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-neutral-1">{t('listing.sidebar.price_range')}</h3>
+                <h3 className="text-sm font-medium text-neutral-1">Price Range from</h3>
                 <span className="text-xs font-medium text-primary">
                   {priceRange[0].toLocaleString()} – {priceRange[1].toLocaleString()} ETB
                 </span>
@@ -420,7 +418,7 @@ function PropertiesPageContent() {
             {/* Area Range */}
             <div className="space-y-4 pt-6 border-t border-gray-50">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-neutral-1">{t('listing.sidebar.size_range')}</h3>
+                <h3 className="text-sm font-medium text-neutral-1">Size Range from</h3>
                 <span className="text-xs font-medium text-primary">
                   {areaRange[0].toLocaleString()} – {areaRange[1].toLocaleString()} SqFt
                 </span>
@@ -438,7 +436,7 @@ function PropertiesPageContent() {
 
           {/* Featured mini list */}
           <div className="border border-gray-100 bg-white p-6 rounded-2xl space-y-6">
-            <h3 className="font-medium text-neutral-1">{t('listing.sidebar.featured_homes')}</h3>
+            <h3 className="font-medium text-neutral-1">Featured Homes</h3>
             {featuredList.length === 0 ? (
               <p className="text-sm text-neutral-2 text-center py-4">No featured properties</p>
             ) : (
@@ -453,7 +451,7 @@ function PropertiesPageContent() {
                     <div className="space-y-1">
                       <h4 className="text-sm font-medium text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{item.title ?? item.name}</h4>
                       <p className="text-[10px] text-neutral-2 font-medium uppercase tracking-wider">
-                        {item.listing?.bedrooms ?? 0} {t('featured.property.beds')} | {item.listing?.bathrooms ?? 0} {t('featured.property.baths')}
+                        {item.listing?.bedrooms ?? 0} Beds | {item.listing?.bathrooms ?? 0} Baths
                       </p>
                       <p className="text-sm font-black text-primary">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</p>
                     </div>
@@ -470,7 +468,7 @@ function PropertiesPageContent() {
             {isLoading || isFetching ? (
               <span className="text-neutral-2 font-medium italic text-sm flex items-center gap-2"><Loader2 size={14} className="animate-spin" /> Loading...</span>
             ) : (
-              <span className="text-neutral-2 font-medium italic text-[13px] md:text-sm" dangerouslySetInnerHTML={{ __html: t('listing.main.showing', { start: showing.start, end: showing.end, total }) }} />
+              <span className="text-neutral-2 font-medium italic text-[13px] md:text-sm" dangerouslySetInnerHTML={{ __html: `Showing <span class="text-neutral-1 font-medium not-italic">${showing.start}-${showing.end}</span> of <span class="text-neutral-1 font-medium not-italic">${total}</span> properties` }} />
             )}
             {hasActiveFilters && (
               <button onClick={clearAllFilters} className="text-xs text-neutral-2 hover:text-primary font-medium flex items-center gap-1 transition-colors">
@@ -504,7 +502,7 @@ function PropertiesPageContent() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute top-4 left-4 flex gap-2">
-                        {item.isVerified && <span className="bg-[#2B9724] text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg">{t('featured.property.verified')}</span>}
+                        {item.isVerified && <span className="bg-[#2B9724] text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg">Zila Verified</span>}
                         {item.listing?.purpose && <span className="bg-primary text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg capitalize">{item.listing.purpose.replace('_', ' ')}</span>}
                       </div>
                     </div>
@@ -527,15 +525,15 @@ function PropertiesPageContent() {
                       <div className="flex items-center justify-between pt-4 border-t border-gray-50 text-neutral-2 gap-1">
                         <div className="flex items-center gap-1 font-medium text-[9px] sm:text-[10px] uppercase tracking-wider">
                           <BedDouble className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                          <span>{t('featured.property.beds')} <span className="text-neutral-1 font-black">{item.listing?.bedrooms ?? 0}</span></span>
+                          <span>Beds <span className="text-neutral-1 font-black">{item.listing?.bedrooms ?? 0}</span></span>
                         </div>
                         <div className="flex items-center gap-1 font-medium text-[9px] sm:text-[10px] uppercase tracking-wider">
                           <Bath className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                          <span>{t('featured.property.baths')} <span className="text-neutral-1 font-black">{item.listing?.bathrooms ?? 0}</span></span>
+                          <span>Baths <span className="text-neutral-1 font-black">{item.listing?.bathrooms ?? 0}</span></span>
                         </div>
                         <div className="flex items-center gap-1 font-medium text-[9px] sm:text-[10px] uppercase tracking-wider">
                           <Maximize2 className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                          <span>{t('featured.property.sqft')} <span className="text-neutral-1 font-black">{item.listing?.totalArea ?? 0}</span></span>
+                          <span>Sqft <span className="text-neutral-1 font-black">{item.listing?.totalArea ?? 0}</span></span>
                         </div>
                       </div>
                     </div>
@@ -550,7 +548,7 @@ function PropertiesPageContent() {
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 pt-8 sm:pt-12">
               <button disabled={page <= 1} onClick={() => setPage(p => p - 1)} className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-medium text-xs sm:text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
                 <ChevronLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">{t('listing.main.previous')}</span>
+                <span className="hidden sm:inline">Previous</span>
               </button>
               <div className="flex items-center gap-1 sm:gap-2">
                 {pageNumbers().map((p, idx) =>
@@ -562,7 +560,7 @@ function PropertiesPageContent() {
                 )}
               </div>
               <button disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} className="flex items-center gap-1 sm:gap-2 p-2 px-3 sm:px-6 rounded-lg border border-gray-100 text-neutral-2 hover:text-white hover:bg-primary hover:border-primary transition-all font-medium text-xs sm:text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
-                <span className="hidden sm:inline">{t('listing.main.next')}</span>
+                <span className="hidden sm:inline">Next</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
