@@ -40,6 +40,24 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Hide Google Translate toolbar */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+.goog-te-ftab-float,
+.skiptranslate > iframe,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+  visibility: hidden !important;
+}
+body {
+  top: 0px !important;
+}
+html body[style*="top"] {
+  top: 0px !important;
+}
+
 html.lenis,
 html.lenis body {
   height: auto;

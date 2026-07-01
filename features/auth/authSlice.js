@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { saveToken, saveRefreshToken, saveUser, removeStorage } from "../../utils/storage";
+import { saveToken, saveRefreshToken, saveUser, removeStorage, getToken, getRefreshToken, getUser } from "../../utils/storage";
 
 const initialState = {
-  token: null,
-  refreshToken: null,
-  user: null,
+  token: getToken(),
+  refreshToken: getRefreshToken(),
+  user: getUser(),
 };
 
 const authSlice = createSlice({

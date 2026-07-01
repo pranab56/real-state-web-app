@@ -92,6 +92,7 @@ function PropertiesPageContent() {
   const topCities: string[] = (topCitiesData?.data ?? []).map(
     (c: { city: string; count: number }) => c.city
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const resolveCity = (input: string): string => {
     if (!input) return '';
     const lower = input.toLowerCase();

@@ -35,6 +35,7 @@ const getImg = (path?: string) => {
 };
 
 export function Navbar() {
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -50,7 +51,7 @@ export function Navbar() {
   const { data: notificationData } = useGetAllNotificationQuery({ page: 1 }, { skip: !isLoggedIn });
   const unreadCount: number = notificationData?.data?.unreadCount ?? 0;
 
-  const { data: profileData } = useGetProfileQuery({}, { skip: !isLoggedIn });
+  const { data: profileData, isLoading: profileLoading } = useGetProfileQuery({}, { skip: !isLoggedIn });
   const profile = profileData?.data;
   const firstName = profile?.firstName ?? user?.firstName ?? '';
   const lastName = profile?.lastName ?? user?.lastName ?? '';
@@ -60,6 +61,11 @@ export function Navbar() {
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || 'U';
 
   const isHome = pathname === '/';
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -108,8 +114,33 @@ export function Navbar() {
   const [selectedLangCode, setSelectedLangCode] = useState('en');
   const selectedLang = languages.find(l => l.code === selectedLangCode) || languages[0];
 
+  // Restore saved language on mount and re-apply Google Translate
+  useEffect(() => {
+    const saved = localStorage.getItem('zila_lang');
+    if (!saved || saved === 'en') return;
+
+    // Defer state update to avoid synchronous setState-in-effect lint error
+    const raf = requestAnimationFrame(() => setSelectedLangCode(saved));
+
+    const apply = () => changeGoogleLanguage(saved);
+    const interval = setInterval(() => {
+      if (document.querySelector('.goog-te-combo')) {
+        apply();
+        clearInterval(interval);
+      }
+    }, 200);
+    const timeout = setTimeout(() => clearInterval(interval), 5000);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, []);
+
   const handleLanguageChange = (lang: typeof languages[0]) => {
     setSelectedLangCode(lang.code);
+    localStorage.setItem('zila_lang', lang.code);
     changeGoogleLanguage(lang.code);
   };
 
@@ -235,7 +266,13 @@ export function Navbar() {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2 md:gap-3 ml-2">
-          {isLoggedIn ? (
+          {!mounted || (isLoggedIn && profileLoading) ? (
+            /* ── Skeleton: shown during SSR hydration and profile fetch ── */
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/15 animate-pulse" />
+              <div className="w-9 h-9 md:w-10 md:h-10 rounded-sm bg-white/15 animate-pulse" />
+            </div>
+          ) : isLoggedIn ? (
             <>
               {/* Notification Bell */}
               <Link href="/notification">
