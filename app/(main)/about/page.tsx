@@ -75,9 +75,11 @@ export default function AboutPage() {
             <p className="sm:text-lg text-sm text-neutral-2 max-w-xl font-medium leading-relaxed">
               Simplifying your search for excellence in the Ethiopian real estate market. We bridge the gap between dream homes and reality.
             </p>
-            <Button className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 cursor-pointer text-white font-medium rounded-lg shadow-lg shadow-primary/20 transition-all">
-              Explore Listings
-            </Button>
+            <Link href="/properties">
+              <Button className="h-10 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 cursor-pointer text-white font-medium rounded-lg shadow-lg shadow-primary/20 transition-all">
+                Explore Listings
+              </Button>
+            </Link>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
