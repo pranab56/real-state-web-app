@@ -164,7 +164,7 @@
     "sidebar": {
       "search_title": "Поиск объектов",
       "clear_all": "Очистить всё",
-      "search_placeholder": "Город, штат или район",
+      "search_placeholder": "Поиск по названию объекта...",
       "status": "Статус",
       "type": "Тип",
       "bath": "Ванные",

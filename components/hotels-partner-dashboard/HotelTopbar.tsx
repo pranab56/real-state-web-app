@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetProfileQuery } from '@/features/profile/profileApi';
+import { useGetMyKYCQuery, useGetProfileQuery } from '@/features/profile/profileApi';
 import { useSidebar } from '@/hooks/use-sidebar';
 import { baseURL } from '@/utils/BaseURL';
 import { Menu } from 'lucide-react';
@@ -18,7 +18,9 @@ export function HotelTopbar() {
   const { toggleSidebar } = useSidebar();
   const router = useRouter();
   const { data: profileData } = useGetProfileQuery({});
+  const { data: kycData } = useGetMyKYCQuery({});
   const profile = profileData?.data;
+  const isVerified = kycData?.data?.verification?.status === 'verified';
 
   const fullName = `${profile?.firstName ?? ''} ${profile?.lastName ?? ''}`.trim() || 'My Account';
   const roleLabel = ROLE_LABELS[profile?.role ?? ''] ?? profile?.role ?? '';
@@ -41,9 +43,12 @@ export function HotelTopbar() {
 
       {/* Right side - Profile */}
       <div onClick={() => router.push('/hotels-partner-dashboard/profile')} className="flex items-center gap-3 cursor-pointer">
-        <div className="text-right flex flex-col items-end">
+        <div className="text-right flex flex-col items-end gap-0.5">
           <span className="text-[15px] font-medium text-[#2C2E33] leading-none">{fullName}</span>
           <span className="text-[13px] text-[#6C757D] font-medium leading-[1.2]">{roleLabel}</span>
+          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${isVerified ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+            {isVerified ? 'Verified' : 'Unverified'}
+          </span>
         </div>
         <div className="h-10 w-10 rounded-full bg-primary/10 overflow-hidden border-2 border-white shadow-sm ring-1 ring-[#F2F2F2] flex items-center justify-center relative shrink-0">
           {avatarSrc ? (

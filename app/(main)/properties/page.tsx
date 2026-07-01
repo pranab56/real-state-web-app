@@ -2,7 +2,7 @@
 
 import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Slider } from '@/components/ui/slider';
-import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
+import { useGetAllListingsQuery, useGetTopCitisQuery } from '@/features/listings/listingsApi';
 import { Hotel } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
@@ -78,11 +78,31 @@ function PropertiesPageContent() {
   const [bedrooms, setBedrooms] = useState<number>(() => Number(sp.get('bedrooms') ?? 0));
   const [bathrooms, setBathrooms] = useState<number>(() => Number(sp.get('bathrooms') ?? 0));
   const [city, setCity] = useState(() => sp.get('city') ?? '');
+  const [cityInput, setCityInput] = useState(() => sp.get('city') ?? '');
+  const [stateInput, setStateInput] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [areaInput, setAreaInput] = useState('');
+  const [areaFilter, setAreaFilter] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(() => {
     const lat = sp.get('latitude');
     const lng = sp.get('longitude');
     return lat && lng ? { lat: Number(lat), lng: Number(lng) } : null;
   });
+
+  // ── Top cities for partial city-name resolution ──
+  const { data: topCitiesData } = useGetTopCitisQuery({});
+  const topCities: string[] = (topCitiesData?.data ?? []).map(
+    (c: { city: string; count: number }) => c.city
+  );
+  const resolveCity = (input: string): string => {
+    if (!input) return '';
+    const lower = input.toLowerCase();
+    return (
+      topCities.find((c) => c.toLowerCase().startsWith(lower)) ??
+      topCities.find((c) => c.toLowerCase().includes(lower)) ??
+      ''
+    );
+  };
 
   // debounce search
   useEffect(() => {
@@ -93,6 +113,21 @@ function PropertiesPageContent() {
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [searchInput]);
+
+  useEffect(() => {
+    const t = setTimeout(() => { setCity(cityInput); setPage(1); }, 500);
+    return () => clearTimeout(t);
+  }, [cityInput]);
+
+  useEffect(() => {
+    const t = setTimeout(() => { setStateFilter(stateInput); setPage(1); }, 500);
+    return () => clearTimeout(t);
+  }, [stateInput]);
+
+  useEffect(() => {
+    const t = setTimeout(() => { setAreaFilter(areaInput); setPage(1); }, 500);
+    return () => clearTimeout(t);
+  }, [areaInput]);
 
   // Handle filter updates
   const handlePriceChange = (v: number | readonly number[]) => {
@@ -135,13 +170,37 @@ function PropertiesPageContent() {
     ...(bedrooms > 0 && { bedrooms }),
     ...(bathrooms > 0 && { bathrooms }),
     ...(city && { city }),
+    ...(stateFilter && { state: stateFilter }),
+    ...(areaFilter && { area: areaFilter }),
     ...(coords && { latitude: coords.lat, longitude: coords.lng }),
   };
 
   const { data, isLoading, isFetching } = useGetAllListingsQuery(queryArgs);
+
+  // Parallel city search — frontend merges name + city results for the same input
+  const cityQueryArgs = {
+    category: 'listing',
+    page,
+    limit: LIMIT,
+    city: searchTerm,
+    ...(priceRange[0] > 0 && { minPrice: priceRange[0] }),
+    ...(priceRange[1] < MAX_PRICE && { maxPrice: priceRange[1] }),
+    ...(areaRange[0] > 0 && { minArea: areaRange[0] }),
+    ...(areaRange[1] < MAX_AREA && { maxArea: areaRange[1] }),
+    ...(structureType && { structureType }),
+    ...(bedrooms > 0 && { bedrooms }),
+    ...(bathrooms > 0 && { bathrooms }),
+  };
+  const { data: cityData } = useGetAllListingsQuery(cityQueryArgs, { skip: !searchTerm });
+
   const { data: featuredData } = useGetAllListingsQuery({ category: 'listing', page: 1, limit: 5 });
 
-  const listings: Hotel[] = data?.data ?? [];
+  const nameResults: Hotel[] = data?.data ?? [];
+  const seenIds = new Set(nameResults.map((n) => n._id ?? n.id ?? ''));
+  const uniqueCityResults: Hotel[] = (cityData?.data ?? []).filter(
+    (c: Hotel) => !seenIds.has(c._id ?? c.id ?? '')
+  );
+  const listings: Hotel[] = [...nameResults, ...uniqueCityResults];
 
   useEffect(() => {
     if (!data?.data) return;
@@ -159,7 +218,7 @@ function PropertiesPageContent() {
       });
     }
   }, [data, wishlisted]);
-  const total: number = data?.pagination?.total ?? 0;
+  const total: number = (data?.pagination?.total ?? 0) + uniqueCityResults.length;
   const totalPages = Math.max(1, data?.pagination?.totalPage ?? Math.ceil(total / LIMIT));
   const showing = { start: (page - 1) * LIMIT + 1, end: Math.min(page * LIMIT, total) };
   const featuredList: Hotel[] = featuredData?.data ?? [];
@@ -185,14 +244,17 @@ function PropertiesPageContent() {
     setStructureType('');
     setBedrooms(0);
     setBathrooms(0);
-    setCity('');
+    setCityInput(''); setCity('');
+    setStateInput(''); setStateFilter('');
+    setAreaInput(''); setAreaFilter('');
     setCoords(null);
     setPage(1);
   };
 
   const hasActiveFilters =
     searchInput || priceRange[0] > 0 || priceRange[1] < MAX_PRICE ||
-    areaRange[0] > 0 || areaRange[1] < MAX_AREA || structureType || bedrooms > 0 || bathrooms > 0 || city || coords;
+    areaRange[0] > 0 || areaRange[1] < MAX_AREA || structureType || bedrooms > 0 || bathrooms > 0 ||
+    cityInput || stateInput || areaInput || coords;
 
   return (
     <div className="min-h-screen bg-white">
@@ -235,7 +297,7 @@ function PropertiesPageContent() {
               <input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={t('listing.sidebar.search_placeholder')}
+                placeholder="Search By Property And City"
                 className="w-full h-12 bg-[#F7F7F7] border-none rounded-sm pl-12 pr-4 text-neutral-1 font-medium text-sm outline-none focus:ring-2 focus:ring-primary/20"
               />
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-2" size={20} />

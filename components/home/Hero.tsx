@@ -253,7 +253,8 @@ export default function Hero() {
                     onPlaceSelectAction={handlePlaceSelect}
                     onTextChange={handleSearchTextChange}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder={t('hero.search')}
+                    placeholder={"Search Location"}
+                    types={['(cities)']}
                     className="!h-11 md:!h-12 !pl-11 !bg-[#F2F2F2] !rounded-[4px] !text-gray-800 placeholder:!text-gray-600 !text-[13px] md:!text-sm focus:!ring-1"
                   />
 

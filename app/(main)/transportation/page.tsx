@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
-import { PlacesAutocomplete } from '@/components/ui/places-autocomplete';
+import { GooglePlacesInput } from '@/components/ui/google-places-input';
 import { useCreateTransportationMutation } from '@/features/transportation/transportationApi';
 import { cn } from '@/lib/utils';
 import { ApiError } from '@/types';
@@ -80,10 +80,30 @@ const LUGGAGE_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({
   label: n === 0 ? 'No luggage' : `${n} ${n === 1 ? 'bag' : 'bags'}`,
 }));
 
-// ── "datetime-local" inputs need "YYYY-MM-DDTHH:mm" in local time ──
-const toDateTimeLocal = (d: Date) => {
-  const tzOffsetMs = d.getTimezoneOffset() * 60000;
-  return new Date(d.getTime() - tzOffsetMs).toISOString().slice(0, 16);
+// ── Today's date in local YYYY-MM-DD (for date input min) ──
+const getTodayStr = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+// ── 30-minute time slots ──
+const ALL_TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {
+  const h = Math.floor(i / 2);
+  const m = i % 2 === 0 ? '00' : '30';
+  const h12 = h % 12 || 12;
+  const ampm = h < 12 ? 'AM' : 'PM';
+  return { value: `${String(h).padStart(2, '0')}:${m}`, label: `${h12}:${m} ${ampm}` };
+});
+
+const getAvailableTimeSlots = (dateStr: string) => {
+  if (!dateStr || dateStr !== getTodayStr()) return ALL_TIME_SLOTS;
+  const now = new Date();
+  // round current time up to next 30-min mark + 30 min buffer
+  const minMinutes = Math.ceil((now.getHours() * 60 + now.getMinutes() + 30) / 30) * 30;
+  return ALL_TIME_SLOTS.filter(({ value }) => {
+    const [h, m] = value.split(':').map(Number);
+    return h * 60 + m >= minMinutes;
+  });
 };
 
 interface FormErrors {
@@ -129,13 +149,16 @@ export default function TransportationPage() {
   const [serviceType, setServiceType] = useState('');
   const [vehicleType, setVehicleType] = useState('');
   const [flightNumber, setFlightNumber] = useState('');
-  const [pickupAt, setPickupAt] = useState('');
+  const [pickupDate, setPickupDate] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
   const [pickup, setPickup] = useState<LocationField>(emptyLocation());
   const [dropoff, setDropoff] = useState<LocationField>(emptyLocation());
   const [errors, setErrors] = useState<FormErrors>({});
 
   const clearErr = (key: keyof FormErrors) =>
     setErrors((prev) => { const n = { ...prev }; delete n[key]; return n; });
+
+  const pickupAt = pickupDate && pickupTime ? `${pickupDate}T${pickupTime}` : '';
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
@@ -168,7 +191,7 @@ export default function TransportationPage() {
       setCustomerName(''); setCustomerEmail(''); setCustomerPhone('');
       setPassengerName(''); setPassengers('1'); setLuggage('0');
       setServiceType(''); setVehicleType(''); setFlightNumber('');
-      setPickupAt(''); setPickup(emptyLocation()); setDropoff(emptyLocation());
+      setPickupDate(''); setPickupTime(''); setPickup(emptyLocation()); setDropoff(emptyLocation());
       setErrors({});
     } catch (err) {
       const error = err as ApiError;
@@ -297,44 +320,56 @@ export default function TransportationPage() {
 
               <Field>
                 <FormLabel>Pickup Address</FormLabel>
-                <PlacesAutocomplete
-                  placeholder="Search pickup address..."
+                <GooglePlacesInput
+                  placeholder="Search pickup location (city, airport, street…)"
                   value={pickup.address}
                   onPlaceSelectAction={({ address, lat, lng }) => {
                     setPickup({ address, location: { type: 'Point', coordinates: [lng, lat] } });
                     clearErr('pickup');
                   }}
+                  onTextChange={() => setPickup(emptyLocation())}
                   error={!!errors.pickup}
-                  className={FIELD_BORDER_CLS}
+                  className={cn('rounded-lg', FIELD_BORDER_CLS)}
                 />
                 <FieldError msg={errors.pickup} />
               </Field>
 
               <Field>
                 <FormLabel>{t('transportation.form.dropoff_location')}</FormLabel>
-                <PlacesAutocomplete
-                  placeholder="Search drop-off address..."
+                <GooglePlacesInput
+                  placeholder="Search drop-off location (city, airport, street…)"
                   value={dropoff.address}
                   onPlaceSelectAction={({ address, lat, lng }) => {
                     setDropoff({ address, location: { type: 'Point', coordinates: [lng, lat] } });
                     clearErr('dropoff');
                   }}
+                  onTextChange={() => setDropoff(emptyLocation())}
                   error={!!errors.dropoff}
-                  className={FIELD_BORDER_CLS}
+                  className={cn('rounded-lg', FIELD_BORDER_CLS)}
                 />
                 <FieldError msg={errors.dropoff} />
               </Field>
 
               <Field>
-                <FormLabel htmlFor="pickupAt">Pickup Date & Time</FormLabel>
-                <input
-                  id="pickupAt"
-                  type="datetime-local"
-                  value={pickupAt}
-                  min={toDateTimeLocal(new Date())}
-                  onChange={(e) => { setPickupAt(e.target.value); clearErr('pickupAt'); }}
-                  className={inputCls(errors.pickupAt)}
-                />
+                <FormLabel>Pickup Date & Time</FormLabel>
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="date"
+                    value={pickupDate}
+                    min={getTodayStr()}
+                    onChange={(e) => { setPickupDate(e.target.value); setPickupTime(''); clearErr('pickupAt'); }}
+                    className={inputCls(errors.pickupAt)}
+                  />
+                  <Combobox
+                    options={getAvailableTimeSlots(pickupDate)}
+                    value={pickupTime}
+                    onChange={(v) => { setPickupTime(v); clearErr('pickupAt'); }}
+                    placeholder={pickupDate ? 'Select time' : 'Select date first'}
+                    disabled={!pickupDate}
+                    error={!!errors.pickupAt}
+                    className={FIELD_BORDER_CLS}
+                  />
+                </div>
                 <FieldError msg={errors.pickupAt} />
               </Field>
 

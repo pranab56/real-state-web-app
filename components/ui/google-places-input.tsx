@@ -23,6 +23,9 @@ interface GooglePlacesInputProps {
   className?: string;
   /** ISO 3166-1 alpha-2 country code to restrict suggestions to, e.g. "et". Omit for worldwide suggestions. */
   country?: string;
+  /** Google Places types to restrict suggestions, e.g. ['(cities)']. Omit for all types. */
+  types?: string[];
+  error?: boolean;
 }
 
 let optionsInitialized = false;
@@ -35,6 +38,8 @@ export function GooglePlacesInput({
   onKeyDown,
   className,
   country,
+  types,
+  error,
 }: GooglePlacesInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const onPlaceSelectRef = useRef(onPlaceSelectAction);
@@ -65,6 +70,7 @@ export function GooglePlacesInput({
         const autocomplete = new Autocomplete(inputRef.current, {
           fields: ['formatted_address', 'geometry', 'address_components'],
           ...(country && { componentRestrictions: { country } }),
+          ...(types && { types }),
         });
         listener = autocomplete.addListener('place_changed', () => {
           const place = autocomplete.getPlace();
@@ -74,7 +80,8 @@ export function GooglePlacesInput({
           const city = place.address_components?.find(
             (c) => c.types.includes('locality') || c.types.includes('administrative_area_level_2')
           )?.long_name;
-          const address = place.formatted_address ?? inputRef.current?.value ?? '';
+          const isCitySearch = types?.includes('(cities)');
+          const address = (isCitySearch && city) ? city : (place.formatted_address ?? inputRef.current?.value ?? '');
           setInputVal(address);
           onPlaceSelectRef.current({ address, lat, lng, city });
         });
@@ -86,7 +93,8 @@ export function GooglePlacesInput({
     return () => {
       listener?.remove();
     };
-  }, [country]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country, types?.join(',')]);
 
   return (
     <div className="relative w-full">
@@ -102,7 +110,10 @@ export function GooglePlacesInput({
         placeholder={placeholder}
         autoComplete="off"
         className={cn(
-          'w-full h-12 rounded-sm pl-10 pr-4 text-neutral-1 font-medium text-sm outline-none transition-all bg-[#F6F6F6] border border-transparent focus:ring-2 focus:ring-primary/20',
+          'w-full h-12 rounded-sm pl-10 pr-4 text-neutral-1 font-medium text-sm outline-none transition-all border',
+          error
+            ? 'bg-red-50/30 border-red-400 focus:ring-2 focus:ring-red-200'
+            : 'bg-[#F6F6F6] border-transparent focus:ring-2 focus:ring-primary/20',
           className
         )}
       />

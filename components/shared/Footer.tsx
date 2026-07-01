@@ -29,20 +29,23 @@ export default function Footer() {
   const { t } = useTranslation('common');
   const pathname = usePathname();
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [createNewsletter, { isLoading }] = useCreateNewsletterMutation();
 
   const handleSubscribe = async () => {
-    if (!email.trim()) { toast.error('Please enter your email'); return; }
+    if (!email.trim()) { setEmailError('Please enter your email'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setEmailError('Please enter a valid email address'); return; }
+    setEmailError('');
     try {
       const res = await createNewsletter({ email: email.trim(), source: 'website' }).unwrap();
       toast.success(res.message ?? 'Subscribed successfully!');
       setEmail('');
     } catch (err) {
       const error = err as ApiError;
-      toast.error(
+      setEmailError(
         error.data?.errorMessages?.[0]?.message ??
         error.data?.message ??
-        "Something went wrong"
+        'Something went wrong'
       );
     }
   };
@@ -92,14 +95,17 @@ export default function Footer() {
             <h3 className="text-lg md:text-xl font-medium">{t('footer.newsletter')}</h3>
             <p className="text-[#A1A1A1] text-sm md:text-base">{t('footer.newsletter_desc')}</p>
             <div className="flex flex-col gap-3 md:gap-4 w-full max-w-sm">
-              <Input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubscribe()}
-                placeholder={t('footer.newsletter_placeholder')}
-                className="h-12 md:h-14 bg-[#2C2E33] border border-white/60 placeholder:text-white/60 text-white rounded-xl px-4 text-sm md:text-base focus-visible:ring-1 focus-visible:ring-primary"
-              />
+              <div className="flex flex-col gap-1">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setEmailError(''); }}
+                  onKeyDown={e => e.key === 'Enter' && handleSubscribe()}
+                  placeholder={t('footer.newsletter_placeholder')}
+                  className={`h-12 md:h-14 bg-[#2C2E33] placeholder:text-white/60 text-white rounded-xl px-4 text-sm md:text-base focus-visible:ring-1 focus-visible:ring-primary ${emailError ? 'border border-red-400' : 'border border-white/60'}`}
+                />
+                {emailError && <p className="text-red-400 text-xs font-medium px-1">{emailError}</p>}
+              </div>
               <Button
                 size="lg"
                 onClick={handleSubscribe}

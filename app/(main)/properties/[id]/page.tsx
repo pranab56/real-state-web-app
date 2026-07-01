@@ -4,11 +4,11 @@ import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { logout } from '@/features/auth/authSlice';
 import { useCreateInquiryMutation } from '@/features/inquiry/inquiryApi';
 import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/listings/listingsApi';
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
-import { logout } from '@/features/auth/authSlice';
 import { isTokenExpired, useAuthGuard } from '@/hooks/use-auth-guard';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
@@ -20,7 +20,9 @@ import {
   Calendar,
   Car,
   ChevronLeft,
+  ChevronRight,
   Clock,
+  Grid2x2,
   Heart,
   Home,
   Layers,
@@ -35,10 +37,15 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination as SwiperPagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
@@ -94,6 +101,16 @@ export default function PropertyDetailPage() {
   const token = useSelector((state: RootState) => state.auth?.token);
   const { requireAuth } = useAuthGuard();
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  const [galleryIdx, setGalleryIdx] = useState(0);
+  const swiperRef = useRef<SwiperType | null>(null);
+
+  const openGallery = (idx: number) => {
+    setActivePhotoIdx(idx);
+    setGalleryIdx(idx);
+    setShowAllPhotos(true);
+  };
   const [playVideo, setPlayVideo] = useState(false);
   const [reviewRating, setReviewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -234,19 +251,112 @@ export default function PropertyDetailPage() {
             <span className="text-sm">Back to Listings</span>
           </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 h-auto md:h-[500px]">
-            <div className="lg:col-span-1 relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group">
+          <div className={`relative grid grid-cols-1 gap-4 md:gap-6 h-auto md:h-[500px] ${images.length >= 3 ? 'md:grid-cols-2 lg:grid-cols-3' : images.length === 2 ? 'md:grid-cols-2' : ''}`}>
+            <div
+              className="relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group cursor-pointer"
+              onClick={() => openGallery(0)}
+            >
               <Image src={getImg(images[0])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
-            <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
-              <Image src={getImg(images[1])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-            </div>
-            <div className="hidden md:block lg:col-span-1 relative rounded-2xl md:rounded-[2rem] overflow-hidden group">
-              <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-            </div>
+            {images.length >= 2 && (
+              <div
+                className="hidden md:block relative rounded-2xl md:rounded-[2rem] overflow-hidden group cursor-pointer"
+                onClick={() => openGallery(1)}
+              >
+                <Image src={getImg(images[1])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              </div>
+            )}
+            {images.length >= 3 && (
+              <div
+                className="hidden md:block relative rounded-2xl md:rounded-[2rem] overflow-hidden group cursor-pointer"
+                onClick={() => openGallery(2)}
+              >
+                <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              </div>
+            )}
+            {images.length > 0 && (
+              <button
+                type="button"
+                onClick={() => openGallery(0)}
+                className="absolute bottom-4 right-4 inline-flex items-center gap-2 bg-white text-neutral-1 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg shadow-lg hover:bg-neutral-1 hover:text-white transition-all cursor-pointer"
+              >
+                <Grid2x2 size={16} />
+                View all {images.length} photos
+              </button>
+            )}
           </div>
         </div>
       </section>
+
+      {/* All Photos Overlay */}
+      {showAllPhotos && (
+        <div className="fixed inset-0 z-[200] bg-black flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-3 shrink-0 bg-black/60">
+            <span className="text-white text-sm font-medium">
+              {title} &middot; {galleryIdx + 1} / {images.length}
+            </span>
+            <button
+              onClick={() => setShowAllPhotos(false)}
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-lg leading-none transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+          {/* Swiper fills the rest */}
+          <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+            <Swiper
+              key={activePhotoIdx}
+              modules={[SwiperPagination]}
+              pagination={{ clickable: true }}
+              initialSlide={activePhotoIdx}
+              loop={false}
+              style={{ height: '100%' }}
+              onSwiper={(s) => { swiperRef.current = s; }}
+              onSlideChange={(s) => setGalleryIdx(s.activeIndex)}
+            >
+              {images.map((img, idx) => (
+                <SwiperSlide key={idx}>
+                  <div
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#000',
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getImg(img)}
+                      alt={`${title} photo ${idx + 1}`}
+                      style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Prev */}
+            <button
+              onClick={() => swiperRef.current?.slidePrev()}
+              disabled={galleryIdx === 0}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            {/* Next */}
+            <button
+              onClick={() => swiperRef.current?.slideNext()}
+              disabled={galleryIdx === images.length - 1}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Property Info */}
       <section className="container mx-auto px-4 md:px-6 py-8 md:py-12">

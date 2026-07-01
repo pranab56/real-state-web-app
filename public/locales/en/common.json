@@ -164,7 +164,7 @@
     "sidebar": {
       "search_title": "Property Search",
       "clear_all": "Clear All",
-      "search_placeholder": "Search City, State or Area",
+      "search_placeholder": "Search by property name...",
       "status": "Status",
       "type": "Type",
       "bath": "Bath",

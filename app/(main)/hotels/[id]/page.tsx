@@ -4,7 +4,6 @@ import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Combobox } from '@/components/ui/combobox';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Popover,
   PopoverContent,
@@ -27,6 +26,7 @@ import { motion } from 'framer-motion';
 import {
   Bookmark,
   Calendar as CalendarIcon,
+  ChevronLeft,
   ChevronRight,
   Grid2x2,
   Heart,
@@ -41,7 +41,12 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination as SwiperPagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
@@ -159,6 +164,15 @@ export default function HotelDetailPage() {
   const { requireAuth } = useAuthGuard();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  const [galleryIdx, setGalleryIdx] = useState(0);
+  const swiperRef = useRef<SwiperType | null>(null);
+
+  const openGallery = (idx: number) => {
+    setActivePhotoIdx(idx);
+    setGalleryIdx(idx);
+    setShowAllPhotos(true);
+  };
   const [reviewRating, setReviewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [toggleWishlist] = useCreateWishlistToggleMutation();
@@ -304,21 +318,30 @@ export default function HotelDetailPage() {
       {/* Gallery */}
       <section className="container mx-auto px-4 sm:px-6 pt-4 md:pt-12">
         <div className="relative grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 h-auto md:h-[500px]">
-          <div className="md:col-span-8 relative aspect-[4/3] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-xl">
+          <div
+            className="md:col-span-8 relative aspect-[4/3] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-xl cursor-pointer"
+            onClick={() => openGallery(0)}
+          >
             <Image src={getImg(images[0])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
           </div>
           <div className="md:col-span-4 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-3 sm:gap-6">
-            <div className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg">
+            <div
+              className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg cursor-pointer"
+              onClick={() => openGallery(1)}
+            >
               <Image src={getImg(images[1])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
-            <div className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg">
+            <div
+              className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg cursor-pointer"
+              onClick={() => openGallery(2)}
+            >
               <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
           </div>
           {images.length > 0 && (
             <button
               type="button"
-              onClick={() => setShowAllPhotos(true)}
+              onClick={() => openGallery(0)}
               className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 inline-flex items-center gap-2 bg-white text-neutral-1 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg shadow-lg hover:bg-neutral-1 hover:text-white transition-all cursor-pointer"
             >
               <Grid2x2 size={16} />
@@ -328,19 +351,75 @@ export default function HotelDetailPage() {
         </div>
       </section>
 
-      {/* All Photos Modal */}
-      <Dialog open={showAllPhotos} onOpenChange={setShowAllPhotos}>
-        <DialogContent className="max-w-4xl sm:max-w-4xl max-h-[88vh] overflow-y-auto">
-          <DialogTitle>{title} · {images.length} photo{images.length !== 1 ? 's' : ''}</DialogTitle>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-            {images.map((img, idx) => (
-              <div key={idx} className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                <Image src={getImg(img)} alt={`${title} photo ${idx + 1}`} fill className="object-cover" />
-              </div>
-            ))}
+      {/* All Photos Overlay */}
+      {showAllPhotos && (
+        <div className="fixed inset-0 z-[200] bg-black flex flex-col">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-3 shrink-0 bg-black/60">
+            <span className="text-white text-sm font-medium">
+              {title} &middot; {galleryIdx + 1} / {images.length}
+            </span>
+            <button
+              onClick={() => setShowAllPhotos(false)}
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-lg leading-none transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
           </div>
-        </DialogContent>
-      </Dialog>
+          {/* Swiper fills the rest */}
+          <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+            <Swiper
+              key={activePhotoIdx}
+              modules={[SwiperPagination]}
+              pagination={{ clickable: true }}
+              initialSlide={activePhotoIdx}
+              loop={false}
+              style={{ height: '100%' }}
+              onSwiper={(s) => { swiperRef.current = s; }}
+              onSlideChange={(s) => setGalleryIdx(s.activeIndex)}
+            >
+              {images.map((img, idx) => (
+                <SwiperSlide key={idx}>
+                  <div
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#000',
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getImg(img)}
+                      alt={`${title} photo ${idx + 1}`}
+                      style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Prev */}
+            <button
+              onClick={() => swiperRef.current?.slidePrev()}
+              disabled={galleryIdx === 0}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            {/* Next */}
+            <button
+              onClick={() => swiperRef.current?.slideNext()}
+              disabled={galleryIdx === images.length - 1}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/25 text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Hotel Info & Booking */}
       <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">

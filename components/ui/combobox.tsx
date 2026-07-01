@@ -18,6 +18,7 @@ interface ComboboxProps {
   searchable?: boolean;
   searchPlaceholder?: string;
   error?: boolean;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -29,6 +30,7 @@ export function Combobox({
   searchable = false,
   searchPlaceholder = 'Search...',
   error,
+  disabled,
   className,
 }: ComboboxProps) {
   const [open, setOpen] = useState(false);
@@ -40,14 +42,17 @@ export function Combobox({
     : options;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={disabled ? false : open} onOpenChange={disabled ? undefined : setOpen}>
       <PopoverTrigger
+        disabled={disabled}
         className={cn(
-          'h-12 w-full rounded-sm px-4 text-sm font-medium flex items-center justify-between gap-2 outline-none transition-all cursor-pointer border',
-          error
-            ? 'bg-red-50/30 border-red-400'
-            : 'bg-[#F6F6F6] border-transparent hover:border-gray-200',
-          selected ? 'text-neutral-1' : 'text-neutral-2/60',
+          'h-12 w-full rounded-sm px-4 text-sm font-medium flex items-center justify-between gap-2 outline-none transition-all border',
+          disabled
+            ? 'bg-gray-100 border-transparent text-neutral-2/40 cursor-not-allowed opacity-60'
+            : error
+              ? 'bg-red-50/30 border-red-400 cursor-pointer'
+              : 'bg-[#F6F6F6] border-transparent hover:border-gray-200 cursor-pointer',
+          !disabled && (selected ? 'text-neutral-1' : 'text-neutral-2/60'),
           className
         )}
       >

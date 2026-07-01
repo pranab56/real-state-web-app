@@ -164,7 +164,7 @@
     "sidebar": {
       "search_title": "البحث عن عقار",
       "clear_all": "مسح الكل",
-      "search_placeholder": "ابحث عن المدينة أو الولاية أو المنطقة",
+      "search_placeholder": "البحث باسم العقار...",
       "status": "الحالة",
       "type": "النوع",
       "bath": "حمام",

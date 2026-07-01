@@ -10,7 +10,7 @@ import {
 } from '@/features/profile/profileApi';
 import { ApiError } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
-import { Camera, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck, Upload, User, X } from 'lucide-react';
+import { Camera, ChevronLeft, ChevronRight, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck, Upload, User, X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -79,6 +79,7 @@ export default function PartnerDashboardProfile() {
 
   const [profileErrors, setProfileErrors] = useState<ProfileErrors>({});
   const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({});
+  const [previewDocIndex, setPreviewDocIndex] = useState<number | null>(null);
 
   // Prefill the form once the profile loads — guarded by a ref so it doesn't
   // keep overwriting in-progress edits on every keystroke re-render.
@@ -95,6 +96,17 @@ export default function PartnerDashboardProfile() {
       });
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (previewDocIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPreviewDocIndex(null);
+      if (e.key === 'ArrowLeft') setPreviewDocIndex(i => (i !== null && i > 0 ? i - 1 : i));
+      if (e.key === 'ArrowRight') setPreviewDocIndex(i => (i !== null && i < kycDocuments.length - 1 ? i + 1 : i));
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [previewDocIndex, kycDocuments.length]);
 
   const avatarSrc = previewUrl ?? getImg(profile?.image);
   const initials = `${profile?.firstName?.[0] ?? ''}${profile?.lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -274,11 +286,9 @@ export default function PartnerDashboardProfile() {
               <h2 className="text-[20px] font-semibold text-[#2C2E33]">
                 {profile?.firstName} {profile?.lastName}
               </h2>
-              {profile?.isVerified && (
-                <span className="text-[11px] font-semibold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
-                  Verified
-                </span>
-              )}
+              <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${verification?.status === 'verified' ? 'text-green-600 bg-green-50' : 'text-gray-500 bg-gray-100'}`}>
+                {verification?.status === 'verified' ? 'Verified' : 'Unverified'}
+              </span>
             </div>
             <p className="text-[13px] text-[#6C757D] font-medium mb-3">{profile?.email}</p>
             <div className="flex flex-wrap items-center gap-2">
@@ -412,15 +422,17 @@ export default function PartnerDashboardProfile() {
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                   {kycDocuments.map((doc, i) => (
-                    <a
+                    <button
                       key={i}
-                      href={getImg(doc) ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2] block group"
+                      type="button"
+                      onClick={() => setPreviewDocIndex(i)}
+                      className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2] block group cursor-pointer w-full"
                     >
                       <Image src={getImg(doc) ?? ''} alt={`KYC document ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                    </a>
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <span className="text-white text-[11px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded-full">Preview</span>
+                      </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -573,6 +585,63 @@ export default function PartnerDashboardProfile() {
         </div>
       </div>
 
+      {/* KYC Document Preview Modal */}
+      {previewDocIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setPreviewDocIndex(null)}
+        >
+          {/* Close */}
+          <button
+            type="button"
+            onClick={() => setPreviewDocIndex(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-10"
+          >
+            <X size={20} />
+          </button>
+
+          {/* Counter */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/80 text-[13px] font-medium bg-black/40 px-3 py-1 rounded-full">
+            {previewDocIndex + 1} / {kycDocuments.length}
+          </div>
+
+          {/* Prev */}
+          {previewDocIndex > 0 && (
+            <button
+              type="button"
+              onClick={e => { e.stopPropagation(); setPreviewDocIndex(i => (i !== null ? i - 1 : i)); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-10"
+            >
+              <ChevronLeft size={22} />
+            </button>
+          )}
+
+          {/* Next */}
+          {previewDocIndex < kycDocuments.length - 1 && (
+            <button
+              type="button"
+              onClick={e => { e.stopPropagation(); setPreviewDocIndex(i => (i !== null ? i + 1 : i)); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer z-10"
+            >
+              <ChevronRight size={22} />
+            </button>
+          )}
+
+          {/* Image */}
+          <div
+            className="relative max-w-3xl max-h-[80vh] w-full h-full"
+            onClick={e => e.stopPropagation()}
+          >
+            <Image
+              src={getImg(kycDocuments[previewDocIndex]) ?? ''}
+              alt={`KYC document ${previewDocIndex + 1}`}
+              fill
+              className="object-contain"
+              unoptimized
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
