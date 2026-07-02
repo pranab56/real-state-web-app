@@ -7,19 +7,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { changeGoogleLanguage } from '@/components/ui/google-translate';
 import { logout } from '@/features/auth/authSlice';
 import { useGetAllNotificationQuery } from '@/features/notification/notificationApi';
 import { useGetProfileQuery } from '@/features/profile/profileApi';
 import { cn } from '@/lib/utils';
 import { RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
+import { isTokenExpired } from '@/utils/storage';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, ChevronDown, LogOut, Menu, User, UserCircle, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { changeGoogleLanguage } from '@/components/ui/google-translate';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../ui/button';
 
@@ -42,7 +43,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
-  
+
 
   const token = useSelector((state: RootState) => state.auth?.token);
   const user = useSelector((state: RootState) => state.auth?.user);
@@ -66,6 +67,22 @@ export function Navbar() {
     const raf = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(raf);
   }, []);
+
+  useEffect(() => {
+    if (!token) return;
+
+    const checkExpiration = () => {
+      if (isTokenExpired(token)) {
+        dispatch(logout());
+      }
+    };
+
+    checkExpiration();
+
+    const intervalId = setInterval(checkExpiration, 60000); // Check every minute
+
+    return () => clearInterval(intervalId);
+  }, [token, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

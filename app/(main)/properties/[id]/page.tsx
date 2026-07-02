@@ -607,7 +607,7 @@ export default function PropertyDetailPage() {
 
             {/* Leave a Reply */}
             <div className="space-y-8 bg-[#FDFDFD] p-10 rounded-3xl border border-gray-100">
-              <h3 className="text-2xl font-medium text-neutral-1">Leave A Reply</h3>
+              <h3 className="text-2xl font-medium text-neutral-1">Leave A Review</h3>
               <form className="space-y-6" onSubmit={replyForm.handleSubmit(onReplySubmit)}>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-neutral-1 ml-1">Your Rating</label>

@@ -42,14 +42,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import { toast } from 'sonner';
 import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
-import { toast } from 'sonner';
 import * as z from 'zod';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200';
@@ -591,7 +591,7 @@ export default function HotelDetailPage() {
 
             {/* Leave A Reply */}
             <div className="space-y-8 bg-[#FDFDFD] p-10 rounded-3xl border border-gray-100">
-              <h3 className="text-2xl font-medium text-neutral-1">Leave A Reply</h3>
+              <h3 className="text-2xl font-medium text-neutral-1">Leave A Review</h3>
               {isHost && (
                 <div className="flex items-start gap-2.5 bg-amber-50 text-amber-700 text-sm font-medium rounded-xl px-4 py-3">
                   <Info size={16} className="mt-0.5 shrink-0" />
@@ -748,7 +748,7 @@ export default function HotelDetailPage() {
                   disabled={isBooking || isHost}
                   className="w-full h-14 bg-primary hover:bg-primary text-white font-medium rounded-xl transition-all active:scale-95 text-base cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isBooking ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : isHost ? 'Booking Unavailable' : 'Book This Hotel'}
+                  {isBooking ? <><Loader2 size={20} className="animate-spin" /> Processing...</> : isHost ? 'Booking Unavailable' : 'Proceed to CheckOut'}
                 </Button>
               </div>
             </div>
