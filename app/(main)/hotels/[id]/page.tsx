@@ -20,6 +20,7 @@ import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
 import { getErrorMessage } from '@/utils/getErrorMessage';
+import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -46,6 +47,21 @@ import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import type { Swiper as SwiperType } from 'swiper';
+
+interface LocalGoogleMaps {
+  Map: new (container: HTMLElement, options: {
+    center: { lat: number; lng: number };
+    zoom: number;
+    disableDefaultUI?: boolean;
+    clickableIcons?: boolean;
+  }) => google.maps.Map;
+  Marker: new (options: {
+    position: { lat: number; lng: number };
+    map: google.maps.Map;
+    title: string;
+  }) => unknown;
+}
+
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination as SwiperPagination } from 'swiper/modules';
@@ -178,6 +194,7 @@ export default function HotelDetailPage() {
   const [toggleWishlist] = useCreateWishlistToggleMutation();
   const [createReservation, { isLoading: isBooking }] = useCreateReservationMutation();
   const [createReview, { isLoading: isSubmittingReview }] = useCreateReviewMutation();
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const userId = (() => {
     if (!token) return undefined;
@@ -277,6 +294,43 @@ export default function HotelDetailPage() {
     { propertyId: id, page: 1 },
     { skip: !id }
   );
+
+  const locationCoordinates = h?.location?.coordinates;
+  const mapLat = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[1] : undefined;
+  const mapLng = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[0] : undefined;
+  const hasLocation = mapLat != null && mapLng != null;
+
+  useEffect(() => {
+    if (!hasLocation || !mapContainerRef.current) return;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      console.warn('Google Maps API key is not defined in NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
+      return;
+    }
+
+    setOptions({ key: apiKey, v: 'weekly' });
+    importLibrary('maps')
+      .then(() => {
+        if (!window.google?.maps) return;
+
+        const center = { lat: mapLat!, lng: mapLng! };
+        const map = new window.google.maps.Map(mapContainerRef.current!, {
+          center,
+          zoom: 15,
+          disableDefaultUI: true,
+          clickableIcons: false,
+        });
+
+        new window.google.maps.Marker({
+          position: center,
+          map,
+          title: title || 'Property Location',
+        });
+      })
+      .catch((err) => {
+        console.error('Failed to load Google Maps library', err);
+      });
+  }, [hasLocation, mapLat, mapLng, title]);
   const reviews: Review[] = reviewsData?.data ?? [];
 
   const replyForm = useForm<ReplyFormValues>({
@@ -496,6 +550,19 @@ export default function HotelDetailPage() {
                       <span className="text-xs sm:text-sm font-medium text-neutral-1">{amenity}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Map */}
+            {hasLocation && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between gap-3 pb-4 border-b border-gray-100">
+                  <h3 className="text-xl sm:text-2xl font-medium text-neutral-1">Location</h3>
+
+                </div>
+                <div className="rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
+                  <div ref={mapContainerRef} className="w-full h-[360px]" />
                 </div>
               </div>
             )}

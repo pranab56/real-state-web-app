@@ -24,6 +24,10 @@ export interface Hotel {
   structureType?: string;
   videoUrl?: string;
   verifiedAt?: string;
+  location?: {
+    type?: string;
+    coordinates?: [number, number];
+  };
   listing?: {
     purpose?: string;
     bedrooms?: number;
