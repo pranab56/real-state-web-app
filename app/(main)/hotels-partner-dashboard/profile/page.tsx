@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  Dialog,
+  DialogContent
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
   useChangePasswordMutation,
@@ -10,7 +14,7 @@ import {
 } from '@/features/profile/profileApi';
 import { ApiError } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
-import { Camera, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck, Upload, User, X } from 'lucide-react';
+import { Camera, ChevronLeft, ChevronRight, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck, Upload, User, X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -58,6 +62,33 @@ export default function HotelsPartnerDashboardProfile() {
   const profile = profileData?.data;
   const verification = kycData?.data?.verification;
   const kycDocuments: string[] = verification?.documents ?? [];
+  const [kycPreviewModalOpen, setKycPreviewModalOpen] = useState(false);
+  const [kycPreviewIndex, setKycPreviewIndex] = useState(0);
+
+  const openKycPreview = (index: number, fromPreviews = false) => {
+    // combine server docs and local previews so all are viewable in one modal
+    const serverImgs = kycDocuments.map(getImg).filter(Boolean) as string[];
+    const localImgs = kycPreviews || [];
+    const all = [...serverImgs, ...localImgs];
+    // calculate absolute index: if opening from local previews, offset by serverImgs.length
+    const absoluteIndex = fromPreviews ? serverImgs.length + index : index;
+    if (absoluteIndex < 0 || absoluteIndex >= all.length) return;
+    setKycPreviewIndex(absoluteIndex);
+    setKycPreviewModalOpen(true);
+  };
+
+  const closeKycPreview = () => setKycPreviewModalOpen(false);
+
+  const moveKycPreview = (dir: number) => {
+    const serverImgs = kycDocuments.map(getImg).filter(Boolean) as string[];
+    const all = [...serverImgs, ...(kycPreviews || [])];
+    setKycPreviewIndex(i => {
+      const next = i + dir;
+      if (next < 0) return all.length - 1;
+      if (next >= all.length) return 0;
+      return next;
+    });
+  };
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -412,15 +443,15 @@ export default function HotelsPartnerDashboardProfile() {
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                   {kycDocuments.map((doc, i) => (
-                    <a
+                    <button
                       key={i}
-                      href={getImg(doc) ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2] block group"
+                      type="button"
+                      onClick={() => openKycPreview(i, false)}
+                      onContextMenu={(e) => e.preventDefault()}
+                      className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2] block group cursor-pointer"
                     >
                       <Image src={getImg(doc) ?? ''} alt={`KYC document ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-                    </a>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -438,11 +469,18 @@ export default function HotelsPartnerDashboardProfile() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                       {kycPreviews.map((src, i) => (
                         <div key={i} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2]">
+                          <button
+                            type="button"
+                            onClick={() => openKycPreview(i, true)}
+                            onContextMenu={(e) => e.preventDefault()}
+                            className="absolute inset-0 z-0"
+                            style={{ background: 'transparent', border: 0 }}
+                          />
                           <Image src={src} alt={`Selected document ${i + 1}`} fill className="object-cover" unoptimized />
                           <button
                             type="button"
                             onClick={() => handleRemoveKycFile(i)}
-                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors cursor-pointer"
+                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors cursor-pointer z-10"
                           >
                             <X size={12} />
                           </button>
@@ -489,6 +527,57 @@ export default function HotelsPartnerDashboardProfile() {
 
 
 
+
+      {/* KYC Preview Modal (secure, no new-tab) */}
+      {(() => {
+        const serverImgs = kycDocuments.map(getImg).filter(Boolean) as string[];
+        const allKycImages = [...serverImgs, ...kycPreviews];
+        const currentSrc = allKycImages[kycPreviewIndex] ?? null;
+        return (
+          <Dialog open={kycPreviewModalOpen} onOpenChange={setKycPreviewModalOpen}>
+            <DialogContent className="sm:max-w-4xl p-0 bg-gray-50 shadow-none">
+              <div className="relative bg-white/50 rounded-xl overflow-hidden">
+                {/* <DialogClose asChild>
+                  <button className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-black/40 text-white flex items-center justify-center">
+                    <X size={16} />
+                  </button>
+                </DialogClose> */}
+
+                {currentSrc ? (
+                  <div className="w-full h-[70vh] flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => moveKycPreview(-1)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer z-20 w-10 h-10 rounded-full bg-black/40 text-white flex items-center justify-center"
+                      aria-label="Previous"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+
+                    <div className="max-h-[68vh] max-w-[90%] flex items-center justify-center">
+                      <img
+                        src={currentSrc}
+                        alt={`KYC preview ${kycPreviewIndex + 1}`}
+                        onContextMenu={(e) => e.preventDefault()}
+                        className="max-h-[68vh] max-w-[95%] object-contain"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => moveKycPreview(1)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer z-20 w-10 h-10 rounded-full bg-black/40 text-white flex items-center justify-center"
+                      aria-label="Next"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
 
       {/* Change Password */}
       <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#F2F2F2] shadow-sm">
