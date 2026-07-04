@@ -3,6 +3,7 @@
 import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Slider } from '@/components/ui/slider';
 import { useGetAllListingsQuery, useGetTopCitisQuery } from '@/features/listings/listingsApi';
+import { getCardLocation } from '@/lib/utils';
 import { Hotel } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
@@ -519,7 +520,7 @@ function PropertiesPageContent() {
                         <div className="flex items-start gap-1.5 text-neutral-2">
                           <MapPin size={16} className="mt-1 flex-shrink-0 text-primary w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           <p className="font-medium text-[13px] sm:text-sm italic line-clamp-1">
-                            {[item.address?.street, item.address?.city, item.address?.country].filter(Boolean).join(', ')}
+                            {getCardLocation(item.address)}
                           </p>
                         </div>
                       </div>

@@ -8,6 +8,8 @@ import { Switch } from '@/components/ui/switch';
 import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { useAuthGuard } from '@/hooks/use-auth-guard';
+import { getCardLocation } from '@/lib/utils';
+import { Hotel } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import {
@@ -24,7 +26,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Hotel } from '@/types';
 
 const LIMIT = 6;
 const MAX_PRICE = 50000;
@@ -411,7 +412,7 @@ function HotelsPageContent() {
                             <div className="flex items-start gap-2 text-neutral-2">
                               <MapPin size={16} className="mt-1 flex-shrink-0 text-primary" />
                               <p className="font-medium text-sm line-clamp-2">
-                                {[hotel.address?.street, hotel.address?.city, hotel.address?.country].filter(Boolean).join(', ')}
+                                {getCardLocation(hotel.address)}
                               </p>
                             </div>
                           </div>

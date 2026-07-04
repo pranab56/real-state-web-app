@@ -10,6 +10,7 @@ import { useGetAllListingsQuery, useGetSingleListingQuery } from '@/features/lis
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { isTokenExpired, useAuthGuard } from '@/hooks/use-auth-guard';
+import { getFullAddress } from '@/lib/utils';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
@@ -222,7 +223,7 @@ export default function PropertyDetailPage() {
   const price: number | undefined = p?.price;
   const currency: string = p?.currency ?? 'ETB';
   const address = p?.address;
-  const addressStr = [address?.street, address?.city, address?.country].filter(Boolean).join(', ');
+  const addressStr = getFullAddress(address);
   const locationCoordinates = p?.location?.coordinates;
   const mapLat = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[1] : undefined;
   const mapLng = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[0] : undefined;

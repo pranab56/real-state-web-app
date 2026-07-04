@@ -15,7 +15,7 @@ import { useCreateReservationMutation } from '@/features/reservation/page';
 import { useCreateReviewMutation, useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
 import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsApi';
 import { useAuthGuard } from '@/hooks/use-auth-guard';
-import { cn } from '@/lib/utils';
+import { cn, getFullAddress } from '@/lib/utils';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
@@ -362,7 +362,7 @@ export default function HotelDetailPage() {
   }
 
   const address = h?.address;
-  const addressStr = [address?.street, address?.city, address?.country].filter(Boolean).join(', ');
+  const addressStr = getFullAddress(address);
   const amenities: string[] = h?.amenities ?? [];
   const rating: number = h?.averageRating ?? 0;
   const ratingCount: number = h?.ratingCount ?? 0;
