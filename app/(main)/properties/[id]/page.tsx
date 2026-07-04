@@ -12,6 +12,7 @@ import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsA
 import { isTokenExpired, useAuthGuard } from '@/hooks/use-auth-guard';
 import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
+import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import {
@@ -105,6 +106,7 @@ export default function PropertyDetailPage() {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [galleryIdx, setGalleryIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const openGallery = (idx: number) => {
     setActivePhotoIdx(idx);
@@ -214,14 +216,6 @@ export default function PropertyDetailPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 size={48} className="animate-spin text-primary" />
-      </div>
-    );
-  }
-
   const images: string[] = p?.images ?? [];
   const title: string = p?.title ?? p?.name ?? '';
   const description: string = p?.description ?? '';
@@ -229,12 +223,56 @@ export default function PropertyDetailPage() {
   const currency: string = p?.currency ?? 'ETB';
   const address = p?.address;
   const addressStr = [address?.street, address?.city, address?.country].filter(Boolean).join(', ');
+  const locationCoordinates = p?.location?.coordinates;
+  const mapLat = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[1] : undefined;
+  const mapLng = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[0] : undefined;
+  const hasLocation = mapLat != null && mapLng != null;
   const amenities: string[] = p?.amenities ?? [];
   const status: string = p?.status ?? '';
   const isVerified: boolean = p?.isVerified ?? false;
   const ld = p?.listing ?? {};
   const landmarks: { name: string; distanceInKm: number }[] = ld.landmarks ?? [];
   const purpose: string = (ld.purpose ?? '').replace('_', ' ');
+
+  useEffect(() => {
+    if (!hasLocation || !mapContainerRef.current) return;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      console.warn('Google Maps API key is not defined in NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
+      return;
+    }
+
+    setOptions({ key: apiKey, v: 'weekly' });
+    importLibrary('maps')
+      .then(() => {
+        if (!window.google?.maps) return;
+
+        const center = { lat: mapLat!, lng: mapLng! };
+        const map = new window.google.maps.Map(mapContainerRef.current!, {
+          center,
+          zoom: 15,
+          disableDefaultUI: true,
+          clickableIcons: false,
+        });
+
+        new window.google.maps.Marker({
+          position: center,
+          map,
+          title: title || 'Property Location',
+        });
+      })
+      .catch((err) => {
+        console.error('Failed to load Google Maps library', err);
+      });
+  }, [hasLocation, mapLat, mapLng, title]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 size={48} className="animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pt-10">
@@ -516,6 +554,15 @@ export default function PropertyDetailPage() {
                 </div>
               </div>
             </div>
+
+            {hasLocation && (
+              <div className="space-y-6 md:space-y-8">
+                <h3 className="text-2xl font-medium text-neutral-1">Location</h3>
+                <div className="rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
+                  <div ref={mapContainerRef} className="w-full h-[360px] bg-gray-100" />
+                </div>
+              </div>
+            )}
 
             {/* Amenities */}
             {amenities.length > 0 && (

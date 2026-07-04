@@ -17,7 +17,7 @@ function Logo() {
       <div className="flex items-center gap-1.5">
         <div className="relative w-70 h-20">
           {/* Logo SVG matching the image design */}
-          <Image src={"/icons/logo.png"} fill alt="ZilaHomes" />
+          <Image src={"/icons/logoOne.png"} fill alt="ZilaHomes" />
         </div>
       </div>
     </div>
@@ -119,7 +119,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="mt-12 md:mt-20 pt-8 md:pt-10 border-t border-white/10 text-center">
           <p className="text-[#A1A1A1] text-xs md:text-base flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5">
-            <span>© 2025 Zila Homes. All rights reserved.</span>
+            <span>© 2026 ZilaHomes. All rights reserved.</span>
             <span className="hidden md:inline">•</span>
             <span>SOC2 Type II Certified.</span>
           </p>
