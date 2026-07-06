@@ -1,8 +1,9 @@
 'use client';
 
 import { useCreatePropertyMutation, useGetAllPropertyQuery, useUpdatePropertyMutation } from '@/features/manageHotels/manageHotelsApi';
-import { Hotel, RootState } from '@/types';
+import { ApiError, Hotel, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { motion } from "framer-motion";
 import { ChevronLeft, CloudUpload, Loader2, MapPin, X } from 'lucide-react';
 import Image from 'next/image';
@@ -39,6 +40,7 @@ interface NominatimResult {
     town?: string;
     village?: string;
     municipality?: string;
+    county?: string;
     state?: string;
     postcode?: string | number | null;
     country?: string;
@@ -206,8 +208,8 @@ export default function AddHotelPage() {
       fd.append('description', description.trim());
       fd.append('price', String(Number(price)));
 
-      // Amenities - sending each as a separate field with the same name
-      amenities.forEach(a => fd.append('amenities', a));
+      // Amenities - send repeated `amenities[]` entries so the backend parses an array
+      amenities.forEach(a => fd.append('amenities[]', a));
 
       // Address object structure in FormData
       fd.append('address[street]', String(street.trim()));
@@ -234,8 +236,8 @@ export default function AddHotelPage() {
       toast.success(res.message ?? (isEditMode ? 'Hotel updated successfully!' : 'Hotel created successfully!'));
       router.push('/hotels-partner-dashboard/manage-hotels/list');
     } catch (err) {
-      const error = err as { data?: { message?: string } };
-      toast.error(error?.data?.message ?? (isEditMode ? 'Failed to update hotel' : 'Failed to create hotel'));
+      const error = err as ApiError;
+      toast.error(getErrorMessage(error, isEditMode ? 'Failed to update hotel' : 'Failed to create hotel'));
     }
   };
 
@@ -277,14 +279,14 @@ export default function AddHotelPage() {
     } else if (addr.road) {
       streetName = addr.road;
     } else {
-      // If road is missing, take the first part of display name that isn't the city
       streetName = item.display_name.split(',')[0];
     }
 
     setStreet(streetName);
-    setCity(addr.city || addr.town || addr.village || addr.municipality || "");
-    setState(addr.state || "");
-    // Force postalCode to be a string, even if Nominatim returns a number
+    setCity(
+      addr.city || addr.town || addr.village || addr.municipality || addr.state || addr.county || ""
+    );
+    setState(addr.state || addr.county || "");
     const postalCodeValue = addr.postcode;
     const postalCodeStr = (postalCodeValue === null || postalCodeValue === undefined) ? "" : String(postalCodeValue);
     setPostalCode(postalCodeStr);

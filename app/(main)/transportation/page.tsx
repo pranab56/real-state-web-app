@@ -248,7 +248,7 @@ export default function TransportationPage() {
                   id="customerName"
                   value={customerName}
                   onChange={(e) => { setCustomerName(e.target.value); clearErr('customerName'); }}
-                  placeholder="Hermela Araya"
+                  placeholder="Requester's Full Name"
                   className={inputCls(errors.customerName)}
                 />
                 <FieldError msg={errors.customerName} />
@@ -261,7 +261,7 @@ export default function TransportationPage() {
                     id="customerPhone"
                     value={customerPhone}
                     onChange={(e) => { setCustomerPhone(e.target.value); clearErr('customerPhone'); }}
-                    placeholder="+251 9xx xxx xxxx"
+                    placeholder="Enter your phone number"
                     className={inputCls(errors.customerPhone)}
                   />
                   <FieldError msg={errors.customerPhone} />
