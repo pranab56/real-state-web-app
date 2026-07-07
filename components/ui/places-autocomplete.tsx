@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export interface PlaceResult {
   address: string;

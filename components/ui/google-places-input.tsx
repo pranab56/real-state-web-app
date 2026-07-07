@@ -51,7 +51,7 @@ export function GooglePlacesInput({
   }, [onPlaceSelectAction]);
 
   useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    const apiKey = process.env.NEXT_GOOGLE_MAPS_API_KEY;
     if (!apiKey || !inputRef.current) return;
 
     if (!optionsInitialized) {
@@ -90,7 +90,7 @@ export function GooglePlacesInput({
     return () => {
       listener?.remove();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [country, types?.join(',')]);
 
   return (
