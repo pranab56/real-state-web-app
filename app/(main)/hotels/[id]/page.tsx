@@ -302,9 +302,9 @@ export default function HotelDetailPage() {
 
   useEffect(() => {
     if (!hasLocation || !mapContainerRef.current) return;
-    const apiKey = process.env.NEXT_GOOGLE_MAPS_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KE;
     if (!apiKey) {
-      console.warn('Google Maps API key is not defined in NEXT_GOOGLE_MAPS_API_KEY');
+      console.warn('Google Maps API key is not defined in NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
       return;
     }
 
