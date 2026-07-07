@@ -46,22 +46,19 @@ interface PlacesAutocompleteProps {
 
 export function PlacesAutocomplete({
   placeholder = 'Search address...',
-  value = '',
+  value,
   onPlaceSelectAction,
   className,
   disabled,
   error,
 }: PlacesAutocompleteProps) {
-  const [inputVal, setInputVal] = useState(value);
+  const [inputVal, setInputVal] = useState(() => value ?? '');
+  const controlledValue = value ?? inputVal;
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    setInputVal(value);
-  }, [value]);
 
   const fetchSuggestions = async (query: string) => {
     if (query.trim().length < 3) {
@@ -112,7 +109,7 @@ export function PlacesAutocomplete({
           className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-2/60 pointer-events-none z-10"
         />
         <input
-          value={inputVal}
+          value={controlledValue}
           onChange={handleChange}
           onFocus={() => suggestions.length > 0 && setIsOpen(true)}
           onBlur={() => setTimeout(() => setIsOpen(false), 180)}

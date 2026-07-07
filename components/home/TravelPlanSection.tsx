@@ -107,13 +107,7 @@ export default function TravelPlanSection() {
             <div className="lg:w-2/3 p-8 md:p-12 lg:p-20 space-y-6 md:space-y-8 z-10 text-center lg:text-left">
               <h2 className="text-3xl md:text-4xl lg:text-5xl w-10/12 font-medium text-neutral-1 leading-tight" dangerouslySetInnerHTML={{ __html: 'Ready to experience Ethiopia?' }} />
               <p className="text-neutral-2 text-sm md:text-lg max-w-lg mx-auto lg:mx-0 font-medium">
-                Book your complete travel package with ZilaHomes today. We handle everything so you can focus on the journey.
-              </p>
-              <Link href={"/properties"} className="bg-[#F1913D] py-3.5 hover:bg-[#F1913D]/90 text-white font-medium h-12 md:h-14 px-10 md:px-12 rounded-sm cursor-pointer text-base md:text-lg shadow-xl shadow-primary/20 w-full md:w-auto">
-                Book now
-              </Link>
-            </div>
-
+                Book your complete travel package with ZilaHomes today. We handle everything so you can focus on the journey. </p> <Link href={"/properties"} className="bg-[#F1913D] py-3.5 hover:bg-[#F1913D]/90 text-white font-medium h-12 md:h-14 px-10 md:px-12 rounded-sm cursor-pointer text-base md:text-lg shadow-xl shadow-primary/20 w-full md:w-auto"> Book now </Link> </div>
             <div className="relative w-full lg:w-2/3 h-[250px] md:h-[350px] lg:h-auto">
               <Image
                 src="/images/homeOne.png"

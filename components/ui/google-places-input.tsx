@@ -32,7 +32,7 @@ let optionsInitialized = false;
 
 export function GooglePlacesInput({
   placeholder = 'Search address...',
-  value = '',
+  value,
   onPlaceSelectAction,
   onTextChange,
   onKeyDown,
@@ -43,15 +43,12 @@ export function GooglePlacesInput({
 }: GooglePlacesInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const onPlaceSelectRef = useRef(onPlaceSelectAction);
-  const [inputVal, setInputVal] = useState(value);
+  const [inputVal, setInputVal] = useState(() => value ?? '');
+  const controlledValue = value ?? inputVal;
 
   useEffect(() => {
     onPlaceSelectRef.current = onPlaceSelectAction;
   }, [onPlaceSelectAction]);
-
-  useEffect(() => {
-    setInputVal(value);
-  }, [value]);
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -101,7 +98,7 @@ export function GooglePlacesInput({
       <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-2/60 pointer-events-none z-10" />
       <input
         ref={inputRef}
-        value={inputVal}
+        value={controlledValue}
         onChange={(e) => {
           setInputVal(e.target.value);
           onTextChange?.(e.target.value);
