@@ -21,7 +21,8 @@ import {
   Loader2,
   LogOut,
   Ticket,
-  User
+  User,
+  Wallet
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -56,6 +57,7 @@ const sidebarItems: SidebarItem[] = [
   },
   { name: 'Wishlist', href: '/hotels-partner-dashboard/wishlist', icon: Heart },
   { name: 'Payment History', href: '/hotels-partner-dashboard/payments', icon: FileText },
+  { name: 'my wallet', href: '/hotels-partner-dashboard/withdraw', icon: Wallet },
   { name: 'Profile', href: '/hotels-partner-dashboard/profile', icon: User },
 ];
 

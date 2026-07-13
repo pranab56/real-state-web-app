@@ -67,6 +67,7 @@ import 'swiper/css/pagination';
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
+import { envConfig } from '../../../../envConfig';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200';
 
@@ -183,6 +184,8 @@ export default function HotelDetailPage() {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [galleryIdx, setGalleryIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
+  const [apiKey, setApiKey] = useState<string>("");
+
 
   const openGallery = (idx: number) => {
     setActivePhotoIdx(idx);
@@ -300,9 +303,18 @@ export default function HotelDetailPage() {
   const mapLng = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[0] : undefined;
   const hasLocation = mapLat != null && mapLng != null;
 
+
+  useEffect(() => {
+    const getApiKey = async () => {
+      const config = await envConfig();
+      setApiKey(config.googleMapsApiKey || '');
+    }
+    getApiKey();
+  }, [])
+
   useEffect(() => {
     if (!hasLocation || !mapContainerRef.current) return;
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KE;
+
     if (!apiKey) {
       console.warn('Google Maps API key is not defined in NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
       return;
