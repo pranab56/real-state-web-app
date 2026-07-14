@@ -44,14 +44,22 @@ export function GooglePlacesInput({
   const inputRef = useRef<HTMLInputElement>(null);
   const onPlaceSelectRef = useRef(onPlaceSelectAction);
   const [inputVal, setInputVal] = useState(value);
+  
+  // Sync inputVal with value prop when it changes externally
+  // Use a ref to track if the change came from internal or external
+  const isInternalChangeRef = useRef(false);
+
+  useEffect(() => {
+    // Only update if the change came from external (not from internal setInputVal)
+    if (!isInternalChangeRef.current) {
+      setInputVal(value);
+    }
+    isInternalChangeRef.current = false;
+  }, [value]);
 
   useEffect(() => {
     onPlaceSelectRef.current = onPlaceSelectAction;
   }, [onPlaceSelectAction]);
-
-  useEffect(() => {
-    setInputVal(value);
-  }, [value]);
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -82,6 +90,9 @@ export function GooglePlacesInput({
           )?.long_name;
           const isCitySearch = types?.includes('(cities)');
           const address = (isCitySearch && city) ? city : (place.formatted_address ?? inputRef.current?.value ?? '');
+          
+          // Mark as internal change to prevent the value useEffect from resetting it
+          isInternalChangeRef.current = true;
           setInputVal(address);
           onPlaceSelectRef.current({ address, lat, lng, city });
         });
@@ -103,6 +114,8 @@ export function GooglePlacesInput({
         ref={inputRef}
         value={inputVal}
         onChange={(e) => {
+          // Mark as internal change
+          isInternalChangeRef.current = true;
           setInputVal(e.target.value);
           onTextChange?.(e.target.value);
         }}
