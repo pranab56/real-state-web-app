@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import {
   Bath,
+  Bed,
   BedDouble,
   Calendar,
   Car,
@@ -49,6 +50,7 @@ import 'swiper/css/pagination';
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
+import { envConfig } from '../../../../envConfig';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
 
@@ -71,7 +73,7 @@ const OverviewItem = ({ icon: Icon, label, value }: { icon: React.ElementType; l
 );
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex items-center justify-between py-4 border-b border-gray-100 last:border-none">
+  <div className="flex items-center justify-between py-4 border-b border-gray-100 last:border-none capitalize">
     <span className="text-sm text-neutral-2 font-medium">{label}</span>
     <span className="text-sm font-medium text-neutral-1">{value}</span>
   </div>
@@ -108,6 +110,7 @@ export default function PropertyDetailPage() {
   const [galleryIdx, setGalleryIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const [apiKey, setApiKey] = useState<string>("");
 
   const openGallery = (idx: number) => {
     setActivePhotoIdx(idx);
@@ -236,10 +239,17 @@ export default function PropertyDetailPage() {
   const purpose: string = (ld.purpose ?? '').replace('_', ' ');
 
   useEffect(() => {
+    const getApiKey = async () => {
+      const config = await envConfig();
+      setApiKey(config.googleMapsApiKey || '');
+    }
+    getApiKey();
+  }, []);
+
+  useEffect(() => {
     if (!hasLocation || !mapContainerRef.current) return;
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!apiKey) {
-      console.warn('Google Maps API key is not defined in NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
+      console.warn('Google Maps API key is not defined');
       return;
     }
 
@@ -265,7 +275,7 @@ export default function PropertyDetailPage() {
       .catch((err) => {
         console.error('Failed to load Google Maps library', err);
       });
-  }, [hasLocation, mapLat, mapLng, title]);
+  }, [hasLocation, mapLat, mapLng, title, apiKey]);
 
   if (isLoading) {
     return (
@@ -538,7 +548,7 @@ export default function PropertyDetailPage() {
               <h3 className="text-2xl font-medium text-neutral-1">Property Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
                 <div>
-                  {p?._id && <DetailRow label="Property ID:" value={p._id.slice(-8).toUpperCase()} />}
+                  {p?._id && <DetailRow label="Property ID:" value={p.uid} />}
                   {price != null && <DetailRow label="Price:" value={`${currency} ${price.toLocaleString()}`} />}
                   {ld.totalArea != null && <DetailRow label="Property Size:" value={`${ld.totalArea} SqFt`} />}
                   {ld.yearBuilt != null && <DetailRow label="Year Built:" value={String(ld.yearBuilt)} />}
@@ -780,35 +790,84 @@ export default function PropertyDetailPage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {featuredList.map((item: Hotel, i: number) => (
-              <motion.div
-                key={item._id ?? i}
-                className="group bg-white rounded-lg overflow-hidden shadow-xl shadow-black/5 hover:shadow-primary/5 transition-all duration-700"
-              >
-                <Link href={`/properties/${item._id ?? item.id}`}>
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image src={getImg(item.images?.[0])} alt={item.title ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      {item.isVerified && <span className="bg-[#2B9724] text-white text-[10px] font-medium px-3 py-1.5 rounded-full uppercase">Verified</span>}
-                      {item.listing?.purpose && <span className="bg-primary text-white text-[10px] font-medium px-3 py-1.5 rounded-full capitalize">{item.listing.purpose.replace('_', ' ')}</span>}
+            {featuredList.map((item: Hotel, i: number) => {
+              const addressStr = [item.address?.street, item.address?.city, item.address?.country].filter(Boolean).join(', ');
+              const purpose = item.listing?.purpose ?? '';
+
+              return (
+                <motion.div
+                  key={item._id ?? i}
+                  className="bg-white border border-gray-100 rounded-lg overflow-hidden group hover:shadow-2xl hover:shadow-black/5 transition-all duration-500"
+                >
+                  <Link href={`/properties/${item._id ?? item.id}`} className="block">
+                    {/* Image */}
+                    <div className="relative aspect-[4/3] overflow-hidden m-3 md:m-4 rounded-lg">
+                      <Image
+                        src={getImg(item.images?.[0])}
+                        alt={item.title ?? 'Property'}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+
+                      {/* Badges */}
+                      <div className="absolute top-3 left-3 md:top-4 md:left-4 flex gap-2">
+                        {item.isVerified && (
+                          <span className="bg-[#2B9724] text-white text-[9px] md:text-[10px] font-medium px-2.5 md:px-3 py-1 rounded-full">
+                            Zila Verified
+                          </span>
+                        )}
+                        {purpose && (
+                          <span className="bg-primary text-white text-[9px] md:text-[10px] font-medium px-2.5 md:px-3 py-1 rounded-full capitalize">
+                            {purpose.replace('_', ' ')}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <h3 className="text-2xl font-black text-neutral-1">{item.currency ?? 'ETB'} {item.price?.toLocaleString() ?? ''}</h3>
-                    <p className="text-base font-medium text-neutral-1 line-clamp-1">{item.title ?? item.name}</p>
-                    <div className="flex items-center gap-2 text-neutral-2 text-sm font-medium italic">
-                      <MapPin size={16} className="text-primary flex-shrink-0" />
-                      <p className="line-clamp-1">{[item.address?.street, item.address?.city].filter(Boolean).join(', ')}</p>
+
+                    {/* Content */}
+                    <div className="p-4 md:p-6 pt-2 md:pt-2 space-y-3 md:space-y-4">
+                      <h3 className="text-base md:text-lg font-semibold text-neutral-1 line-clamp-1">
+                        {item.title ?? item.name ?? ''}
+                      </h3>
+                      <div className="flex items-center justify-between bg-primary/5 rounded-md px-3 py-2">
+                        <span className="text-lg md:text-xl font-bold text-primary">
+                          {item.currency} {item.price?.toLocaleString()}
+                        </span>
+                        <PriceConvertButton price={item.price} currency={item.currency} />
+                      </div>
+                      <div className="flex items-center gap-2 text-neutral-2">
+                        <MapPin size={14} className="shrink-0 md:size-[18px]" />
+                        <span className="text-[12px] md:text-[15px] font-medium line-clamp-1">{addressStr}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 md:pt-5 border-t border-gray-100">
+                        <div className="flex items-center gap-1.5 md:gap-2.5">
+                          <Bed size={15} className="md:size-[18px] text-primary shrink-0" />
+                          <div className="flex flex-col md:flex-row md:gap-1">
+                            <span className="text-[11px] md:text-sm font-medium text-neutral-1">{item.listing?.bedrooms ?? 0}</span>
+                            <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Beds</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 md:gap-2.5">
+                          <Bath size={15} className="md:size-[18px] text-primary shrink-0" />
+                          <div className="flex flex-col md:flex-row md:gap-1">
+                            <span className="text-[11px] md:text-sm font-medium text-neutral-1">{item.listing?.bathrooms ?? 0}</span>
+                            <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Baths</span>
+                          </div>
+                      </div>
+                        <div className="flex items-center gap-1.5 md:gap-2.5">
+                          <Maximize2 size={15} className="md:size-[18px] text-primary shrink-0" />
+                          <div className="flex flex-col md:flex-row md:gap-1">
+                            <span className="text-[11px] md:text-sm font-medium text-neutral-1">{item.listing?.totalArea ?? 0}</span>
+                            <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Sqft</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-neutral-2 font-medium text-xs uppercase italic opacity-60">
-                      <div className="flex items-center gap-1.5"><BedDouble size={16} /><span>Beds {item.listing?.bedrooms ?? 0}</span></div>
-                      <div className="flex items-center gap-1.5"><Bath size={16} /><span>Baths {item.listing?.bathrooms ?? 0}</span></div>
-                      <div className="flex items-center gap-1.5"><Maximize2 size={16} /><span>m² {item.listing?.totalArea ?? 0}</span></div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </section>
       )}

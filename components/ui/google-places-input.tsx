@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
 import { MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { envConfig } from '../../envConfig';
 
 export interface GooglePlaceResult {
   address: string;
@@ -61,8 +62,17 @@ export function GooglePlacesInput({
     onPlaceSelectRef.current = onPlaceSelectAction;
   }, [onPlaceSelectAction]);
 
+  const [apiKey, setApiKey] = useState<string>('');
+
   useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    const getApiKey = async () => {
+      const config = await envConfig();
+      setApiKey(config.googleMapsApiKey || '');
+    };
+    getApiKey();
+  }, []);
+
+  useEffect(() => {
     if (!apiKey || !inputRef.current) return;
 
     if (!optionsInitialized) {
@@ -105,7 +115,7 @@ export function GooglePlacesInput({
       listener?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [country, types?.join(',')]);
+  }, [country, types?.join(','), apiKey]);
 
   return (
     <div className="relative w-full">

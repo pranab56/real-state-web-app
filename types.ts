@@ -11,6 +11,7 @@ export interface Hotel {
   isWishlisted?: boolean;
   status?: string;
   isVerified?: boolean;
+  uid: string;
   address?: {
     street?: string;
     city?: string;
