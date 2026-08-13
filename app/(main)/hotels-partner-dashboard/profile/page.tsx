@@ -59,6 +59,7 @@ export default function HotelsPartnerDashboardProfile() {
   const [changePassword, { isLoading: changePassLoading }] = useChangePasswordMutation();
   const [submitKYC, { isLoading: kycSubmitting }] = useVerificationKYCMutation();
 
+
   const profile = profileData?.data;
   const verification = kycData?.data?.verification;
   const kycDocuments: string[] = verification?.documents ?? [];
@@ -110,6 +111,8 @@ export default function HotelsPartnerDashboardProfile() {
 
   const [profileErrors, setProfileErrors] = useState<ProfileErrors>({});
   const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({});
+
+  const isVerified = kycData?.data?.verification?.status === 'verified';
 
   // Prefill the form once the profile loads — guarded by a ref so it doesn't
   // keep overwriting in-progress edits on every keystroke re-render.
@@ -305,11 +308,9 @@ export default function HotelsPartnerDashboardProfile() {
               <h2 className="text-[20px] font-semibold text-[#2C2E33]">
                 {profile?.firstName} {profile?.lastName}
               </h2>
-              {profile?.isVerified && (
-                <span className="text-[11px] font-semibold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
-                  Verified
-                </span>
-              )}
+              <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${isVerified ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                {isVerified ? 'Verified' : 'Unverified'}
+              </span>
             </div>
             <p className="text-[13px] text-[#6C757D] font-medium mb-3">{profile?.email}</p>
             <div className="flex flex-wrap items-center gap-2">

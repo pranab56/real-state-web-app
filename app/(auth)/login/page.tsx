@@ -96,8 +96,13 @@ export default function LoginPage() {
           role: result.data.role,
         },
       }));
-      toast.success('Welcome back!');
-      router.push('/');
+
+      console.log("login response", result);
+      toast.success(result?.message || 'Welcome back!');
+      const role = (result?.data?.role || '').toLowerCase();
+      const targetRoute = role === 'host' ? '/' : '/';
+      router.push(targetRoute);
+      router.refresh();
     } catch (err) {
       const error = err as { data?: { message?: string } };
       toast.error(error?.data?.message || 'Login failed. Please try again.');

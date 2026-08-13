@@ -33,7 +33,7 @@ export default function RootLayout({
           {/* <LenisProvider> */}
           {children}
           {/* </LenisProvider> */}
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="top-center" />
         </ReduxProvider>
       </body>
     </html>

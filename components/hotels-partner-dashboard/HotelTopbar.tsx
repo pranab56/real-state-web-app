@@ -7,6 +7,9 @@ import { Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+import { RootState } from '@/types';
+import { useSelector } from 'react-redux';
+
 const ROLE_LABELS: Record<string, string> = { host: 'Hotel Partner', customer: 'Customer' };
 
 const getImg = (path?: string) => {
@@ -17,14 +20,19 @@ const getImg = (path?: string) => {
 export function HotelTopbar() {
   const { toggleSidebar } = useSidebar();
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.auth?.user);
   const { data: profileData } = useGetProfileQuery({});
   const { data: kycData } = useGetMyKYCQuery({});
+  console.log("kycData", kycData);
   const profile = profileData?.data;
   const isVerified = kycData?.data?.verification?.status === 'verified';
 
-  const fullName = `${profile?.firstName ?? ''} ${profile?.lastName ?? ''}`.trim() || 'My Account';
-  const roleLabel = ROLE_LABELS[profile?.role ?? ''] ?? profile?.role ?? '';
-  const initials = `${profile?.firstName?.[0] ?? ''}${profile?.lastName?.[0] ?? ''}`.toUpperCase() || '?';
+  const firstName = profile?.firstName ?? user?.firstName ?? '';
+  const lastName = profile?.lastName ?? user?.lastName ?? '';
+  const fullName = `${firstName} ${lastName}`.trim() || profile?.email || user?.email || 'My Account';
+  const rawRole = (profile?.role ?? user?.role ?? '').toLowerCase();
+  const roleLabel = ROLE_LABELS[rawRole] ?? profile?.role ?? user?.role ?? '';
+  const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || '?';
   const avatarSrc = getImg(profile?.image);
 
   return (
