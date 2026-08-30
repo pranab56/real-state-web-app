@@ -2,7 +2,6 @@
 
 import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { useCreateWishlistToggleMutation, useGetMyWishlistsQuery } from '@/features/wishlists/wishlistsApi';
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { Building2, Calendar, Heart, Loader2, MapPin } from 'lucide-react';
 import Image from 'next/image';
@@ -11,13 +10,8 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { ApiError, Hotel, WishlistItem } from '@/types';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
+
 
 const getDetailHref = (property: Hotel) => {
   if (property.structureType === 'hotel' || property.structureType === 'resort') return `/hotels/${property._id}`;
@@ -136,7 +130,7 @@ export default function WishlistPage() {
                   {/* Image */}
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
-                      src={getImg(img)}
+                      src={img || ""}
                       alt={property.title ?? 'Property'}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -181,11 +175,10 @@ export default function WishlistPage() {
                           {property.title}
                         </h3>
                         <span
-                          className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${
-                            property.status === 'active'
+                          className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${property.status === 'active'
                               ? 'bg-green-50 text-green-600'
                               : 'bg-gray-100 text-gray-500'
-                          }`}
+                            }`}
                         >
                           {property.status}
                         </span>

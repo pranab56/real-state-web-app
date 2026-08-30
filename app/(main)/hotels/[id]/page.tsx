@@ -1,5 +1,6 @@
 'use client';
 
+import { LocationMap } from '@/components/shared/LocationMap';
 import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -20,7 +21,6 @@ import { ApiError, Hotel, Review, RootState } from '@/types';
 import { baseURL } from '@/utils/BaseURL';
 import { useLazyGetExchangeRatesQuery } from '@/utils/exchangeRateApi';
 import { getErrorMessage } from '@/utils/getErrorMessage';
-import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -48,34 +48,11 @@ import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import type { Swiper as SwiperType } from 'swiper';
 
-interface LocalGoogleMaps {
-  Map: new (container: HTMLElement, options: {
-    center: { lat: number; lng: number };
-    zoom: number;
-    disableDefaultUI?: boolean;
-    clickableIcons?: boolean;
-  }) => google.maps.Map;
-  Marker: new (options: {
-    position: { lat: number; lng: number };
-    map: google.maps.Map;
-    title: string;
-  }) => unknown;
-}
-
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
-import { envConfig } from '../../../../envConfig';
-
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200';
-
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getAvatarSrc = (path?: string) => {
   if (!path) return null;
@@ -114,17 +91,15 @@ const DatePicker = ({
     <div className={cn('space-y-1.5 sm:space-y-2 w-full', className)}>
       <label className="text-[10px] sm:text-xs font-medium w-full text-neutral-2 uppercase tracking-wider ml-1">{label}</label>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger className="w-full">
-          <button
-            className={cn(
-              'w-full h-10 sm:h-12 bg-[#F6F6F6] border flex items-center justify-start text-left font-medium shadow-none hover:border-primary/30 hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
-              error ? 'border-red-500' : 'border-gray-200',
-              !date ? 'text-neutral-2' : 'text-neutral-1'
-            )}
-          >
-            <CalendarIcon className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-            {date ? format(date, 'PPP') : <span>Pick a date</span>}
-          </button>
+        <PopoverTrigger
+          className={cn(
+            'w-full h-10 sm:h-12 bg-[#F6F6F6] border flex items-center justify-start text-left font-medium shadow-none hover:border-primary/30 hover:bg-[#EFEFEF] transition-all px-3 sm:px-4 rounded-lg text-xs sm:text-sm cursor-pointer',
+            error ? 'border-red-500' : 'border-gray-200',
+            !date ? 'text-neutral-2' : 'text-neutral-1'
+          )}
+        >
+          <CalendarIcon className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+          {date ? format(date, 'PPP') : <span>Pick a date</span>}
         </PopoverTrigger>
         <PopoverContent className="w-(--anchor-width) p-0 rounded-xl shadow-2xl border-none overflow-hidden ">
           <Calendar
@@ -184,8 +159,6 @@ export default function HotelDetailPage() {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [galleryIdx, setGalleryIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [apiKey, setApiKey] = useState<string>("");
-
 
   const openGallery = (idx: number) => {
     setActivePhotoIdx(idx);
@@ -197,7 +170,6 @@ export default function HotelDetailPage() {
   const [toggleWishlist] = useCreateWishlistToggleMutation();
   const [createReservation, { isLoading: isBooking }] = useCreateReservationMutation();
   const [createReview, { isLoading: isSubmittingReview }] = useCreateReviewMutation();
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const userId = (() => {
     if (!token) return undefined;
@@ -303,46 +275,6 @@ export default function HotelDetailPage() {
   const mapLng = Array.isArray(locationCoordinates) && locationCoordinates.length === 2 ? locationCoordinates[0] : undefined;
   const hasLocation = mapLat != null && mapLng != null;
 
-
-  useEffect(() => {
-    const getApiKey = async () => {
-      const config = await envConfig();
-      setApiKey(config.googleMapsApiKey || '');
-    }
-    getApiKey();
-  }, [])
-
-  useEffect(() => {
-    if (!hasLocation || !mapContainerRef.current) return;
-
-    if (!apiKey) {
-      console.warn('Google Maps API key is not defined in NEXT_PUBLIC_GOOGLE_MAPS_API_KEY');
-      return;
-    }
-
-    setOptions({ key: apiKey, v: 'weekly' });
-    importLibrary('maps')
-      .then(() => {
-        if (!window.google?.maps) return;
-
-        const center = { lat: mapLat!, lng: mapLng! };
-        const map = new window.google.maps.Map(mapContainerRef.current!, {
-          center,
-          zoom: 15,
-          disableDefaultUI: true,
-          clickableIcons: false,
-        });
-
-        new window.google.maps.Marker({
-          position: center,
-          map,
-          title: title || 'Property Location',
-        });
-      })
-      .catch((err) => {
-        console.error('Failed to load Google Maps library', err);
-      });
-  }, [hasLocation, mapLat, mapLng, title]);
   const reviews: Review[] = reviewsData?.data ?? [];
 
   const replyForm = useForm<ReplyFormValues>({
@@ -388,20 +320,20 @@ export default function HotelDetailPage() {
             className="md:col-span-8 relative aspect-[4/3] md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-xl cursor-pointer"
             onClick={() => openGallery(0)}
           >
-            <Image src={getImg(images[0])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
+            <Image src={images[0] || ""} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
           </div>
           <div className="md:col-span-4 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-3 sm:gap-6">
             <div
               className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg cursor-pointer"
               onClick={() => openGallery(1)}
             >
-              <Image src={getImg(images[1])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src={images[1] || ""} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
             <div
               className="relative aspect-square md:aspect-auto rounded-xl md:rounded-2xl overflow-hidden group shadow-lg cursor-pointer"
               onClick={() => openGallery(2)}
             >
-              <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src={images[2] || ""} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
           </div>
           {images.length > 0 && (
@@ -457,7 +389,7 @@ export default function HotelDetailPage() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={getImg(img)}
+                      src={img}
                       alt={`${title} photo ${idx + 1}`}
                       style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }}
                     />
@@ -571,11 +503,8 @@ export default function HotelDetailPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-3 pb-4 border-b border-gray-100">
                   <h3 className="text-xl sm:text-2xl font-medium text-neutral-1">Location</h3>
-
                 </div>
-                <div className="rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
-                  <div ref={mapContainerRef} className="w-full h-[360px]" />
-                </div>
+                <LocationMap lat={mapLat!} lng={mapLng!} title={title} />
               </div>
             )}
 
@@ -859,7 +788,7 @@ export default function HotelDetailPage() {
               >
                 <Link href={`/hotels/${hotel._id ?? hotel.id}`}>
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image src={getImg(hotel.images?.[0])} alt={hotel.title ?? hotel.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src={hotel.images?.[0] || ""} alt={hotel.title ?? hotel.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                     {hotel.isVerified && (
                       <span className="absolute top-4 left-4 bg-[#2B9724] text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg">Verified</span>
                     )}

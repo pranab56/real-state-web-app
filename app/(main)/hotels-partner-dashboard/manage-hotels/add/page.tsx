@@ -2,7 +2,6 @@
 
 import { useCreatePropertyMutation, useGetAllPropertyQuery, useUpdatePropertyMutation } from '@/features/manageHotels/manageHotelsApi';
 import { ApiError, Hotel, RootState } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { motion } from "framer-motion";
 import { ChevronLeft, CloudUpload, Loader2, MapPin, X } from 'lucide-react';
@@ -26,7 +25,7 @@ const addHotelSchema = z.object({
 });
 type AddHotelErrors = Partial<Record<keyof z.infer<typeof addHotelSchema> | 'images', string>>;
 
-const getImg = (path: string) => (path.startsWith('http') ? path : `${baseURL}${path}`);
+
 
 interface NominatimResult {
   place_id: number;
@@ -532,7 +531,7 @@ export default function AddHotelPage() {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                 {existingImages.map((img, idx) => (
                   <div key={img} className="relative rounded-[10px] overflow-hidden border border-[#F2F2F2] shadow-sm aspect-square bg-gray-100">
-                    <Image src={getImg(img)} alt={`Current ${idx + 1}`} fill className="object-cover" unoptimized />
+                    <Image src={img} alt={`Current ${idx + 1}`} fill className="object-cover" unoptimized />
                     {idx === 0 && images.length === 0 && (
                       <span className="absolute bottom-1.5 left-1.5 bg-[#F1913D] text-white text-[10px] font-medium px-2 py-0.5 rounded-full">Main</span>
                     )}

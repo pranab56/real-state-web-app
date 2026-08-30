@@ -10,7 +10,6 @@ import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsA
 import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { getCardLocation } from '@/lib/utils';
 import { Hotel } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import {
   ChevronLeft,
@@ -39,14 +38,6 @@ const HOTEL_TYPES = [
 
 const formatType = (t: string) =>
   t.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&h=600&fit=crop';
-
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 function HotelsPageContent() {
   const sp = useSearchParams();
@@ -383,7 +374,7 @@ function HotelsPageContent() {
                     <div className="group block bg-white rounded-sm overflow-hidden border border-gray-100 hover:shadow-sm transition-all duration-500 relative">
                       <Link href={`/hotels/${hotel._id ?? hotel.id}`}>
                         <div className="relative aspect-[16/10] overflow-hidden">
-                          <Image src={getImg(hotel.images?.[0])} alt={hotel.name ?? hotel.title ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                          <Image src={hotel.images?.[0] || ""} alt={hotel.name ?? hotel.title ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                           {hotel.status && <span className="absolute top-4 left-4 bg-primary text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-sm capitalize">{hotel.status.replace('_', ' ')}</span>}
                         </div>
                       </Link>

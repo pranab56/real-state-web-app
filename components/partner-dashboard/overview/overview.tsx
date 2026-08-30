@@ -3,7 +3,6 @@
 import { useGetAllTransectionQuery } from '@/features/peyment/payementApi';
 import { useGetMyReviewsQuery } from '@/features/review/reviewApi';
 import { useGetMyReservationQuery } from '@/features/reservation/page';
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import {
   CalendarCheck,
@@ -17,33 +16,28 @@ import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { Hotel, Reservation, RootState, Review, Transaction } from '@/types';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=150&auto=format&fit=crop';
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
+
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
 
 const getBookingStatusStyle = (status: string) => {
   switch (status) {
-    case 'confirmed':  return 'bg-green-50 text-green-600';
-    case 'pending':    return 'bg-orange-50 text-orange-500';
-    case 'completed':  return 'bg-gray-100 text-gray-500';
-    case 'cancelled':  return 'bg-red-50 text-red-500';
-    default:           return 'bg-gray-100 text-gray-600';
+    case 'confirmed': return 'bg-green-50 text-green-600';
+    case 'pending': return 'bg-orange-50 text-orange-500';
+    case 'completed': return 'bg-gray-100 text-gray-500';
+    case 'cancelled': return 'bg-red-50 text-red-500';
+    default: return 'bg-gray-100 text-gray-600';
   }
 };
 
 const getTxStatusStyle = (status: string) => {
   switch (status) {
     case 'completed': return 'bg-green-50 text-green-600';
-    case 'pending':   return 'bg-orange-50 text-orange-500';
-    case 'failed':    return 'bg-red-50 text-red-500';
-    default:          return 'bg-gray-100 text-gray-600';
+    case 'pending': return 'bg-orange-50 text-orange-500';
+    case 'failed': return 'bg-red-50 text-red-500';
+    default: return 'bg-gray-100 text-gray-600';
   }
 };
 
@@ -66,13 +60,13 @@ export function Overview() {
   const transactions: Transaction[] = txData?.data ?? [];
   const reviews: Review[] = reviewData?.data ?? [];
 
-  const totalBookings      = bookingData?.pagination?.total ?? 0;
-  const totalTransactions  = txData?.pagination?.total ?? 0;
-  const totalReviews       = reviewData?.pagination?.total ?? 0;
+  const totalBookings = bookingData?.pagination?.total ?? 0;
+  const totalTransactions = txData?.pagination?.total ?? 0;
+  const totalReviews = reviewData?.pagination?.total ?? 0;
 
-  const recentBookings     = bookings.slice(0, 5);
+  const recentBookings = bookings.slice(0, 5);
   const recentTransactions = transactions.slice(0, 4);
-  const recentReviews      = reviews.slice(0, 3);
+  const recentReviews = reviews.slice(0, 3);
 
   return (
     <div className="space-y-6">
@@ -154,7 +148,7 @@ export function Overview() {
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden relative flex-shrink-0">
-                            <Image src={getImg(b.property?.images?.[0])} alt={b.property?.title ?? ''} fill className="object-cover" />
+                            <Image src={b.property?.images?.[0] || ""} alt={b.property?.title ?? ''} fill className="object-cover" />
                           </div>
                           <div>
                             <p className="font-medium text-[#2C2E33] text-[13px] line-clamp-1">{b.property?.title ?? '—'}</p>
@@ -252,12 +246,12 @@ export function Overview() {
           ) : (
             <div className="divide-y divide-[#F2F2F2]">
               {recentReviews.map((review: Review) => {
-                const customer  = review.customer ?? {};
-                const property  = (review.property as Hotel) ?? {};
-                const avatarUrl = getImg(customer.image);
-                const initials  = getInitials(customer.firstName, customer.lastName);
-                const location  = [property.address?.city, property.address?.country].filter(Boolean).join(', ');
-                const dateStr   = review.createdAt ? format(new Date(review.createdAt), 'MMM dd, yyyy') : '';
+                const customer = review.customer ?? {};
+                const property = (review.property as Hotel) ?? {};
+                const avatarUrl = customer.image || "";
+                const initials = getInitials(customer.firstName, customer.lastName);
+                const location = [property.address?.city, property.address?.country].filter(Boolean).join(', ');
+                const dateStr = review.createdAt ? format(new Date(review.createdAt), 'MMM dd, yyyy') : '';
 
                 return (
                   <div key={review._id} className="py-4 flex gap-3">

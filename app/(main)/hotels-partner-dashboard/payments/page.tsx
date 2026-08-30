@@ -1,18 +1,12 @@
 'use client';
 
 import { useGetAllTransectionQuery } from '@/features/peyment/payementApi';
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { ChevronLeft, ChevronRight, CreditCard, DollarSign, Loader2, ReceiptText } from 'lucide-react';
 import { Transaction } from '@/types';
 import Image from 'next/image';
 import { useState } from 'react';
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -124,7 +118,7 @@ export default function HotelPaymentsPage() {
               {!isLoading && transactions.map((tx: Transaction) => {
                 const reservation = tx.reference?.id;
                 const user        = tx.user ?? {};
-                const avatarUrl   = getImg(user.image);
+                const avatarUrl   = user.image;
                 const initials    = getInitials(user.firstName, user.lastName);
                 const dateStr     = tx.createdAt ? format(new Date(tx.createdAt), 'MMM dd, yyyy') : '—';
                 const txId        = tx._id?.slice(-8).toUpperCase();

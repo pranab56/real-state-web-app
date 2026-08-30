@@ -1,7 +1,6 @@
 'use client';
 
 import { BlogPost } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock } from 'lucide-react';
@@ -9,11 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useGetAllBlogsQuery } from '../../features/blog/blogsApi';
 
-const getImg = (path?: string) => {
-  if (!path) return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
+
 
 export default function InsightOpinionSection() {
   const { data } = useGetAllBlogsQuery({ page: 1 });
@@ -45,7 +40,7 @@ export default function InsightOpinionSection() {
             >
               <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
                 <Image
-                  src={getImg(blog.images?.[0])}
+                  src={blog.images?.[0] || ""}
                   alt={blog.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"

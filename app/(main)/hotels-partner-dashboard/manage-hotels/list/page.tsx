@@ -4,7 +4,6 @@ import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useDeletePropertyMutation, useGetAllPropertyQuery } from '@/features/manageHotels/manageHotelsApi';
 import { ApiError, Hotel, RootState } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Loader2, MapPin, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import Image from 'next/image';
@@ -15,11 +14,6 @@ import { toast } from 'sonner';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&h=600&fit=crop';
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 export default function ManageHotelsListPage() {
   const [page, setPage] = useState(1);
@@ -92,7 +86,7 @@ export default function ManageHotelsListPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {properties.map((hotel: Hotel, index: number) => {
             const address = [hotel.address?.city, hotel.address?.country].filter(Boolean).join(', ');
-            const imgSrc = (hotel.images && hotel.images.length > 0) ? getImg(hotel.images[0]) : FALLBACK_IMG;
+            const imgSrc = (hotel.images && hotel.images.length > 0) ? hotel.images[0] : FALLBACK_IMG;
             const rating: number = hotel.averageRating ?? 0;
 
             return (

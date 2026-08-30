@@ -2,18 +2,13 @@
 
 import { useGetSingleListingQuery } from '@/features/listings/listingsApi';
 import { useGetReviewsByPropertyQuery } from '@/features/review/reviewApi';
-import { baseURL } from '@/utils/BaseURL';
 import { ChevronLeft, ChevronRight, Loader2, MessageSquare, Star, User } from 'lucide-react';
 import { Review } from '@/types';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
+
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -110,7 +105,7 @@ export default function PropertyReviewsPage() {
           <div className="space-y-0 divide-y divide-gray-100 border border-gray-100 rounded-2xl overflow-hidden bg-white">
             {reviews.map((review: Review, idx: number) => {
               const customer = review.customer ?? {};
-              const avatarSrc = getImg(customer.image);
+              const avatarSrc = customer.image;
               const initials = getInitials(customer.firstName, customer.lastName);
               const displayName = `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim() || customer.email || 'Anonymous';
               const dateStr = review.createdAt
@@ -186,11 +181,10 @@ export default function PropertyReviewsPage() {
                 <button
                   key={i}
                   onClick={() => setPage(i + 1)}
-                  className={`w-9 h-9 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                    i + 1 === page
+                  className={`w-9 h-9 rounded-full text-sm font-medium transition-all cursor-pointer ${i + 1 === page
                       ? 'bg-primary text-white shadow-lg shadow-primary/20'
                       : 'border border-gray-200 text-neutral-2 hover:border-primary hover:text-primary'
-                  }`}
+                    }`}
                 >
                   {i + 1}
                 </button>

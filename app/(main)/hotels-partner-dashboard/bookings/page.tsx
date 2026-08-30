@@ -2,7 +2,7 @@
 
 import { BookingDetailsModal } from '@/components/shared/booking-details-modal';
 import { Reservation, RootState } from "@/types";
-import { baseURL } from "@/utils/BaseURL";
+
 import { format } from "date-fns";
 import { ChevronLeft, ChevronRight, Eye, Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -17,13 +17,7 @@ const HOST_NEXT_STATUSES: Record<string, { value: string; label: string }[]> = {
   ],
 };
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=150&auto=format&fit=crop';
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getStatusStyle = (status: string) => {
   switch (status) {
@@ -107,7 +101,7 @@ export default function PartnerDashboardBookings() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-[50px] h-[50px] flex-shrink-0 rounded-xl bg-gray-200 overflow-hidden relative">
-                        <Image src={getImg(booking.property?.images?.[0])} alt={booking.property?.title ?? ''} fill className="object-cover" />
+                        <Image src={booking.property?.images?.[0] || ''} alt={booking.property?.title ?? ''} fill className="object-cover" />
                       </div>
                       <div className="flex flex-col justify-center">
                         <span className="font-medium text-[#2C2E33] text-[15px]">{booking.property?.title}</span>

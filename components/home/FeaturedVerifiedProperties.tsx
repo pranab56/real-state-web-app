@@ -4,7 +4,6 @@ import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { useGetAllListingsQuery } from '@/features/listings/listingsApi';
 import { cn } from '@/lib/utils';
 import { Hotel } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bath,
@@ -16,15 +15,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 const MAX_VISIBLE = 6;
 const FILTER_SWITCH_DELAY = 400;
-
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 function PropertyCardSkeleton() {
   return (
@@ -158,7 +150,7 @@ export default function FeaturedVerifiedProperties() {
                         {/* Image */}
                         <div className="relative aspect-[4/3] overflow-hidden m-3 md:m-4 rounded-lg">
                           <Image
-                            src={getImg(property.images?.[0])}
+                            src={property.images?.[0] || ""}
                             alt={property.title ?? 'Property'}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-700"

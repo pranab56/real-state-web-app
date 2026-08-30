@@ -6,7 +6,6 @@ import { useGetMyReservationQuery } from '@/features/reservation/page';
 import { useGetMyReviewsQuery } from '@/features/review/reviewApi';
 import { useGetMyWishlistsQuery } from '@/features/wishlists/wishlistsApi';
 import { Hotel, Reservation, Review, RootState, Transaction, WishlistItem } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import {
   CalendarCheck,
@@ -19,14 +18,6 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
-
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=400&fit=crop';
-
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -173,7 +164,7 @@ export function HotelOverview() {
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
-                      src={getImg(hotel.images?.[0])}
+                      src={hotel.images?.[0] || ""}
                       alt={hotel.title ?? 'Hotel'}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -259,7 +250,7 @@ export function HotelOverview() {
               {recentReviews.map((review) => {
                 const customer = review.customer ?? {};
                 const property = (review.property as Hotel) ?? {};
-                const reviewAvatar = getImg(customer.image);
+                const reviewAvatar = customer.image || "";
                 const reviewInitials = getInitials(customer.firstName, customer.lastName);
                 const location = [property.address?.city, property.address?.country].filter(Boolean).join(', ');
                 const dateStr = review.createdAt ? format(new Date(review.createdAt), 'MMM dd, yyyy') : '';
@@ -320,7 +311,7 @@ export function HotelOverview() {
                 return (
                   <div key={b._id} className="flex items-center gap-3 py-3.5">
                     <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden relative flex-shrink-0">
-                      <Image src={getImg(b.property?.images?.[0])} alt={b.property?.title ?? ''} fill className="object-cover" />
+                      <Image src={b.property?.images?.[0] || ""} alt={b.property?.title ?? ''} fill className="object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-[#2C2E33] text-[13px] line-clamp-1">{b.property?.title ?? '—'}</p>
@@ -355,7 +346,7 @@ export function HotelOverview() {
                 return (
                   <div key={item._id} className="flex items-center gap-3 py-3.5">
                     <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden relative flex-shrink-0">
-                      <Image src={getImg(property.images?.[0])} alt={property.title ?? ''} fill className="object-cover" />
+                      <Image src={property.images?.[0] || ""} alt={property.title ?? ''} fill className="object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-[#2C2E33] text-[13px] line-clamp-1">{property.title ?? '—'}</p>

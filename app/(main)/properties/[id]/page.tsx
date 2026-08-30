@@ -1,5 +1,6 @@
 'use client';
 
+import { LocationMap } from '@/components/shared/LocationMap';
 import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +13,6 @@ import { useCreateWishlistToggleMutation } from '@/features/wishlists/wishlistsA
 import { isTokenExpired, useAuthGuard } from '@/hooks/use-auth-guard';
 import { getFullAddress } from '@/lib/utils';
 import { ApiError, Hotel, Review, RootState } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
-import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import {
@@ -50,15 +49,7 @@ import 'swiper/css/pagination';
 import { Pagination as SwiperPagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import * as z from 'zod';
-import { envConfig } from '../../../../envConfig';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200';
-
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const OverviewItem = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) => (
   <div className="flex items-center gap-3 sm:gap-4 bg-[#F7F7F7] p-3 sm:p-6 rounded-lg">
@@ -109,8 +100,6 @@ export default function PropertyDetailPage() {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [galleryIdx, setGalleryIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const [apiKey, setApiKey] = useState<string>("");
 
   const openGallery = (idx: number) => {
     setActivePhotoIdx(idx);
@@ -238,44 +227,7 @@ export default function PropertyDetailPage() {
   const landmarks: { name: string; distanceInKm: number }[] = ld.landmarks ?? [];
   const purpose: string = (ld.purpose ?? '').replace('_', ' ');
 
-  useEffect(() => {
-    const getApiKey = async () => {
-      const config = await envConfig();
-      setApiKey(config.googleMapsApiKey || '');
-    }
-    getApiKey();
-  }, []);
 
-  useEffect(() => {
-    if (!hasLocation || !mapContainerRef.current) return;
-    if (!apiKey) {
-      console.warn('Google Maps API key is not defined');
-      return;
-    }
-
-    setOptions({ key: apiKey, v: 'weekly' });
-    importLibrary('maps')
-      .then(() => {
-        if (!window.google?.maps) return;
-
-        const center = { lat: mapLat!, lng: mapLng! };
-        const map = new window.google.maps.Map(mapContainerRef.current!, {
-          center,
-          zoom: 15,
-          disableDefaultUI: true,
-          clickableIcons: false,
-        });
-
-        new window.google.maps.Marker({
-          position: center,
-          map,
-          title: title || 'Property Location',
-        });
-      })
-      .catch((err) => {
-        console.error('Failed to load Google Maps library', err);
-      });
-  }, [hasLocation, mapLat, mapLng, title, apiKey]);
 
   if (isLoading) {
     return (
@@ -305,14 +257,14 @@ export default function PropertyDetailPage() {
               className="relative h-[250px] md:h-auto rounded-2xl md:rounded-[2rem] overflow-hidden group cursor-pointer"
               onClick={() => openGallery(0)}
             >
-              <Image src={getImg(images[0])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+              <Image src={images[0] || ""} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
             </div>
             {images.length >= 2 && (
               <div
                 className="hidden md:block relative rounded-2xl md:rounded-[2rem] overflow-hidden group cursor-pointer"
                 onClick={() => openGallery(1)}
               >
-                <Image src={getImg(images[1])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                <Image src={images[1] || ""} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
               </div>
             )}
             {images.length >= 3 && (
@@ -320,7 +272,7 @@ export default function PropertyDetailPage() {
                 className="hidden md:block relative rounded-2xl md:rounded-[2rem] overflow-hidden group cursor-pointer"
                 onClick={() => openGallery(2)}
               >
-                <Image src={getImg(images[2])} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                <Image src={images[2] || ""} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
               </div>
             )}
             {images.length > 0 && (
@@ -377,7 +329,7 @@ export default function PropertyDetailPage() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={getImg(img)}
+                      src={img || ""}
                       alt={`${title} photo ${idx + 1}`}
                       style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }}
                     />
@@ -502,7 +454,7 @@ export default function PropertyDetailPage() {
                 <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl">
                   {playVideo ? (
                     <video
-                      src={getImg(p.videoUrl)}
+                      src={p.videoUrl || ""}
                       controls
                       autoPlay
                       className="absolute inset-0 w-full h-full object-cover"
@@ -513,7 +465,7 @@ export default function PropertyDetailPage() {
                       onClick={() => setPlayVideo(true)}
                       className="absolute inset-0 w-full h-full group cursor-pointer"
                     >
-                      <Image src={getImg(images[0])} alt="Video" fill className="object-cover" />
+                      <Image src={images[0] || ""} alt="Video" fill className="object-cover" />
                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/40 group-hover:scale-110 transition-transform duration-300">
                           <Play size={32} fill="currentColor" />
@@ -569,9 +521,7 @@ export default function PropertyDetailPage() {
             {hasLocation && (
               <div className="space-y-6 md:space-y-8">
                 <h3 className="text-2xl font-medium text-neutral-1">Location</h3>
-                <div className="rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm">
-                  <div ref={mapContainerRef} className="w-full h-[360px] bg-gray-100" />
-                </div>
+                <LocationMap lat={mapLat!} lng={mapLng!} title={title} />
               </div>
             )}
 
@@ -803,7 +753,7 @@ export default function PropertyDetailPage() {
                     {/* Image */}
                     <div className="relative aspect-[4/3] overflow-hidden m-3 md:m-4 rounded-lg">
                       <Image
-                        src={getImg(item.images?.[0])}
+                        src={item.images?.[0] || ""}
                         alt={item.title ?? 'Property'}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -854,7 +804,7 @@ export default function PropertyDetailPage() {
                             <span className="text-[11px] md:text-sm font-medium text-neutral-1">{item.listing?.bathrooms ?? 0}</span>
                             <span className="text-[9px] md:text-[13px] text-neutral-2 font-medium">Baths</span>
                           </div>
-                      </div>
+                        </div>
                         <div className="flex items-center gap-1.5 md:gap-2.5">
                           <Maximize2 size={15} className="md:size-[18px] text-primary shrink-0" />
                           <div className="flex flex-col md:flex-row md:gap-1">

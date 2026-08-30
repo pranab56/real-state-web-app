@@ -9,7 +9,6 @@ import {
   useVerificationKYCMutation,
 } from '@/features/profile/profileApi';
 import { ApiError } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { Camera, ChevronLeft, ChevronRight, Clock, Eye, EyeOff, IdCard, Info, Loader2, Shield, ShieldCheck, Upload, User, X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -34,11 +33,6 @@ const passwordSchema = z.object({
 });
 type PasswordErrors = Partial<Record<keyof z.infer<typeof passwordSchema>, string>>;
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 export default function PartnerDashboardProfile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,7 +102,7 @@ export default function PartnerDashboardProfile() {
     return () => window.removeEventListener('keydown', onKey);
   }, [previewDocIndex, kycDocuments.length]);
 
-  const avatarSrc = previewUrl ?? getImg(profile?.image);
+  const avatarSrc = previewUrl ?? profile?.image;
   const initials = `${profile?.firstName?.[0] ?? ''}${profile?.lastName?.[0] ?? ''}`.toUpperCase() || '?';
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -428,7 +422,7 @@ export default function PartnerDashboardProfile() {
                       onClick={() => setPreviewDocIndex(i)}
                       className="relative aspect-[4/3] rounded-xl overflow-hidden border border-[#F2F2F2] block group cursor-pointer w-full"
                     >
-                      <Image src={getImg(doc) ?? ''} alt={`KYC document ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Image src={doc ?? ''} alt={`KYC document ${i + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                         <span className="text-white text-[11px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded-full">Preview</span>
                       </div>
@@ -633,7 +627,7 @@ export default function PartnerDashboardProfile() {
             onClick={e => e.stopPropagation()}
           >
             <Image
-              src={getImg(kycDocuments[previewDocIndex]) ?? ''}
+              src={kycDocuments[previewDocIndex] ?? ''}
               alt={`KYC document ${previewDocIndex + 1}`}
               fill
               className="object-contain"

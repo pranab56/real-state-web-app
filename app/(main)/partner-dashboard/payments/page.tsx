@@ -1,18 +1,12 @@
 'use client';
 
 import { useGetAllTransectionQuery } from '@/features/peyment/payementApi';
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { ChevronLeft, ChevronRight, CreditCard, DollarSign, Loader2, ReceiptText } from 'lucide-react';
 import { Transaction } from '@/types';
 import Image from 'next/image';
 import { useState } from 'react';
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -20,10 +14,10 @@ const getInitials = (firstName?: string, lastName?: string) =>
 const getStatusStyle = (status: string) => {
   switch (status) {
     case 'completed': return 'bg-[#2B9724]/10 text-[#2B9724]';
-    case 'pending':   return 'bg-[#F1913D]/10 text-[#F1913D]';
-    case 'failed':    return 'bg-[#DC3545]/10 text-[#DC3545]';
-    case 'refunded':  return 'bg-blue-50 text-blue-600';
-    default:          return 'bg-gray-100 text-gray-600';
+    case 'pending': return 'bg-[#F1913D]/10 text-[#F1913D]';
+    case 'failed': return 'bg-[#DC3545]/10 text-[#DC3545]';
+    case 'refunded': return 'bg-blue-50 text-blue-600';
+    default: return 'bg-gray-100 text-gray-600';
   }
 };
 
@@ -35,15 +29,15 @@ export default function PartnerDashboardPayments() {
 
   const transactions: Transaction[] = data?.data ?? [];
   const pagination = data?.pagination;
-  const totalPage: number  = pagination?.totalPage ?? 1;
-  const total: number      = pagination?.total ?? 0;
-  const limit: number      = pagination?.limit ?? 10;
+  const totalPage: number = pagination?.totalPage ?? 1;
+  const total: number = pagination?.total ?? 0;
+  const limit: number = pagination?.limit ?? 10;
 
-  const totalAmount  = transactions.reduce((s: number, tx: Transaction) => s + (tx.amount ?? 0), 0);
-  const totalNet     = transactions.reduce((s: number, tx: Transaction) => s + (tx.netAmount ?? 0), 0);
+  const totalAmount = transactions.reduce((s: number, tx: Transaction) => s + (tx.amount ?? 0), 0);
+  const totalNet = transactions.reduce((s: number, tx: Transaction) => s + (tx.netAmount ?? 0), 0);
 
   const showingFrom = total === 0 ? 0 : (page - 1) * limit + 1;
-  const showingTo   = Math.min(page * limit, total);
+  const showingTo = Math.min(page * limit, total);
 
   return (
     <div className="space-y-6">
@@ -123,11 +117,11 @@ export default function PartnerDashboardPayments() {
 
               {!isLoading && transactions.map((tx: Transaction) => {
                 const reservation = tx.reference?.id;
-                const user        = tx.user ?? {};
-                const avatarUrl   = getImg(user.image);
-                const initials    = getInitials(user.firstName, user.lastName);
-                const dateStr     = tx.createdAt ? format(new Date(tx.createdAt), 'MMM dd, yyyy') : '—';
-                const txId        = tx._id?.slice(-8).toUpperCase();
+                const user = tx.user ?? {};
+                const avatarUrl = user.image;
+                const initials = getInitials(user.firstName, user.lastName);
+                const dateStr = tx.createdAt ? format(new Date(tx.createdAt), 'MMM dd, yyyy') : '—';
+                const txId = tx._id?.slice(-8).toUpperCase();
 
                 return (
                   <tr key={tx._id} className="hover:bg-gray-50/50 transition-colors border-b border-[#F2F2F2] last:border-0">

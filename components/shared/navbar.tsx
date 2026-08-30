@@ -13,7 +13,6 @@ import { useGetAllNotificationQuery } from '@/features/notification/notification
 import { useGetProfileQuery } from '@/features/profile/profileApi';
 import { cn } from '@/lib/utils';
 import { RootState } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { isTokenExpired } from '@/utils/storage';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bell, ChevronDown, LogOut, Menu, User, UserCircle, X } from 'lucide-react';
@@ -29,11 +28,6 @@ const PROFILE_ROUTE: Record<string, string> = {
   host: '/hotels-partner-dashboard',
 };
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false);
@@ -58,7 +52,7 @@ export function Navbar() {
   const lastName = profile?.lastName ?? user?.lastName ?? '';
   const displayName = `${firstName} ${lastName}`.trim() || profile?.email || user?.email || 'My Account';
   const displayRole = profile?.role ?? user?.role ?? '';
-  const avatarSrc = getImg(profile?.image);
+  const avatarSrc = profile?.image || "";
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || 'U';
 
   const isHome = pathname === '/';

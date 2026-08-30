@@ -1,17 +1,10 @@
 'use client';
 
-import { baseURL } from '@/utils/BaseURL';
 import { format } from 'date-fns';
 import { MapPin, MessageSquare, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useGetMyReviewsQuery } from '../../../../features/review/reviewApi';
 import { Hotel, Review } from '@/types';
-
-const getImg = (path?: string) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -97,7 +90,7 @@ export default function PartnerDashboardReviews() {
           {reviews.map((review: Review) => {
             const customer = review.customer ?? {};
             const property = typeof review.property === 'object' ? review.property : ({} as Hotel);
-            const avatarUrl = getImg(customer.image);
+            const avatarUrl = customer.image;
             const initials = getInitials(customer.firstName, customer.lastName);
             const location = [property.address?.city, property.address?.country].filter(Boolean).join(', ');
             const ratingInfo = getRatingLabel(review.rating ?? 0);

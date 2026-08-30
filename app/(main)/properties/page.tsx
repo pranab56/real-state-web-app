@@ -5,7 +5,6 @@ import { Slider } from '@/components/ui/slider';
 import { useGetAllListingsQuery, useGetTopCitisQuery } from '@/features/listings/listingsApi';
 import { getCardLocation } from '@/lib/utils';
 import { Hotel } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import {
   Bath,
@@ -33,7 +32,6 @@ const BATHROOM_VISIBLE_LIMIT = 4;
 const BEDROOM_OPTIONS = [0, 1, 2, 3, 4, 5];
 const BATHROOM_OPTIONS = [0, 1, 2, 3, 4];
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&h=600&fit=crop';
 
 const STRUCTURE_TYPES = [
   'house', 'apartment', 'villa', 'penthouse',
@@ -44,11 +42,6 @@ const STRUCTURE_TYPES = [
 const formatType = (t: string) =>
   t.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 
 function PropertiesPageContent() {
@@ -69,10 +62,12 @@ function PropertiesPageContent() {
     Number(sp.get('minPrice') ?? 0),
     Number(sp.get('maxPrice') ?? MAX_PRICE),
   ]);
+
   const [areaRange, setAreaRange] = useState<number[]>(() => [
     Number(sp.get('minArea') ?? 0),
     Number(sp.get('maxArea') ?? MAX_AREA),
   ]);
+
   const [structureType, setStructureType] = useState(() => sp.get('structureType') ?? '');
   const [bedrooms, setBedrooms] = useState<number>(() => Number(sp.get('bedrooms') ?? 0));
   const [bathrooms, setBathrooms] = useState<number>(() => Number(sp.get('bathrooms') ?? 0));
@@ -218,6 +213,8 @@ function PropertiesPageContent() {
       });
     }
   }, [data, wishlisted]);
+
+
   const total: number = (data?.pagination?.total ?? 0) + uniqueCityResults.length;
   const totalPages = Math.max(1, data?.pagination?.totalPage ?? Math.ceil(total / LIMIT));
   const showing = { start: (page - 1) * LIMIT + 1, end: Math.min(page * LIMIT, total) };
@@ -448,7 +445,7 @@ function PropertiesPageContent() {
                 {featuredList.map((item: Hotel, idx: number) => (
                   <Link href={`/properties/${item._id ?? item.id}`} key={idx} className="flex gap-4 group cursor-pointer border-b border-gray-50 last:border-none pb-4 last:pb-0">
                     <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                      <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <Image src={item.images?.[0] || ""} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="space-y-1">
                       <h4 className="text-sm font-medium text-neutral-1 group-hover:text-primary transition-colors line-clamp-1">{item.title ?? item.name}</h4>
@@ -502,7 +499,7 @@ function PropertiesPageContent() {
                 <motion.div key={item._id ?? item.id ?? index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }}>
                   <Link href={`/properties/${item._id ?? item.id}`} className="group block bg-white rounded-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-500 relative">
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      <Image src={getImg(item.images?.[0])} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <Image src={item.images?.[0] || ""} alt={item.title ?? item.name ?? ''} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute top-4 left-4 flex gap-2">
                         {item.isVerified && <span className="bg-[#2B9724] text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg">Zila Verified</span>}
                         {item.listing?.purpose && <span className="bg-primary text-white text-[10px] font-medium px-3 py-1.5 rounded-full shadow-lg capitalize">{item.listing.purpose.replace('_', ' ')}</span>}

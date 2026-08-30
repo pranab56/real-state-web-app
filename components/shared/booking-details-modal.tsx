@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dialog';
 import { useUpdateStatusMutation } from '@/features/hotelPartner/confrimBooking/confrimBookingApi';
 import { ApiError, Reservation } from '@/types';
-import { baseURL } from '@/utils/BaseURL';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { format } from 'date-fns';
 import { Bed, CalendarDays, Loader2, Mail, MapPin, Phone, Users } from 'lucide-react';
@@ -18,13 +17,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=300&auto=format&fit=crop';
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const getInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase() || '?';
@@ -73,7 +66,7 @@ export function BookingDetailsModal({ booking, open, onOpenChangeAction, allowed
   const customer = booking.customer ?? {};
   const pricing = booking.pricing ?? {};
   const address = [property.address?.street, property.address?.city, property.address?.country].filter(Boolean).join(', ');
-  const customerAvatar = getImg(customer.image);
+  const customerAvatar = customer.image || "";
   const customerInitials = getInitials(customer.firstName, customer.lastName);
 
   const checkInStr = booking.checkIn ? format(new Date(booking.checkIn), 'MMM dd, yyyy') : '—';
@@ -114,7 +107,7 @@ export function BookingDetailsModal({ booking, open, onOpenChangeAction, allowed
           {/* Property */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-xl bg-gray-100 overflow-hidden relative flex-shrink-0">
-              <Image src={getImg(property.images?.[0])} alt={property.title ?? ''} fill className="object-cover" />
+              <Image src={property.images?.[0] || ""} alt={property.title ?? ''} fill className="object-cover" />
             </div>
             <div className="min-w-0">
               <p className="text-[15px] font-semibold text-[#2C2E33] line-clamp-1">{property.title}</p>

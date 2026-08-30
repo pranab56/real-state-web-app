@@ -2,7 +2,6 @@
 
 import { Input } from '@/components/ui/input';
 import { useGetAllCategoryQuery, useGetSingleBlogQuery } from '@/features/blog/blogsApi';
-import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import { ArrowLeft, BookOpen, Calendar, Clock, Loader2, Search, Tag } from 'lucide-react';
 import Image from 'next/image';
@@ -10,14 +9,6 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { BlogPost } from '@/types';
-
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&h=800&fit=crop';
-
-const getImageUrl = (path?: string) => {
-  if (!path) return FALLBACK_IMAGE;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('en-US', {
@@ -71,7 +62,7 @@ export default function BlogDetailPage() {
       {/* Hero */}
       <section className="relative w-full h-[340px] md:h-[480px] lg:h-[560px] overflow-hidden">
         <Image
-          src={getImageUrl(blog.images?.[0])}
+          src={blog.images?.[0] || ""}
           alt={blog.title}
           fill
           className="object-cover"
@@ -196,7 +187,7 @@ export default function BlogDetailPage() {
                     {extraImages.map((img, i) => (
                       <div key={i} className="relative aspect-[16/10] rounded-xl overflow-hidden group">
                         <Image
-                          src={getImageUrl(img)}
+                          src={img || ""}
                           alt={`${blog.title} image ${i + 2}`}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -294,11 +285,10 @@ export default function BlogDetailPage() {
                     <Link
                       key={cat}
                       href={`/blog`}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer group ${
-                        blog.category === cat
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-neutral-2 hover:bg-gray-50 hover:text-neutral-1'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer group ${blog.category === cat
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-neutral-2 hover:bg-gray-50 hover:text-neutral-1'
+                        }`}
                     >
                       <Tag size={13} className={blog.category === cat ? 'text-primary' : 'text-neutral-2/40 group-hover:text-neutral-2'} />
                       {cat}
@@ -308,7 +298,7 @@ export default function BlogDetailPage() {
               </div>
             )}
 
-           
+
 
           </div>
         </aside>

@@ -2,7 +2,6 @@
 
 import { PriceConvertButton } from '@/components/shared/price-convert-button';
 import { Button } from '@/components/ui/button';
-import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import { MapPin, Star } from 'lucide-react';
 import { Hotel } from '@/types';
@@ -10,14 +9,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useGetAllListingsQuery } from '../../features/listings/listingsApi';
 
-const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800&h=600&fit=crop';
 const MAX_VISIBLE = 6;
 
-const getImg = (path?: string) => {
-  if (!path) return FALLBACK_IMG;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
+
 
 export default function TopDistention() {
   const { data } = useGetAllListingsQuery({ category: 'accommodation', limit: MAX_VISIBLE });
@@ -68,12 +62,12 @@ export default function TopDistention() {
               >
                 <div className="relative h-64 md:h-72 overflow-hidden">
                   <Image
-                    src={getImg(dest.images?.[0])}
+                    src={dest.images?.[0] || ""}
                     alt={dest.title ?? 'Destination'}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                 
+
                   {rating > 0 && (
                     <div className="absolute bottom-4 left-4">
                       <span className="bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">

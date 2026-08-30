@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // Strict Mode double-invokes effects in dev, which disconnects/reconnects
-  // framer-motion's whileInView IntersectionObservers and replays scroll
-  // animations on first load. Disabled so animations only play once.
   reactStrictMode: false,
   experimental: {
     serverActions: {
@@ -17,8 +13,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
-
-       {
+      {
+        protocol: 'https',
+        hostname: 'media.zilahomes.com',
+      },
+      {
         protocol: 'https',
         hostname: 'api.zilahomes.com',
       },
@@ -26,6 +25,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api.dicebear.com',
       },
+
       {
         protocol: 'https',
         hostname: 'www.mamp.one',
@@ -38,10 +38,9 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api.oriencorapiddelivery.com',
       },
-
       {
         protocol: 'http',
-        hostname: '10.10.26.206',
+        hostname: '10.10.26.188',
       },
     ],
   },

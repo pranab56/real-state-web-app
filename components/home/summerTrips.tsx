@@ -9,7 +9,6 @@ import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useGetAdvertisementQuery } from '../../features/advertisement/advertisementApi';
-import { baseURL } from '@/utils/BaseURL';
 
 interface Advertisement {
   _id: string;
@@ -20,10 +19,7 @@ interface Advertisement {
   status: string;
 }
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  return path.startsWith('http') ? path : `${baseURL}${path}`;
-};
+
 
 export default function SummerTrips() {
   const { data } = useGetAdvertisementQuery({});
@@ -48,7 +44,7 @@ export default function SummerTrips() {
           className="rounded-2xl shadow-2xl"
         >
           {ads.map((ad) => {
-            const imgSrc = getImg(ad.image);
+            const imgSrc = ad.image || "";
             return (
               <SwiperSlide key={ad._id}>
                 <Link href={ad.link ?? '#'} target="_blank" rel="noopener noreferrer">

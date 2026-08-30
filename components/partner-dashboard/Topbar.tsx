@@ -2,7 +2,6 @@
 
 import { useGetMyKYCQuery, useGetProfileQuery } from '@/features/profile/profileApi';
 import { useSidebar } from '@/hooks/use-sidebar';
-import { baseURL } from '@/utils/BaseURL';
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -12,10 +11,7 @@ import { useSelector } from 'react-redux';
 
 const ROLE_LABELS: Record<string, string> = { host: 'Hotel Partner', customer: 'Customer' };
 
-const getImg = (path?: string) => {
-  if (!path) return null;
-  return path.startsWith('http') ? path : `${baseURL}${path}`;
-};
+
 
 export function Topbar() {
   const router = useRouter();
@@ -32,7 +28,7 @@ export function Topbar() {
   const rawRole = (profile?.role ?? user?.role ?? '').toLowerCase();
   const roleLabel = ROLE_LABELS[rawRole] ?? profile?.role ?? user?.role ?? '';
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase() || '?';
-  const avatarSrc = getImg(profile?.image);
+  const avatarSrc = profile?.image || "";
 
   return (
     <header className="bg-white px-4 md:px-8 py-4 md:py-5 flex items-center justify-between border-b border-[#F2F2F2] sticky top-0 z-30">

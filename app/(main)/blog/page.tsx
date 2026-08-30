@@ -2,7 +2,6 @@
 
 import { Input } from '@/components/ui/input';
 import { useGetAllBlogsQuery, useGetAllCategoryQuery } from '@/features/blog/blogsApi';
-import { baseURL } from '@/utils/BaseURL';
 import { motion } from 'framer-motion';
 import { ArrowRight, BookOpen, ChevronRight, Clock, Loader2, Search, Tag, User, X } from 'lucide-react';
 import Image from 'next/image';
@@ -10,14 +9,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { BlogPost } from '@/types';
-
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&h=800&fit=crop';
-
-const getImageUrl = (path?: string) => {
-  if (!path) return FALLBACK_IMAGE;
-  if (path.startsWith('http')) return path;
-  return `${baseURL}${path}`;
-};
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('en-US', {
@@ -148,7 +139,7 @@ function BlogContent() {
                   <div className="grid md:grid-cols-2">
                     <div className="relative aspect-[4/3] md:aspect-auto md:min-h-[320px] overflow-hidden">
                       <Image
-                        src={getImageUrl(featuredPost.images?.[0])}
+                        src={featuredPost.images?.[0] ?? ''}
                         alt={featuredPost.title}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -212,7 +203,7 @@ function BlogContent() {
                       >
                         <div className="relative aspect-[16/9] overflow-hidden">
                           <Image
-                            src={getImageUrl(post.images?.[0])}
+                            src={post.images?.[0] || ""}
                             alt={post.title}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -297,19 +288,17 @@ function BlogContent() {
                 <div className="space-y-1">
                   <button
                     onClick={() => setActiveCategory('')}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer group ${
-                      activeCategory === ''
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-neutral-2 hover:bg-gray-50 hover:text-neutral-1'
-                    }`}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer group ${activeCategory === ''
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-neutral-2 hover:bg-gray-50 hover:text-neutral-1'
+                      }`}
                   >
                     <span className="flex items-center gap-2.5">
                       <Tag size={13} className={activeCategory === '' ? 'text-primary' : 'text-neutral-2/50 group-hover:text-neutral-2'} />
                       All Posts
                     </span>
-                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
-                      activeCategory === '' ? 'bg-primary text-white' : 'bg-gray-100 text-neutral-2'
-                    }`}>
+                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${activeCategory === '' ? 'bg-primary text-white' : 'bg-gray-100 text-neutral-2'
+                      }`}>
                       {allPosts.length}
                     </span>
                   </button>
@@ -320,19 +309,17 @@ function BlogContent() {
                       <button
                         key={cat}
                         onClick={() => setActiveCategory(isActive ? '' : cat)}
-                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer group ${
-                          isActive
-                            ? 'bg-primary/10 text-primary'
-                            : 'text-neutral-2 hover:bg-gray-50 hover:text-neutral-1'
-                        }`}
+                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer group ${isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-neutral-2 hover:bg-gray-50 hover:text-neutral-1'
+                          }`}
                       >
                         <span className="flex items-center gap-2.5 text-left">
                           <Tag size={13} className={isActive ? 'text-primary' : 'text-neutral-2/50 group-hover:text-neutral-2'} />
                           {cat}
                         </span>
-                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${
-                          isActive ? 'bg-primary text-white' : 'bg-gray-100 text-neutral-2'
-                        }`}>
+                        <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-primary text-white' : 'bg-gray-100 text-neutral-2'
+                          }`}>
                           {count}
                         </span>
                       </button>
