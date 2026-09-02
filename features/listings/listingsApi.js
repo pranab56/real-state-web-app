@@ -25,7 +25,7 @@ export const listingsApi = baseApi.injectEndpoints({
         if (params.latitude != null) sp.set('latitude', String(params.latitude));
         if (params.longitude != null) sp.set('longitude', String(params.longitude));
         const qs = sp.toString();
-        return { url: `/properties${qs ? `?${qs}` : ''}`, method: 'GET' };
+        return { url: `/properties${qs ? `?${qs}&status=active` : ''}`, method: 'GET' };
       },
       providesTags: ['Listing'],
     }),
