@@ -162,7 +162,7 @@ export default function Hero() {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-5xl mx-auto space-y-4 md:space-y-6">
             <h1
               className="text-2xl sm:text-4xl md:text-6xl lg:text-6xl font-medium text-white tracking-tight leading-[1.2] md:leading-[1.1] px-2"
-              dangerouslySetInnerHTML={{ __html: 'Find Verified Properties, Hotels, Transportation & <br class="hidden md:block" />  POA Services Across Ethiopia' }}
+              dangerouslySetInnerHTML={{ __html: 'Find Verified Properties, Hotels, Transportation & POA Services' }}
             />
             <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-medium leading-relaxed px-4 md:px-0 opacity-80 md:opacity-100">
               Every listing and service provider undergoes a verification process before being published—helping you connect with trusted opportunities, avoid uncertainty, and make decisions with confidence.
